@@ -1,11 +1,11 @@
 <?php
 
-namespace WpifyWoo\Api;
+namespace WpifyWooCore\Api;
 
 use WP_REST_Response;
 use WP_REST_Server;
 use WpifyWoo\Plugin;
-use WpifyWooDeps\Wpify\Core\Abstracts\AbstractRest;
+use Wpify\Core\Abstracts\AbstractRest;
 
 /**
  * @property Plugin $plugin

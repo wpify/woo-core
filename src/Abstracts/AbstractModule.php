@@ -2,6 +2,7 @@
 
 namespace WpifyWooCore\Abstracts;
 
+use WpifyWooCore\Admin\Settings;
 use WpifyWooCore\WooCommerceIntegration;
 use \Wpify\Core\Abstracts\AbstractComponent;
 
@@ -24,8 +25,9 @@ abstract class AbstractModule extends AbstractComponent {
 	 */
 	public function __construct() {
 		$this->id = $this->id();
+		
 		add_filter(
-				'woocommerce_get_sections_' . WooCommerceIntegration::OPTION_NAME,
+				'woocommerce_get_sections_' . Settings::OPTION_NAME,
 				array(
 						$this,
 						'add_settings_section',
@@ -227,4 +229,7 @@ abstract class AbstractModule extends AbstractComponent {
 		return add_query_arg( [ 'section' => $this->id() ], admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings' ) );
 	}
 
+	public function is_enabled(  ) {
+
+	}
 }

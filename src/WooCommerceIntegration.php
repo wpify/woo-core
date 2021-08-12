@@ -13,17 +13,11 @@ class WooCommerceIntegration {
 	 * @var Premium
 	 */
 	private $premium;
-	/**
-	 * @var Settings
-	 */
-	private $settings;
 
-	public function __construct( Settings $settings, Premium $premium) {
+	public function __construct( Premium $premium) {
 		$this->premium = $premium;
-		$this->settings = $settings;
-	}
 
-	const OPTION_NAME = 'wpify-woo-settings';
+	}
 
 	/**
 	 * Check if a module is enabled
@@ -34,29 +28,6 @@ class WooCommerceIntegration {
 	 */
 	public function is_module_enabled( string $module ): bool {
 		return in_array( $module, $this->get_enabled_modules(), true );
-	}
-
-	/**
-	 * Get an array of enabled modules
-	 * @return array
-	 */
-	public function get_enabled_modules(): array {
-		return $this->get_settings( 'general' )['enabled_modules'] ?? array();
-	}
-
-	/**
-	 * Get settings for a specific module
-	 *
-	 * @param string $module Module name.
-	 *
-	 * @return array
-	 */
-	public function get_settings( string $module ): array {
-		return get_option( $this->get_settings_name( $module ), array() );
-	}
-
-	public function get_settings_name( string $module ): string {
-		return sprintf( '%s-%s', $this::OPTION_NAME, $module );
 	}
 
 	/**

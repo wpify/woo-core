@@ -3,7 +3,10 @@
 namespace WpifyWooCore\Admin;
 
 use WC_Admin_Settings;
+use WpifyCustomFields\WpifyCustomFields;
+use WpifyWooCore\Managers\ModulesManager;
 use WpifyWooCore\Plugin;
+use WpifyWooCore\Premium;
 use WpifyWooCore\WooCommerceIntegration;
 use \Wpify\Core\Abstracts\AbstractComponent;
 
@@ -13,12 +16,39 @@ use \Wpify\Core\Abstracts\AbstractComponent;
  * @property Plugin $plugin
  */
 class Settings {
+	const OPTION_NAME = 'wpify-woo-settings';
 	private $id;
 	private $label;
 	private $pages;
+	/**
+	 * @var WpifyCustomFields
+	 */
+	private $custom_fields;
+	/**
+	 * @var WooCommerceIntegration
+	 */
+	private $woocommerce_integration;
+	/**
+	 * @var Premium
+	 */
+	private $premium;
+	/**
+	 * @var ModulesManager
+	 */
+	private $modules_manager;
 
-	public function __construct(  ) {
-		$this->id    = WooCommerceIntegration::OPTION_NAME;
+	public function __construct(
+			WpifyCustomFields $custom_fields,
+			WooCommerceIntegration $woocommerce_integration,
+			Premium $premium,
+			ModulesManager $modules_manager
+	) {
+		$this->custom_fields           = $custom_fields;
+		$this->woocommerce_integration = $woocommerce_integration;
+		$this->premium                 = $premium;
+		$this->modules_manager         = $modules_manager;
+
+		$this->id    = $this::OPTION_NAME;
 		$this->label = __( 'Wpify Woo', 'wpify-woo' );
 
 		add_action( 'init', array( $this, 'register_settings' ) );
@@ -49,18 +79,20 @@ class Settings {
 		$sections = $this->get_sections();
 
 		foreach ( $sections as $id => $label ) {
-			$this->pages[ $id ] = $this->plugin->get_wcf()->add_woocommerce_settings( array(
-					'tab'     => array(
-							'id'    => $this->id,
-							'label' => $this->label,
-					),
-					'section' => array(
-							'id'    => $id,
-							'label' => $label,
-					),
-					'class'   => 'wpify-woo-settings',
-					'items'   => $this->is_current( $this->id, $id ) ? $this->get_settings() : array(),
-			) );
+			if (!$id || in_array($id, $this->get_enabled_modules())) {
+				$this->pages[ $id ] = $this->custom_fields->add_woocommerce_settings( array(
+						'tab'     => array(
+								'id'    => $this->id,
+								'label' => $this->label,
+						),
+						'section' => array(
+								'id'    => $id,
+								'label' => $label,
+						),
+						'class'   => 'wpify-woo-settings',
+						'items'   => $this->is_current( $this->id, $id ) ? $this->get_settings_items() : array(),
+				) );
+			}
 		}
 	}
 
@@ -93,7 +125,7 @@ class Settings {
 	 *  Get settings array
 	 * @return array
 	 */
-	public function get_settings() {
+	public function get_settings_items() {
 		global $current_section;
 
 		$settings = array();
@@ -112,7 +144,7 @@ class Settings {
 
 		foreach ( $settings as $key => $setting ) {
 			if ( $setting['type'] === 'license' ) {
-				$module       = $this->plugin->get_modules_manager()->get_module_by_id( $current_section );
+				$module       = $this->modules_manager->get_module_by_id( $current_section );
 				$is_activated = $module->is_activated();
 
 				$settings[ $key ]['activated'] = $is_activated ? 1 : 0;
@@ -129,7 +161,7 @@ class Settings {
 		$settings = array(
 				array(
 						'type'  => 'group',
-						'id'    => $this->get_plugin()->get_woocommerce_integration()->get_settings_name( $current_section ),
+						'id'    => $this->get_settings_name( $current_section ),
 						'title' => $this->label,
 						'items' => $settings,
 				),
@@ -144,33 +176,33 @@ class Settings {
 						'type'    => 'multiswitch',
 						'id'      => 'enabled_modules',
 						'label'   => __( 'Enabled modules', 'wpify-woo' ),
-						'options' => $this->get_plugin()->get_woocommerce_integration()->get_modules(),
+						'options' => $this->woocommerce_integration->get_modules(),
 						'desc'    => __( 'Select the modules you want to enable', 'wpify-woo' ),
 				),
 		);
 	}
 
 	public function enqueue_admin_scripts() {
-		$rest_url = $this->get_plugin()->get_api_manager()->get_rest_url();
-		$handle   = $this->get_plugin()->get_webpack_manifest()->register_asset(
-				'settings.js',
-				'wpify-settings',
-				array(
-						'WpifyWooCoreSettings' => array(
-								'publicPath'    => $this->plugin->get_asset_url( 'build/' ),
-								'restUrl'       => $this->plugin->get_api_manager()->get_rest_url(),
-								'nonce'         => wp_create_nonce( $this->get_plugin()->get_api_manager()->get_nonce_action() ),
-								'activateUrl'   => $rest_url . '/license/activate',
-								'deactivateUrl' => $rest_url . '/license/deactivate',
-								'apiKey'        => $this->plugin->get_license()::API_KEY,
-								'apiSecret'     => $this->plugin->get_license()::API_SECRET,
-						),
-				)
-		);
-
-		wp_enqueue_script( $handle );
-		wp_set_script_translations( $handle, 'wpify-woo', $this->get_plugin()->get_asset_path( 'languages' ) );
-		wp_enqueue_style( $this->get_plugin()->get_webpack_manifest()->register_asset( 'settings.css' ) );
+//		$rest_url = $this->get_plugin()->get_api_manager()->get_rest_url();
+//		$handle   = $this->get_plugin()->get_webpack_manifest()->register_asset(
+//				'settings.js',
+//				'wpify-settings',
+//				array(
+//						'WpifyWooCoreSettings' => array(
+//								'publicPath'    => $this->plugin->get_asset_url( 'build/' ),
+//								'restUrl'       => $this->plugin->get_api_manager()->get_rest_url(),
+//								'nonce'         => wp_create_nonce( $this->get_plugin()->get_api_manager()->get_nonce_action() ),
+//								'activateUrl'   => $rest_url . '/license/activate',
+//								'deactivateUrl' => $rest_url . '/license/deactivate',
+//								'apiKey'        => $this->plugin->get_license()::API_KEY,
+//								'apiSecret'     => $this->plugin->get_license()::API_SECRET,
+//						),
+//				)
+//		);
+//
+//		wp_enqueue_script( $handle );
+//		wp_set_script_translations( $handle, 'wpify-woo', $this->get_plugin()->get_asset_path( 'languages' ) );
+//		wp_enqueue_style( $this->get_plugin()->get_webpack_manifest()->register_asset( 'settings.css' ) );
 	}
 
 	public function render_before_settings( $args ) {
@@ -201,7 +233,7 @@ class Settings {
 					</h3>
 					<h2><?php _e( 'Get premium extensions!', 'wpify-woo' ) ?></h2>
 					<div class="wpify-woo-settings__upsells">
-						<?php foreach ( $this->plugin->get_premium()->get_extensions() as $extension ) { ?>
+						<?php foreach ( $this->premium->get_extensions() as $extension ) { ?>
 							<div class="wpify-woo-settings__upsell">
 								<h3><?php echo $extension['title']; ?></h3>
 								<ul>
@@ -222,4 +254,29 @@ class Settings {
 			printf( '<a href="%s">%s</a>', add_query_arg( [ 'wpify-action' => 'download-log', 'wpify-nonce' => wp_create_nonce( 'download-log' ) ], admin_url() ), __( 'Download log', 'wpify-woo' ) );
 		}
 	}
+
+	/**
+	 * Get an array of enabled modules
+	 * @return array
+	 */
+	public function get_enabled_modules(): array {
+		return $this->get_settings( 'general' )['enabled_modules'] ?? array();
+	}
+
+	/**
+	 * Get settings for a specific module
+	 *
+	 * @param string $module Module name.
+	 *
+	 * @return array
+	 */
+	public function get_settings( string $module ): array {
+		return get_option( $this->get_settings_name( $module ), array() );
+	}
+
+	public function get_settings_name( string $module ): string {
+		return sprintf( '%s-%s', $this::OPTION_NAME, $module );
+	}
+
+
 }
