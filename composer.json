@@ -1,37 +1,25 @@
 {
-    "name": "wpify/wpify-woo-core",
-    "authors": [
-        {
-            "name": "vasikgreif",
-            "email": "info@vaclavgreif.cz"
-        }
-    ],
-    "require": {
-        "php": "^7.3|^8.0",
-        "yahnis-elsts/plugin-update-checker": "^4.10",
-        "sentry/sdk": "^3.1"
-    },
-    "require-dev": {
-        "wpify/wordpress-scoper": "^1.2",
-        "symfony/var-dumper": "^5.2"
-    },
-    "extra": {
-        "wordpress-scoper": {
-            "prefix": "WpifyWooCoreDeps",
-            "folder": "deps",
-            "globals": [
-                "wordpress",
-                "woocommerce"
-            ],
-            "packages": {
-                "wpify/core": "^4.2",
-                "wpify/custom-fields": "^1"
-            }
-        }
-    },
-    "autoload": {
-        "psr-4": {
-            "WpifyWooCore\\": "src/"
-        }
+  "name": "wpify/wpify-woo-core",
+  "authors": [
+    {
+      "name": "vasikgreif",
+      "email": "info@vaclavgreif.cz"
     }
+  ],
+  "require": {
+    "php": "^7.3|^8.0",
+    "yahnis-elsts/plugin-update-checker": "^4.10",
+    "sentry/sdk": "^3.1",
+    "wpify/core": "^4.2",
+    "wpify/custom-fields": "^1"
+  },
+  "require-dev": {
+    "wpify/wordpress-scoper": "^1.2",
+    "symfony/var-dumper": "^5.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "WpifyWooCore\\": "src/"
+    }
+  }
 }
