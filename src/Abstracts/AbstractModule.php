@@ -3,13 +3,11 @@
 namespace WpifyWooCore\Abstracts;
 
 use WpifyWooCore\Admin\Settings;
-use WpifyWooCore\WooCommerceIntegration;
 use \Wpify\Core\Abstracts\AbstractComponent;
 
 /**
  * Class AbstractModule
  * @package WpifyWoo\Abstracts
- * @property Plugin $plugin
  */
 abstract class AbstractModule extends AbstractComponent {
 	protected $requires_activation = false;
@@ -165,7 +163,7 @@ abstract class AbstractModule extends AbstractComponent {
 	}
 
 	public function get_option_key() {
-		return sprintf( '%s-%s', WooCommerceIntegration::OPTION_NAME, $this->id() );
+		return sprintf( '%s-%s', Settings::OPTION_NAME, $this->id() );
 	}
 
 	/**

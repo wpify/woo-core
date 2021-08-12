@@ -4,7 +4,7 @@ namespace WpifyWooCore;
 
 use Puc_v4_Factory;
 use WpifyWooCore\Abstracts\AbstractModule;
-use WpifyWooDeps\Wpify\Core\Abstracts\AbstractComponent;
+use Wpify\Core\Abstracts\AbstractComponent;
 
 /**
  * Class License

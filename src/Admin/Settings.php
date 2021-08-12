@@ -4,6 +4,8 @@ namespace WpifyWooCore\Admin;
 
 use WC_Admin_Settings;
 use WpifyCustomFields\WpifyCustomFields;
+use WpifyWooCore\License;
+use WpifyWooCore\Managers\ApiManager;
 use WpifyWooCore\Managers\ModulesManager;
 use WpifyWooCore\Plugin;
 use WpifyWooCore\Premium;
@@ -36,17 +38,29 @@ class Settings {
 	 * @var ModulesManager
 	 */
 	private $modules_manager;
+	/**
+	 * @var ApiManager
+	 */
+	private $api_manager;
+	/**
+	 * @var License
+	 */
+	private $license;
 
 	public function __construct(
 			WpifyCustomFields $custom_fields,
 			WooCommerceIntegration $woocommerce_integration,
 			Premium $premium,
-			ModulesManager $modules_manager
+			ModulesManager $modules_manager,
+			ApiManager $api_manager,
+			License $license
 	) {
 		$this->custom_fields           = $custom_fields;
 		$this->woocommerce_integration = $woocommerce_integration;
 		$this->premium                 = $premium;
 		$this->modules_manager         = $modules_manager;
+		$this->api_manager             = $api_manager;
+		$this->license = $license;
 
 		$this->id    = $this::OPTION_NAME;
 		$this->label = __( 'Wpify Woo', 'wpify-woo' );
@@ -79,7 +93,7 @@ class Settings {
 		$sections = $this->get_sections();
 
 		foreach ( $sections as $id => $label ) {
-			if (!$id || in_array($id, $this->get_enabled_modules())) {
+			if ( ! $id || in_array( $id, $this->get_enabled_modules() ) ) {
 				$this->pages[ $id ] = $this->custom_fields->add_woocommerce_settings( array(
 						'tab'     => array(
 								'id'    => $this->id,
@@ -183,26 +197,23 @@ class Settings {
 	}
 
 	public function enqueue_admin_scripts() {
-//		$rest_url = $this->get_plugin()->get_api_manager()->get_rest_url();
-//		$handle   = $this->get_plugin()->get_webpack_manifest()->register_asset(
-//				'settings.js',
-//				'wpify-settings',
-//				array(
-//						'WpifyWooCoreSettings' => array(
-//								'publicPath'    => $this->plugin->get_asset_url( 'build/' ),
-//								'restUrl'       => $this->plugin->get_api_manager()->get_rest_url(),
-//								'nonce'         => wp_create_nonce( $this->get_plugin()->get_api_manager()->get_nonce_action() ),
-//								'activateUrl'   => $rest_url . '/license/activate',
-//								'deactivateUrl' => $rest_url . '/license/deactivate',
-//								'apiKey'        => $this->plugin->get_license()::API_KEY,
-//								'apiSecret'     => $this->plugin->get_license()::API_SECRET,
-//						),
-//				)
-//		);
-//
-//		wp_enqueue_script( $handle );
-//		wp_set_script_translations( $handle, 'wpify-woo', $this->get_plugin()->get_asset_path( 'languages' ) );
-//		wp_enqueue_style( $this->get_plugin()->get_webpack_manifest()->register_asset( 'settings.css' ) );
+		$rest_url = $this->api_manager->get_rest_url();
+
+		$handle = 'wpify-woo-settings.js';
+		wp_enqueue_script( $handle, '');
+		wp_localize_script('wpify-woo-settings.js', 'WpifyWooCoreSettings', array(
+				// TODO
+				//'publicPath'    => $this->plugin->get_asset_url( 'build/' ),
+						'restUrl'       => $rest_url,
+						'nonce'         => wp_create_nonce( $this->api_manager->get_nonce_action() ),
+						'activateUrl'   => $rest_url . '/license/activate',
+						'deactivateUrl' => $rest_url . '/license/deactivate',
+						'apiKey'        => $this->license::API_KEY,
+						'apiSecret'     => $this->license::API_SECRET,
+				),
+		);
+		wp_set_script_translations( $handle, 'wpify-woo', '/languages' );
+		wp_enqueue_style( 'settings.css','' );
 	}
 
 	public function render_before_settings( $args ) {

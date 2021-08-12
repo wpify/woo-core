@@ -2,8 +2,8 @@
 
 namespace WpifyWooCore;
 
-use WpifyWooDeps\Wpify\Core\Abstracts\AbstractLogger;
-use WpifyWooDeps\Wpify\Core\WordpressMonologHandler;
+use Wpify\Core\Abstracts\AbstractLogger;
+use Wpify\Core\WordpressMonologHandler;
 
 class Logger extends AbstractLogger {
 	public function channel(): string {
