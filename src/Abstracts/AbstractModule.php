@@ -1,6 +1,6 @@
 <?php
 
-namespace WpifyWoo\Abstracts;
+namespace WpifyWooCore\Abstracts;
 
 use WpifyWoo\Plugin;
 use WpifyWoo\WooCommerceIntegration;

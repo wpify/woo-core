@@ -17,7 +17,7 @@
     },
     "extra": {
         "wordpress-scoper": {
-            "prefix": "WpifyWooDeps",
+            "prefix": "WpifyWooCoreDeps",
             "folder": "deps",
             "globals": [
                 "wordpress",
