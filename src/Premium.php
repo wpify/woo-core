@@ -2,7 +2,7 @@
 
 namespace WpifyWooCore;
 
-use WpifyWooDeps\Wpify\Core\Abstracts\AbstractComponent;
+use Wpify\Core\Abstracts\AbstractComponent;
 
 /**
  * Class Premium

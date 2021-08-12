@@ -2,38 +2,28 @@
 
 namespace WpifyWooCore;
 
-use WpifyWoo\Admin\Settings;
-use WpifyWooDeps\Wpify\Core\Abstracts\AbstractComponent;
+use WpifyWooCore\Admin\Settings;
 
 /**
  * Class WooCommerceIntegration
  * @package WpifyWoo
  */
-class WooCommerceIntegration extends AbstractComponent {
+class WooCommerceIntegration {
 	/**
 	 * @var Premium
 	 */
 	private $premium;
+	/**
+	 * @var Settings
+	 */
+	private $settings;
 
-	public function __construct( Premium $premium) {
+	public function __construct( Settings $settings, Premium $premium) {
 		$this->premium = $premium;
+		$this->settings = $settings;
 	}
 
 	const OPTION_NAME = 'wpify-woo-settings';
-
-	/**
-	 * Setup
-	 * @return bool|void
-	 */
-	public function setup() {
-		add_action( 'woocommerce_init', array( $this, 'register_settings' ) );
-	}
-
-	public function register_settings() {
-		/** @var Settings $admin_settings */
-		$admin_settings = $this->plugin->create_component( Settings::class );
-		$admin_settings->init();
-	}
 
 	/**
 	 * Check if a module is enabled

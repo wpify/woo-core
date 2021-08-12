@@ -3,17 +3,24 @@
 namespace WpifyWooCore;
 
 use Puc_v4_Factory;
-use WpifyWooCoreDeps\Abstracts\AbstractModule;
+use WpifyWooCore\Abstracts\AbstractModule;
 use WpifyWooDeps\Wpify\Core\Abstracts\AbstractComponent;
 
 /**
  * Class License
  * @package WpifyWoo
- * @property Plugin $plugin
  */
 class License extends AbstractComponent {
 	const API_KEY = 'ck_b543732d2aa924962757690d0d929c043c3f37c1';
 	const API_SECRET = 'cs_5d3605fd909d8e6c1aed7ad19ee0c569ca50d32a';
+	/**
+	 * @var Logger
+	 */
+	private $logger;
+
+	public function __construct( Logger $logger) {
+		$this->logger = $logger;
+	}
 
 	/**
 	 * Activate the license
@@ -143,7 +150,7 @@ class License extends AbstractComponent {
 
 		$code = wp_remote_retrieve_response_code( $response );
 
-		$this->plugin->get_logger()->info( 'Revalidated license',
+		$this->logger->info( 'Revalidated license',
 			[
 				'data' =>
 					[

@@ -5,19 +5,19 @@ namespace WpifyWooCore\Admin;
 use WC_Admin_Settings;
 use WpifyWooCore\Plugin;
 use WpifyWooCore\WooCommerceIntegration;
-use WpifyWooCoreDeps\Wpify\Core\Abstracts\AbstractComponent;
+use \Wpify\Core\Abstracts\AbstractComponent;
 
 /**
  * Class Settings
  * @package WpifyWooCore\Admin
  * @property Plugin $plugin
  */
-class Settings extends AbstractComponent {
+class Settings {
 	private $id;
 	private $label;
 	private $pages;
 
-	public function setup() {
+	public function __construct(  ) {
 		$this->id    = WooCommerceIntegration::OPTION_NAME;
 		$this->label = __( 'Wpify Woo', 'wpify-woo' );
 

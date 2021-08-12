@@ -2,9 +2,8 @@
 
 namespace WpifyWooCore\Abstracts;
 
-use WpifyWoo\Plugin;
-use WpifyWoo\WooCommerceIntegration;
-use WpifyWooDeps\Wpify\Core\Abstracts\AbstractComponent;
+use WpifyWooCore\WooCommerceIntegration;
+use \Wpify\Core\Abstracts\AbstractComponent;
 
 /**
  * Class AbstractModule
