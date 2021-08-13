@@ -1,0 +1,1 @@
+<?php return array('settings.js' => array('dependencies' => array('react', 'wp-components', 'wp-element', 'wp-hooks', 'wp-i18n', 'wp-polyfill'), 'version' => '41e2b514dce7a63f24fd514d7cb13d98'));
