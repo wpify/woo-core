@@ -7,6 +7,7 @@ use WpifyWooCore\Managers\ApiManager;
 use WpifyWooCore\Managers\ModulesManager;
 
 class WpifyWooCore {
+	const PATH = __DIR__;
 	/**
 	 * @var WooCommerceIntegration
 	 */
@@ -49,4 +50,5 @@ class WpifyWooCore {
 	public function get_settings(): Settings {
 		return $this->settings;
 	}
+
 }
