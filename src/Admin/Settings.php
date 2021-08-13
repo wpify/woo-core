@@ -4,6 +4,7 @@ namespace WpifyWooCore\Admin;
 
 use WC_Admin_Settings;
 use WpifyCustomFields\WpifyCustomFields;
+use WpifyWooCore\Assets;
 use WpifyWooCore\License;
 use WpifyWooCore\Managers\ApiManager;
 use WpifyWooCore\Managers\ModulesManager;
@@ -11,6 +12,7 @@ use WpifyWooCore\Plugin;
 use WpifyWooCore\Premium;
 use WpifyWooCore\WooCommerceIntegration;
 use \Wpify\Core\Abstracts\AbstractComponent;
+use WpifyWooCore\WpifyWooCore;
 
 /**
  * Class Settings
@@ -46,6 +48,10 @@ class Settings {
 	 * @var License
 	 */
 	private $license;
+	/**
+	 * @var Assets
+	 */
+	private $assets;
 
 	public function __construct(
 			WpifyCustomFields $custom_fields,
@@ -53,14 +59,16 @@ class Settings {
 			Premium $premium,
 			ModulesManager $modules_manager,
 			ApiManager $api_manager,
-			License $license
+			License $license,
+			Assets $assets
 	) {
 		$this->custom_fields           = $custom_fields;
 		$this->woocommerce_integration = $woocommerce_integration;
 		$this->premium                 = $premium;
 		$this->modules_manager         = $modules_manager;
 		$this->api_manager             = $api_manager;
-		$this->license = $license;
+		$this->license                 = $license;
+		$this->assets                  = $assets;
 
 		$this->id    = $this::OPTION_NAME;
 		$this->label = __( 'Wpify Woo', 'wpify-woo' );
@@ -199,11 +207,10 @@ class Settings {
 	public function enqueue_admin_scripts() {
 		$rest_url = $this->api_manager->get_rest_url();
 
-		$handle = 'wpify-woo-settings.js';
-		wp_enqueue_script( $handle, '');
-		wp_localize_script('wpify-woo-settings.js', 'WpifyWooCoreSettings', array(
-				// TODO
-				//'publicPath'    => $this->plugin->get_asset_url( 'build/' ),
+		$this->assets->enqueue_style( 'settings.css' );
+		$this->assets->enqueue_script( 'settings.js', [
+				'WpifyWooCoreSettings' => array(
+						'publicPath'    => dirname( WpifyWooCore::PATH ) . '/build/',
 						'restUrl'       => $rest_url,
 						'nonce'         => wp_create_nonce( $this->api_manager->get_nonce_action() ),
 						'activateUrl'   => $rest_url . '/license/activate',
@@ -211,9 +218,9 @@ class Settings {
 						'apiKey'        => $this->license::API_KEY,
 						'apiSecret'     => $this->license::API_SECRET,
 				),
-		);
-		wp_set_script_translations( $handle, 'wpify-woo', '/languages' );
-		wp_enqueue_style( 'settings.css','' );
+		] );
+
+		wp_set_script_translations( 'wpify-woo-settings.js', 'wpify-woo', '/languages' );
 	}
 
 	public function render_before_settings( $args ) {
