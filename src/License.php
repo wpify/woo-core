@@ -5,7 +5,6 @@ namespace Wpify\WpifyWooCore;
 use Puc_v4_Factory;
 use Wpify\Log\Log;
 use Wpify\WpifyWooCore\Abstracts\AbstractModule;
-use Wpify\Core\Abstracts\AbstractComponent;
 use Wpify\WpifyWooCore\Managers\ModulesManager;
 
 /**
