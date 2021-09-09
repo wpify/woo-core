@@ -3,17 +3,13 @@
 namespace Wpify\WpifyWooCore\Admin;
 
 use WC_Admin_Settings;
-use Wpify\Asset\Asset;
 use Wpify\Asset\AssetFactory;
 use Wpify\CustomFields\CustomFields;
-use WpifyCustomFields\WpifyCustomFields;
-use Wpify\WpifyWooCore\Assets;
 use Wpify\WpifyWooCore\License;
 use Wpify\WpifyWooCore\Managers\ApiManager;
 use Wpify\WpifyWooCore\Managers\ModulesManager;
 use Wpify\WpifyWooCore\Premium;
 use Wpify\WpifyWooCore\WooCommerceIntegration;
-use \Wpify\Core\Abstracts\AbstractComponent;
 use Wpify\WpifyWooCore\WpifyWooCore;
 
 /**
@@ -26,7 +22,7 @@ class Settings {
 	private $label;
 	private $pages;
 	/**
-	 * @var WpifyCustomFields
+	 * @var CustomFields
 	 */
 	private $custom_fields;
 	/**
