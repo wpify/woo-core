@@ -95,7 +95,7 @@ class Settings {
 
 		foreach ( $sections as $id => $label ) {
 			if ( ! $id || in_array( $id, $this->get_enabled_modules() ) ) {
-				$this->pages[ $id ] = $this->custom_fields->add_woocommerce_settings( array(
+				$this->pages[ $id ] = $this->custom_fields->create_woocommerce_settings( array(
 						'tab'     => array(
 								'id'    => $this->id,
 								'label' => $this->label,
