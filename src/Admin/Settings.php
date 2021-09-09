@@ -208,17 +208,19 @@ class Settings {
 	public function enqueue_admin_scripts() {
 		$rest_url = $this->api_manager->get_rest_url();
 
-		$this->asset_factory->wp_script(__DIR__.'/../../build/settings.css');
-		$this->asset_factory->wp_script( __DIR__.'/../../build/settings.ks', [
-			'WpifyWooCoreSettings' => array(
-				'publicPath'    => dirname( WpifyWooCore::PATH ) . '/build/',
-				'restUrl'       => $rest_url,
-				'nonce'         => wp_create_nonce( $this->api_manager->get_nonce_action() ),
-				'activateUrl'   => $rest_url . '/license/activate',
-				'deactivateUrl' => $rest_url . '/license/deactivate',
-				'apiKey'        => $this->license::API_KEY,
-				'apiSecret'     => $this->license::API_SECRET,
-			),
+		$this->asset_factory->wp_script( __DIR__ . '/../../build/settings.css' );
+		$this->asset_factory->wp_script( __DIR__ . '/../../build/settings.ks', [
+			'variables' => [
+				'WpifyWooCoreSettings' => array(
+					'publicPath'    => dirname( WpifyWooCore::PATH ) . '/build/',
+					'restUrl'       => $rest_url,
+					'nonce'         => wp_create_nonce( $this->api_manager->get_nonce_action() ),
+					'activateUrl'   => $rest_url . '/license/activate',
+					'deactivateUrl' => $rest_url . '/license/deactivate',
+					'apiKey'        => $this->license::API_KEY,
+					'apiSecret'     => $this->license::API_SECRET,
+				),
+			],
 		] );
 
 		wp_set_script_translations( 'wpify-woo-settings.js', 'wpify-woo', '/languages' );
