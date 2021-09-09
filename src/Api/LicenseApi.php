@@ -2,15 +2,15 @@
 
 namespace Wpify\WpifyWooCore\Api;
 
+use WP_Error;
+use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use WpifyWoo\Plugin;
-use Wpify\Core\Abstracts\AbstractRest;
+use Wpify\WpifyWooCore\Managers\ApiManager;
 
 /**
- * @property Plugin $plugin
  */
-class LicenseApi extends AbstractRest {
+class LicenseApi extends \WP_REST_Controller {
 
 	/**
 	 * ExampleApi constructor.
@@ -27,7 +27,7 @@ class LicenseApi extends AbstractRest {
 	 */
 	public function register_routes() {
 		register_rest_route(
-			$this->plugin->get_api_manager()->get_rest_namespace(),
+			ApiManager::REST_NAMESPACE,
 			'license/activate',
 			array(
 				array(
@@ -40,7 +40,7 @@ class LicenseApi extends AbstractRest {
 			)
 		);
 		register_rest_route(
-			$this->plugin->get_api_manager()->get_rest_namespace(),
+			ApiManager::REST_NAMESPACE,,
 			'license/deactivate',
 			array(
 				array(
@@ -55,16 +55,16 @@ class LicenseApi extends AbstractRest {
 	}
 
 	/**
-	 * @param \WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return \WP_Error|\WP_REST_Request|\WP_REST_Response | bool
+	 * @return WP_Error|WP_REST_Request|WP_REST_Response | bool
 	 * @throws \ComposePress\Core\Exception\Plugin
 	 */
 	public function activate_license( $request ) {
 		$data             = $request->get_params();
 		$data['site-url']  = defined(ICL_LANGUAGE_CODE) ? get_option( 'siteurl') : site_url();
 
-		$result = $this->plugin->get_license()->activate_license( $request->get_param( 'license' ), $data );;
+		$result = $this->plugin->get_license()->activate_license( $request->get_param( 'license' ), $data );
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
@@ -73,16 +73,15 @@ class LicenseApi extends AbstractRest {
 	}
 
 	/**
-	 * @param \WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return \WP_Error|\WP_REST_Request|\WP_REST_Response | bool
-	 * @throws \ComposePress\Core\Exception\Plugin
+	 * @return WP_Error|WP_REST_Request|WP_REST_Response | bool
 	 */
 	public function deactivate_license( $request ) {
 		$data             = $request->get_params();
 		$data['site-url']  = defined(ICL_LANGUAGE_CODE) ? get_option( 'siteurl') : site_url();
 
-		$result = $this->plugin->get_license()->deactivate_license( $request->get_param( 'license' ), $data );;
+		$result = $this->plugin->get_license()->deactivate_license( $request->get_param( 'license' ), $data );
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
@@ -93,9 +92,9 @@ class LicenseApi extends AbstractRest {
 	/**
 	 * Check if a given request has access to create items
 	 *
-	 * @param \WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return \WP_Error|bool
+	 * @return WP_Error|bool
 	 */
 	public function create_item_permissions_check( $request ) {
 		return true;
@@ -105,7 +104,7 @@ class LicenseApi extends AbstractRest {
 	 * Prepare the item for the REST response
 	 *
 	 * @param mixed $item WordPress representation of the item.
-	 * @param \WP_REST_Request $request Request object.
+	 * @param WP_REST_Request $request Request object.
 	 *
 	 * @return mixed
 	 */

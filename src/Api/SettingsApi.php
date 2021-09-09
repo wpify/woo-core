@@ -4,13 +4,14 @@ namespace Wpify\WpifyWooCore\Api;
 
 use WP_REST_Response;
 use WP_REST_Server;
+use Wpify\WpifyWooCore\Managers\ApiManager;
 use WpifyWoo\Plugin;
 use Wpify\Core\Abstracts\AbstractRest;
 
 /**
  * @property Plugin $plugin
  */
-class SettingsApi extends AbstractRest {
+class SettingsApi extends \WP_REST_Controller {
 
 	/**
 	 * ExampleApi constructor.
@@ -27,7 +28,7 @@ class SettingsApi extends AbstractRest {
 	 */
 	public function register_routes() {
 		register_rest_route(
-			$this->plugin->get_api_manager()->get_rest_namespace(),
+			ApiManager::REST_NAMESPACE,
 			'option',
 			array(
 				array(
@@ -41,7 +42,7 @@ class SettingsApi extends AbstractRest {
 		);
 
 		register_rest_route(
-			$this->plugin->get_api_manager()->get_rest_namespace(),
+			ApiManager::REST_NAMESPACE,
 			'list',
 			array(
 				array(
@@ -91,7 +92,7 @@ class SettingsApi extends AbstractRest {
 	/**
 	 * Prepare the item for the REST response
 	 *
-	 * @param mixed $item WordPress representation of the item.
+	 * @param mixed            $item WordPress representation of the item.
 	 * @param \WP_REST_Request $request Request object.
 	 *
 	 * @return mixed

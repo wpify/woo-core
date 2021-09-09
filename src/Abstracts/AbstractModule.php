@@ -9,7 +9,7 @@ use \Wpify\Core\Abstracts\AbstractComponent;
  * Class AbstractModule
  * @package WpifyWoo\Abstracts
  */
-abstract class AbstractModule extends AbstractComponent {
+abstract class AbstractModule {
 	protected $requires_activation = false;
 	/**
 	 * Module ID

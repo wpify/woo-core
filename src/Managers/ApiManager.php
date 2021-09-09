@@ -15,11 +15,7 @@ class ApiManager {
 	}
 
 	public function get_rest_url() {
-		return rest_url( $this->get_rest_namespace() );
-	}
-
-	public function get_rest_namespace() {
-		return $this::REST_NAMESPACE;
+		return rest_url( $this::REST_NAMESPACE );
 	}
 
 	public function get_nonce_action() {

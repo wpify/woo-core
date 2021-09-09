@@ -8,7 +8,6 @@ use WpifyWooCore\Assets;
 use WpifyWooCore\License;
 use WpifyWooCore\Managers\ApiManager;
 use WpifyWooCore\Managers\ModulesManager;
-use WpifyWooCore\Plugin;
 use WpifyWooCore\Premium;
 use WpifyWooCore\WooCommerceIntegration;
 use \Wpify\Core\Abstracts\AbstractComponent;
@@ -17,7 +16,6 @@ use WpifyWooCore\WpifyWooCore;
 /**
  * Class Settings
  * @package WpifyWooCore\Admin
- * @property Plugin $plugin
  */
 class Settings {
 	const OPTION_NAME = 'wpify-woo-settings';

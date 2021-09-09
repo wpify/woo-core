@@ -11,7 +11,7 @@ use WpifyWooDeps\Wpify\Core\Abstracts\AbstractComponent;
  * @package WpifyWoo\Abstracts
  * @property Plugin $plugin
  */
-abstract class AbstractFeed extends AbstractComponent {
+abstract class AbstractFeed{
 
 	public function generate_feed() {
 		$this->save_feed( $this->get_feed_xml() );

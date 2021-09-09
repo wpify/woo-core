@@ -2,14 +2,11 @@
 
 namespace Wpify\WpifyWooCore;
 
-use Wpify\Core\Abstracts\AbstractComponent;
-
 /**
  * Class Premium
  * @package WpifyWoo
- * @property Plugin $plugin
  */
-class Premium extends AbstractComponent {
+class Premium {
 
 	/**
 	 * Get the premium extensions

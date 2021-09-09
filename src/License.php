@@ -10,7 +10,7 @@ use Wpify\Core\Abstracts\AbstractComponent;
  * Class License
  * @package WpifyWoo
  */
-class License extends AbstractComponent {
+class License  {
 	const API_KEY = 'ck_b543732d2aa924962757690d0d929c043c3f37c1';
 	const API_SECRET = 'cs_5d3605fd909d8e6c1aed7ad19ee0c569ca50d32a';
 	/**
