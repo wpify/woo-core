@@ -3,7 +3,8 @@
 namespace Wpify\WpifyWooCore;
 
 use Puc_v4_Factory;
-use WpifyWooCore\Abstracts\AbstractModule;
+use Wpify\Log\Log;
+use Wpify\WpifyWooCore\Abstracts\AbstractModule;
 use Wpify\Core\Abstracts\AbstractComponent;
 
 /**
@@ -18,7 +19,7 @@ class License  {
 	 */
 	private $logger;
 
-	public function __construct( Logger $logger) {
+	public function __construct( Log $logger) {
 		$this->logger = $logger;
 	}
 

@@ -2,8 +2,8 @@
 
 namespace Wpify\WpifyWooCore\Managers;
 
-use WpifyWooCore\Api\LicenseApi;
-use WpifyWooCore\Api\SettingsApi;
+use Wpify\WpifyWooCore\Api\LicenseApi;
+use Wpify\WpifyWooCore\Api\SettingsApi;
 
 class ApiManager {
 	public const REST_NAMESPACE = 'wpify-woo/v1';

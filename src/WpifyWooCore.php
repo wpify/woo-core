@@ -2,9 +2,9 @@
 
 namespace Wpify\WpifyWooCore;
 
-use WpifyWooCore\Admin\Settings;
-use WpifyWooCore\Managers\ApiManager;
-use WpifyWooCore\Managers\ModulesManager;
+use Wpify\WpifyWooCore\Admin\Settings;
+use Wpify\WpifyWooCore\Managers\ApiManager;
+use Wpify\WpifyWooCore\Managers\ModulesManager;
 
 class WpifyWooCore {
 	const PATH = __DIR__;

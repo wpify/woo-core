@@ -4,14 +4,14 @@ namespace Wpify\WpifyWooCore\Admin;
 
 use WC_Admin_Settings;
 use WpifyCustomFields\WpifyCustomFields;
-use WpifyWooCore\Assets;
-use WpifyWooCore\License;
-use WpifyWooCore\Managers\ApiManager;
-use WpifyWooCore\Managers\ModulesManager;
-use WpifyWooCore\Premium;
-use WpifyWooCore\WooCommerceIntegration;
+use Wpify\WpifyWooCore\Assets;
+use Wpify\WpifyWooCore\License;
+use Wpify\WpifyWooCore\Managers\ApiManager;
+use Wpify\WpifyWooCore\Managers\ModulesManager;
+use Wpify\WpifyWooCore\Premium;
+use Wpify\WpifyWooCore\WooCommerceIntegration;
 use \Wpify\Core\Abstracts\AbstractComponent;
-use WpifyWooCore\WpifyWooCore;
+use Wpify\WpifyWooCore\WpifyWooCore;
 
 /**
  * Class Settings

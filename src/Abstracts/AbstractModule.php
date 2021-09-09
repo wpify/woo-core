@@ -2,7 +2,7 @@
 
 namespace Wpify\WpifyWooCore\Abstracts;
 
-use WpifyWooCore\Admin\Settings;
+use Wpify\WpifyWooCore\Admin\Settings;
 use \Wpify\Core\Abstracts\AbstractComponent;
 
 /**

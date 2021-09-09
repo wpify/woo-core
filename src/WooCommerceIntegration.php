@@ -2,7 +2,7 @@
 
 namespace Wpify\WpifyWooCore;
 
-use WpifyWooCore\Admin\Settings;
+use Wpify\WpifyWooCore\Admin\Settings;
 
 /**
  * Class WooCommerceIntegration
