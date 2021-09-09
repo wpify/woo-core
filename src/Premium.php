@@ -1,6 +1,6 @@
 <?php
 
-namespace WpifyWooCore;
+namespace Wpify\WpifyWooCore;
 
 use Wpify\Core\Abstracts\AbstractComponent;
 

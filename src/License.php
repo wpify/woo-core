@@ -1,6 +1,6 @@
 <?php
 
-namespace WpifyWooCore;
+namespace Wpify\WpifyWooCore;
 
 use Puc_v4_Factory;
 use WpifyWooCore\Abstracts\AbstractModule;

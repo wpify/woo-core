@@ -1,6 +1,6 @@
 <?php
 
-namespace WpifyWooCore;
+namespace Wpify\WpifyWooCore;
 
 use WpifyWooCore\Admin\Settings;
 use WpifyWooCore\Managers\ApiManager;
