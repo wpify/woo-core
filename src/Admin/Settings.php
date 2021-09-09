@@ -3,6 +3,7 @@
 namespace Wpify\WpifyWooCore\Admin;
 
 use WC_Admin_Settings;
+use Wpify\CustomFields\CustomFields;
 use WpifyCustomFields\WpifyCustomFields;
 use Wpify\WpifyWooCore\Assets;
 use Wpify\WpifyWooCore\License;
@@ -46,19 +47,14 @@ class Settings {
 	 * @var License
 	 */
 	private $license;
-	/**
-	 * @var Assets
-	 */
-	private $assets;
 
 	public function __construct(
-			WpifyCustomFields $custom_fields,
+			CustomFields $custom_fields,
 			WooCommerceIntegration $woocommerce_integration,
 			Premium $premium,
 			ModulesManager $modules_manager,
 			ApiManager $api_manager,
-			License $license,
-			Assets $assets
+			License $license
 	) {
 		$this->custom_fields           = $custom_fields;
 		$this->woocommerce_integration = $woocommerce_integration;
@@ -66,7 +62,6 @@ class Settings {
 		$this->modules_manager         = $modules_manager;
 		$this->api_manager             = $api_manager;
 		$this->license                 = $license;
-		$this->assets                  = $assets;
 
 		$this->id    = $this::OPTION_NAME;
 		$this->label = __( 'Wpify Woo', 'wpify-woo' );
