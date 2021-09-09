@@ -6,6 +6,7 @@ use Puc_v4_Factory;
 use Wpify\Log\Log;
 use Wpify\WpifyWooCore\Abstracts\AbstractModule;
 use Wpify\Core\Abstracts\AbstractComponent;
+use Wpify\WpifyWooCore\Managers\ModulesManager;
 
 /**
  * Class License
@@ -15,12 +16,17 @@ class License  {
 	const API_KEY = 'ck_b543732d2aa924962757690d0d929c043c3f37c1';
 	const API_SECRET = 'cs_5d3605fd909d8e6c1aed7ad19ee0c569ca50d32a';
 	/**
-	 * @var Logger
+	 * @var Log
 	 */
 	private $logger;
+	/**
+	 * @var ModulesManager
+	 */
+	private $modules_manager;
 
-	public function __construct( Log $logger) {
+	public function __construct( Log $logger, ModulesManager $modules_manager) {
 		$this->logger = $logger;
+		$this->modules_manager = $modules_manager;
 	}
 
 	/**
@@ -44,7 +50,7 @@ class License  {
 			return new \WP_Error( $code, $result->message );
 		}
 
-		$module = $this->plugin->get_modules_manager()->get_module_by_id( $data['module_id'] );
+		$module = $this->modules_manager->get_module_by_id( $data['module_id'] );
 
 		if ( $module ) {
 			/** @var AbstractModule $module */
@@ -109,7 +115,7 @@ class License  {
 
 		$result = json_decode( wp_remote_retrieve_body( $response ) );
 		$code   = wp_remote_retrieve_response_code( $response );
-		$module = $this->plugin->get_modules_manager()->get_module_by_id( $data['module_id'] );
+		$module = $this->modules_manager->get_module_by_id( $data['module_id'] );
 
 		if ( $module ) {
 			/** @var AbstractModule $module */
@@ -165,7 +171,7 @@ class License  {
 
 		if ( 200 !== $code ) {
 			// If we don't get response 200, the license is not valid!
-			$module = $this->plugin->get_modules_manager()->get_module_by_id( $data['module_id'] );
+			$module = $this->modules_manager->get_module_by_id( $data['module_id'] );
 			if ( $module ) {
 				/** Abstract Module @var AbstractModule $module */
 				$module->delete_option_activated();
