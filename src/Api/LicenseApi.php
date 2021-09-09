@@ -40,7 +40,7 @@ class LicenseApi extends \WP_REST_Controller {
 			)
 		);
 		register_rest_route(
-			ApiManager::REST_NAMESPACE,,
+			ApiManager::REST_NAMESPACE,
 			'license/deactivate',
 			array(
 				array(
