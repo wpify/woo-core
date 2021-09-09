@@ -1,6 +1,6 @@
 <?php
 
-namespace WpifyWooCore\Managers;
+namespace Wpify\WpifyWooCore\Managers;
 
 use WpifyWooCore\Api\LicenseApi;
 use WpifyWooCore\Api\SettingsApi;

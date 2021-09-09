@@ -1,6 +1,6 @@
 <?php
 
-namespace WpifyWooCore\Admin;
+namespace Wpify\WpifyWooCore\Admin;
 
 use WC_Admin_Settings;
 use WpifyCustomFields\WpifyCustomFields;

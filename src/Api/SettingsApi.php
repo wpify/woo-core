@@ -1,6 +1,6 @@
 <?php
 
-namespace WpifyWooCore\Api;
+namespace Wpify\WpifyWooCore\Api;
 
 use WP_REST_Response;
 use WP_REST_Server;
