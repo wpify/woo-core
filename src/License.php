@@ -5,13 +5,14 @@ namespace Wpify\WpifyWooCore;
 use Puc_v4_Factory;
 use Wpify\Log\Log;
 use Wpify\WpifyWooCore\Abstracts\AbstractModule;
+use Wpify\WpifyWooCore\Admin\Settings;
 use Wpify\WpifyWooCore\Managers\ModulesManager;
 
 /**
  * Class License
  * @package WpifyWoo
  */
-class License  {
+class License {
 	const API_KEY = 'ck_b543732d2aa924962757690d0d929c043c3f37c1';
 	const API_SECRET = 'cs_5d3605fd909d8e6c1aed7ad19ee0c569ca50d32a';
 	/**
@@ -22,10 +23,23 @@ class License  {
 	 * @var ModulesManager
 	 */
 	private $modules_manager;
+	/**
+	 * @var Settings
+	 */
+	private $settings;
 
-	public function __construct( Log $logger, ModulesManager $modules_manager) {
-		$this->logger = $logger;
+	public function __construct( Log $logger, ModulesManager $modules_manager, Settings $settings ) {
+		$this->logger          = $logger;
 		$this->modules_manager = $modules_manager;
+		$this->settings        = $settings;
+
+		foreach ( $this->settings->get_enabled_modules() as $m ) {
+			$module = $this->modules_manager->get_module_by_id( $m );
+			if ( $module && $module->requires_activation && $module->is_activated() ) {
+				add_action( 'init', array( $this, 'maybe_schedule_as_validate_action' ) );
+				add_action( "wpify_woo_check_activation_{$module->id()}", array( $this, 'validate_license' ), 10, 2 );
+			}
+		}
 	}
 
 	/**
@@ -94,7 +108,7 @@ class License  {
 			'headers' => array(
 				'Authorization' => 'Basic ' . base64_encode( $this::API_KEY . ':' . $this::API_SECRET ),
 			),
-			'timeout' => 30
+			'timeout' => 30,
 		);
 	}
 

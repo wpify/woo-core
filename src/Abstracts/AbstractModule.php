@@ -34,10 +34,6 @@ abstract class AbstractModule {
 		if ( $this->requires_activation && ! $this->is_activated() ) {
 			add_action( 'admin_notices', array( $this, 'activation_notice' ) );
 		}
-		if ( $this->requires_activation && $this->is_activated() ) {
-			add_action( 'init', array( $this, 'maybe_schedule_as_validate_action' ) );
-			add_action( "wpify_woo_check_activation_{$this->id()}", array( $this, 'validate_license' ), 10, 2 );
-		}
 	}
 
 	/**
@@ -206,10 +202,6 @@ abstract class AbstractModule {
 		}
 
 		return false;
-	}
-
-	public function validate_license( $license, $data ) {
-		$this->plugin->get_license()->validate_license( $license, $data );
 	}
 
 	/**
