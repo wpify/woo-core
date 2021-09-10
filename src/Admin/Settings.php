@@ -208,7 +208,7 @@ class Settings {
 		$this->asset_factory->wp_script( dirname( WpifyWooCore::PATH ) . '/build/settings.js', [
 			'is_admin' => true,
 			'variables' => [
-				'WpifyWooCoreSettings' => array(
+				'wpifyWooCoreSettings' => array(
 					'publicPath'    => dirname( WpifyWooCore::PATH ) . '/build/',
 					'restUrl'       => $rest_url,
 					'nonce'         => wp_create_nonce( $this->api_manager->get_nonce_action() ),
