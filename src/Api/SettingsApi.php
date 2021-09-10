@@ -12,11 +12,9 @@ class SettingsApi extends \WP_REST_Controller {
 	 * ExampleApi constructor.
 	 */
 	public function __construct() {
-	}
-
-	public function setup() {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
+
 
 	/**
 	 * Register the routes for the objects of the controller.

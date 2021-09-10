@@ -94,7 +94,7 @@ abstract class AbstractModule {
 			$data              = (array) $option_activated;
 			$data['slug']      = $data['plugin'];
 			$data['module_id'] = $this->id();
-			$data['site-url']  = defined(ICL_LANGUAGE_CODE) ? get_option( 'siteurl') : site_url();
+			$data['site-url']  = defined('ICL_LANGUAGE_CODE') ? get_option( 'siteurl') : site_url();
 
 			$args = array(
 					'license' => $option_activated->license,
