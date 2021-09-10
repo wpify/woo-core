@@ -81,24 +81,6 @@ abstract class AbstractModule {
 		return sprintf( 'wpify_woo_%s_public_key', $this->id() );
 	}
 
-	/**
-	 * Maybe schedule the license validation AS event
-	 */
-	public function maybe_schedule_as_validate_action() {
-		$option_activated = $this->decrypt_option_activated();
-		if ( $this->id() && false === as_next_scheduled_action( "wpify_woo_check_activation_{$this->id()}" ) && $option_activated ) {
-			$data              = (array) $option_activated;
-			$data['slug']      = $data['plugin'];
-			$data['module_id'] = $this->id();
-			$data['site-url']  = defined('ICL_LANGUAGE_CODE') ? get_option( 'siteurl') : site_url();
-
-			$args = array(
-					'license' => $option_activated->license,
-					'data'    => $data,
-			);
-			as_schedule_recurring_action( strtotime( 'tomorrow' ), DAY_IN_SECONDS, "wpify_woo_check_activation_{$this->id()}", $args );
-		}
-	}
 
 	public function add_settings_section( $tabs ) {
 		$tabs[ $this->id() ] = $this->name();

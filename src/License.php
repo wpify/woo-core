@@ -28,19 +28,43 @@ class License {
 	 */
 	private $settings;
 
-	public function __construct( Log $logger, ModulesManager $modules_manager, Settings $settings ) {
+	public function __construct( Log $logger, ModulesManager $modules_manager) {
 		$this->logger          = $logger;
 		$this->modules_manager = $modules_manager;
-		$this->settings        = $settings;
 
-		foreach ( $this->settings->get_enabled_modules() as $m ) {
-			$module = $this->modules_manager->get_module_by_id( $m );
-			if ( $module && $module->requires_activation && $module->is_activated() ) {
-				add_action( 'init', array( $this, 'maybe_schedule_as_validate_action' ) );
+		add_action('init', [$this,'validate_modules_licenses']);
+
+	}
+
+	public function validate_modules_licenses(  ) {
+		foreach ( $this->modules_manager->get_modules() as $module ) {
+			if ( $module->requires_activation && $module->is_activated() ) {
+				add_action( 'wp_loaded', array( $this, 'maybe_schedule_as_validate_action' ), $module );
 				add_action( "wpify_woo_check_activation_{$module->id()}", array( $this, 'validate_license' ), 10, 2 );
 			}
 		}
 	}
+
+
+	/**
+	 * Maybe schedule the license validation AS event
+	 */
+	public function maybe_schedule_as_validate_action($module) {
+		$option_activated = $module->decrypt_option_activated();
+		if ( $module->id() && false === as_next_scheduled_action( "wpify_woo_check_activation_{$module->id()}" ) && $option_activated ) {
+			$data              = (array) $option_activated;
+			$data['slug']      = $data['plugin'];
+			$data['module_id'] = $module->id();
+			$data['site-url']  = defined('ICL_LANGUAGE_CODE') ? get_option( 'siteurl') : site_url();
+
+			$args = array(
+				'license' => $option_activated->license,
+				'data'    => $data,
+			);
+			as_schedule_recurring_action( strtotime( 'tomorrow' ), DAY_IN_SECONDS, "wpify_woo_check_activation_{$module->id()}", $args );
+		}
+	}
+
 
 	/**
 	 * Activate the license
