@@ -6,16 +6,22 @@ use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
+use Wpify\WpifyWooCore\License;
 use Wpify\WpifyWooCore\Managers\ApiManager;
 
 /**
  */
 class LicenseApi extends \WP_REST_Controller {
+	/**
+	 * @var License
+	 */
+	private $license;
 
 	/**
 	 * ExampleApi constructor.
 	 */
-	public function __construct() {
+	public function __construct(License $license) {
+		$this->license = $license;
 	}
 
 	public function setup() {
@@ -58,13 +64,12 @@ class LicenseApi extends \WP_REST_Controller {
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
 	 * @return WP_Error|WP_REST_Request|WP_REST_Response | bool
-	 * @throws \ComposePress\Core\Exception\Plugin
 	 */
 	public function activate_license( $request ) {
 		$data             = $request->get_params();
 		$data['site-url']  = defined(ICL_LANGUAGE_CODE) ? get_option( 'siteurl') : site_url();
 
-		$result = $this->plugin->get_license()->activate_license( $request->get_param( 'license' ), $data );
+		$result = $this->license->activate_license( $request->get_param( 'license' ), $data );
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
@@ -81,7 +86,7 @@ class LicenseApi extends \WP_REST_Controller {
 		$data             = $request->get_params();
 		$data['site-url']  = defined(ICL_LANGUAGE_CODE) ? get_option( 'siteurl') : site_url();
 
-		$result = $this->plugin->get_license()->deactivate_license( $request->get_param( 'license' ), $data );
+		$result = $this->license->deactivate_license( $request->get_param( 'license' ), $data );
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}

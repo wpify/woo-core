@@ -5,12 +5,7 @@ namespace Wpify\WpifyWooCore\Api;
 use WP_REST_Response;
 use WP_REST_Server;
 use Wpify\WpifyWooCore\Managers\ApiManager;
-use WpifyWoo\Plugin;
-use Wpify\Core\Abstracts\AbstractRest;
 
-/**
- * @property Plugin $plugin
- */
 class SettingsApi extends \WP_REST_Controller {
 
 	/**
