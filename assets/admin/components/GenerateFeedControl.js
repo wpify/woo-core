@@ -1,4 +1,4 @@
-__webpack_public_path__ = window.wpifyWooSettings.publicPath;
+__webpack_public_path__ = window.WpifyWooCoreSettings.publicPath;
 
 import React, { useEffect, useState } from 'react';
 import { Line } from 'rc-progress';

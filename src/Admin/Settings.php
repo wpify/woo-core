@@ -204,8 +204,9 @@ class Settings {
 	public function enqueue_admin_scripts() {
 		$rest_url = $this->api_manager->get_rest_url();
 
-		$this->asset_factory->wp_script( dirname( WpifyWooCore::PATH ) . '/build/settings.css' );
+		$this->asset_factory->wp_script( dirname( WpifyWooCore::PATH ) . '/build/settings.css',[ 'is_admin' => true ] );
 		$this->asset_factory->wp_script( dirname( WpifyWooCore::PATH ) . '/build/settings.js', [
+			'is_admin' => true,
 			'variables' => [
 				'WpifyWooCoreSettings' => array(
 					'publicPath'    => dirname( WpifyWooCore::PATH ) . '/build/',
