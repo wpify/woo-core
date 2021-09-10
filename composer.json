@@ -12,7 +12,8 @@
     "sentry/sdk": "^3.1",
     "wpify/custom-fields": "^2.0",
     "wpify/log": "^1.0",
-    "wpify/asset": "^1.0"
+    "wpify/asset": "^1.0",
+    "spatie/array-to-xml": "^3.0"
   },
   "require-dev": {
     "symfony/var-dumper": "^5.2"

@@ -2,14 +2,11 @@
 
 namespace Wpify\WpifyWooCore\Abstracts;
 
-use WpifyWoo\Plugin;
-use WpifyWooDeps\Spatie\ArrayToXml\ArrayToXml;
-use WpifyWooDeps\Wpify\Core\Abstracts\AbstractComponent;
+use Spatie\ArrayToXml\ArrayToXml;
 
 /**
  * Class AbstractModule
  * @package WpifyWoo\Abstracts
- * @property Plugin $plugin
  */
 abstract class AbstractFeed{
 
