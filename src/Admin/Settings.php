@@ -42,10 +42,6 @@ class Settings {
 	 */
 	private $api_manager;
 	/**
-	 * @var License
-	 */
-	private $license;
-	/**
 	 * @var AssetFactory
 	 */
 	private $asset_factory;
@@ -56,7 +52,6 @@ class Settings {
 		Premium $premium,
 		ModulesManager $modules_manager,
 		ApiManager $api_manager,
-		License $license,
 		AssetFactory $asset_factory
 	) {
 		$this->custom_fields           = $custom_fields;
@@ -64,7 +59,6 @@ class Settings {
 		$this->premium                 = $premium;
 		$this->modules_manager         = $modules_manager;
 		$this->api_manager             = $api_manager;
-		$this->license                 = $license;
 		$this->asset_factory           = $asset_factory;
 
 		$this->id    = $this::OPTION_NAME;
@@ -214,8 +208,8 @@ class Settings {
 					'nonce'         => wp_create_nonce( $this->api_manager->get_nonce_action() ),
 					'activateUrl'   => $rest_url . '/license/activate',
 					'deactivateUrl' => $rest_url . '/license/deactivate',
-					'apiKey'        => $this->license::API_KEY,
-					'apiSecret'     => $this->license::API_SECRET,
+					'apiKey'        => License::API_KEY,
+					'apiSecret'     => License::API_SECRET,
 				),
 			],
 		] );
