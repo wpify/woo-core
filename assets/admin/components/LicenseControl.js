@@ -28,20 +28,20 @@ const LicenseControl = (props) => {
 	}, [currentValue]);
 
 	const handleRequest = async (type) => {
-		let baseUrl = window.WpifyWooCoreSettings.activateUrl;
+		let baseUrl = window.wpifyWooSettings.activateUrl;
 
 		if ('deactivate' === type) {
-			baseUrl = window.WpifyWooCoreSettings.deactivateUrl;
+			baseUrl = window.wpifyWooSettings.deactivateUrl;
 		}
 
-		const url = `${baseUrl}?license=${value}&slug=${slug}&module_id=${moduleId}`;
+		const url = `${baseUrl}?license=${currentValue}&slug=${slug}&module_id=${moduleId}`;
 
 		const response = await fetch(url, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json, text/plain, */*',
 				'Content-Type': 'application/json',
-				'X-WP-Nonce': window.WpifyWooCoreSettings.nonce
+				'X-WP-Nonce': window.wpifyWooSettings.nonce
 			},
 		});
 
