@@ -2,7 +2,6 @@
 
 namespace Wpify\WpifyWooCore;
 
-use Puc_v4_Factory;
 use Wpify\Log\Log;
 use Wpify\WpifyWooCore\Abstracts\AbstractModule;
 use Wpify\WpifyWooCore\Admin\Settings;
@@ -217,16 +216,5 @@ class License {
 				$module->delete_option_public_key();
 			}
 		}
-	}
-
-	public function init_updates_check( $plugin_slug, $plugin_file, $extra_data = [] ) {
-		$url = sprintf( 'https://wpify.io/?update_action=get_metadata&update_slug=%s&site_url=%s', $plugin_slug, site_url() );
-		$url = add_query_arg( $extra_data, $url );
-
-		Puc_v4_Factory::buildUpdateChecker(
-			$url,
-			$plugin_file,
-			$plugin_slug
-		);
 	}
 }
