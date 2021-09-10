@@ -28,10 +28,10 @@ const LicenseControl = (props) => {
 	}, [currentValue]);
 
 	const handleRequest = async (type) => {
-		let baseUrl = window.wpifyWooSettings.activateUrl;
+		let baseUrl = window.wpifyWooCoreSettings.activateUrl;
 
 		if ('deactivate' === type) {
-			baseUrl = window.wpifyWooSettings.deactivateUrl;
+			baseUrl = window.wpifyWooCoreSettings.deactivateUrl;
 		}
 
 		const url = `${baseUrl}?license=${currentValue}&slug=${slug}&module_id=${moduleId}`;
@@ -41,7 +41,7 @@ const LicenseControl = (props) => {
 			headers: {
 				'Accept': 'application/json, text/plain, */*',
 				'Content-Type': 'application/json',
-				'X-WP-Nonce': window.wpifyWooSettings.nonce
+				'X-WP-Nonce': window.wpifyWooCoreSettings.nonce
 			},
 		});
 
