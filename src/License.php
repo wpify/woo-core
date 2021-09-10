@@ -50,8 +50,10 @@ class License {
 	 * Maybe schedule the license validation AS event
 	 */
 	public function maybe_schedule_as_validate_action( $module ) {
-		$option_activated = $module->decrypt_option_activated();
-		if ( $module->id() && false === as_next_scheduled_action( "wpify_woo_check_activation_{$module->id()}" ) && $option_activated ) {
+		$option_activated      = $module->decrypt_option_activated();
+		$next_scheduled_action = as_next_scheduled_action( "wpify_woo_check_activation_{$module->id()}" );
+
+		if ( $module->id() && false === $next_scheduled_action && $option_activated ) {
 			$data              = (array) $option_activated;
 			$data['slug']      = $data['plugin'];
 			$data['module_id'] = $module->id();
