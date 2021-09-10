@@ -71,7 +71,7 @@ class Settings {
 		$this->label = __( 'Wpify Woo', 'wpify-woo' );
 
 		add_action( 'init', array( $this, 'register_settings' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
+		add_action( 'init', array( $this, 'enqueue_admin_scripts' ) );
 		add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
 		add_action( 'wcf_before_fields', array( $this, 'render_before_settings' ) );
 		add_action( 'wcf_after_fields', array( $this, 'render_after_settings' ) );
