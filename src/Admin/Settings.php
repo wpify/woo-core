@@ -204,8 +204,8 @@ class Settings {
 	public function enqueue_admin_scripts() {
 		$rest_url = $this->api_manager->get_rest_url();
 
-		$this->asset_factory->wp_script( __DIR__ . '/../../build/settings.css' );
-		$this->asset_factory->wp_script( __DIR__ . '/../../build/settings.ks', [
+		$this->asset_factory->wp_script( dirname( WpifyWooCore::PATH ) . '/build/settings.css' );
+		$this->asset_factory->wp_script( dirname( WpifyWooCore::PATH ) . '/build/settings.js', [
 			'variables' => [
 				'WpifyWooCoreSettings' => array(
 					'publicPath'    => dirname( WpifyWooCore::PATH ) . '/build/',
