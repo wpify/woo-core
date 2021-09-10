@@ -7,6 +7,7 @@ use Wpify\Log\Log;
 use Wpify\WpifyWooCore\Abstracts\AbstractModule;
 use Wpify\WpifyWooCore\Admin\Settings;
 use Wpify\WpifyWooCore\Managers\ModulesManager;
+use Wpify\Log\RotatingFileLog;
 
 /**
  * Class License
@@ -28,18 +29,17 @@ class License {
 	 */
 	private $settings;
 
-	public function __construct( Log $logger, ModulesManager $modules_manager) {
+	public function __construct( RotatingFileLog $logger, ModulesManager $modules_manager ) {
 		$this->logger          = $logger;
 		$this->modules_manager = $modules_manager;
 
-		add_action('init', [$this,'validate_modules_licenses']);
-
+		add_action( 'init', [ $this, 'validate_modules_licenses' ] );
 	}
 
-	public function validate_modules_licenses(  ) {
+	public function validate_modules_licenses() {
 		foreach ( $this->modules_manager->get_modules() as $module ) {
-			if ( $module->requires_activation && $module->is_activated() ) {
-				add_action( 'wp_loaded', array( $this, 'maybe_schedule_as_validate_action' ), $module );
+			if ( $module->requires_activation() && $module->is_activated() ) {
+				$this->maybe_schedule_as_validate_action( $module );
 				add_action( "wpify_woo_check_activation_{$module->id()}", array( $this, 'validate_license' ), 10, 2 );
 			}
 		}
@@ -49,13 +49,13 @@ class License {
 	/**
 	 * Maybe schedule the license validation AS event
 	 */
-	public function maybe_schedule_as_validate_action($module) {
+	public function maybe_schedule_as_validate_action( $module ) {
 		$option_activated = $module->decrypt_option_activated();
 		if ( $module->id() && false === as_next_scheduled_action( "wpify_woo_check_activation_{$module->id()}" ) && $option_activated ) {
 			$data              = (array) $option_activated;
 			$data['slug']      = $data['plugin'];
 			$data['module_id'] = $module->id();
-			$data['site-url']  = defined('ICL_LANGUAGE_CODE') ? get_option( 'siteurl') : site_url();
+			$data['site-url']  = defined( 'ICL_LANGUAGE_CODE' ) ? get_option( 'siteurl' ) : site_url();
 
 			$args = array(
 				'license' => $option_activated->license,

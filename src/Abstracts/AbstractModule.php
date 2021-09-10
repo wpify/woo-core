@@ -204,4 +204,8 @@ abstract class AbstractModule {
 	public function is_enabled(  ) {
 
 	}
+
+	public function requires_activation(  ) {
+		return $this->requires_activation;
+	}
 }
