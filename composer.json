@@ -1,6 +1,7 @@
 {
   "name": "wpify/woo-core",
   "type": "library",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "vasikgreif",
