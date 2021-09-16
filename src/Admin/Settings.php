@@ -63,21 +63,23 @@ class Settings {
 
 		$this->id    = $this::OPTION_NAME;
 		$this->label = __( 'Wpify Woo', 'wpify-woo' );
+		// Check if the WpifyWoo Core settings have been initialized already
+		if ( ! apply_filters( 'wpify_woo_core_settings_initialized', false ) ) {
+			add_action( 'init', array( $this, 'register_settings' ) );
+			add_action( 'init', array( $this, 'enqueue_admin_scripts' ) );
+			add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
+			add_action( 'wcf_before_fields', array( $this, 'render_before_settings' ) );
+			add_action( 'wcf_after_fields', array( $this, 'render_after_settings' ) );
 
-		add_action( 'init', array( $this, 'register_settings' ) );
-		add_action( 'init', array( $this, 'enqueue_admin_scripts' ) );
-		add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
-		add_action( 'wcf_before_fields', array( $this, 'render_before_settings' ) );
-		add_action( 'wcf_after_fields', array( $this, 'render_after_settings' ) );
+			/** Handle activation/deactivation messages */
 
-		/** Handle activation/deactivation messages */
+			if ( ! empty( $_REQUEST['wpify-woo-license-activated'] ) && $_REQUEST['wpify-woo-license-activated'] === '1' ) {
+				WC_Admin_Settings::add_message( __( 'Your license has been activated.', 'wpify-woo' ) );
+			}
 
-		if ( ! empty( $_REQUEST['wpify-woo-license-activated'] ) && $_REQUEST['wpify-woo-license-activated'] === '1' ) {
-			WC_Admin_Settings::add_message( __( 'Your license has been activated.', 'wpify-woo' ) );
-		}
-
-		if ( ! empty( $_REQUEST['wpify-woo-license-deactivated'] ) && $_REQUEST['wpify-woo-license-deactivated'] === '1' ) {
-			WC_Admin_Settings::add_message( __( 'Your license has been deactivated.', 'wpify-woo' ) );
+			if ( ! empty( $_REQUEST['wpify-woo-license-deactivated'] ) && $_REQUEST['wpify-woo-license-deactivated'] === '1' ) {
+				WC_Admin_Settings::add_message( __( 'Your license has been deactivated.', 'wpify-woo' ) );
+			}
 		}
 	}
 
@@ -198,9 +200,9 @@ class Settings {
 	public function enqueue_admin_scripts() {
 		$rest_url = $this->api_manager->get_rest_url();
 
-		$this->asset_factory->wp_script( dirname( WpifyWooCore::PATH ) . '/build/settings.css',[ 'is_admin' => true ] );
+		$this->asset_factory->wp_script( dirname( WpifyWooCore::PATH ) . '/build/settings.css', [ 'is_admin' => true ] );
 		$this->asset_factory->wp_script( dirname( WpifyWooCore::PATH ) . '/build/settings.js', [
-			'is_admin' => true,
+			'is_admin'  => true,
 			'variables' => [
 				'wpifyWooCoreSettings' => array(
 					'publicPath'    => dirname( WpifyWooCore::PATH ) . '/build/',
