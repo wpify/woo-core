@@ -18,32 +18,27 @@ use Wpify\WpifyWooCore\WpifyWooCore;
  */
 class Settings {
 	const OPTION_NAME = 'wpify-woo-settings';
+
 	private $id;
 	private $label;
 	private $pages;
-	/**
-	 * @var CustomFields
-	 */
+
+	/** @var CustomFields */
 	private $custom_fields;
-	/**
-	 * @var WooCommerceIntegration
-	 */
+
+	/** @var WooCommerceIntegration */
 	private $woocommerce_integration;
-	/**
-	 * @var Premium
-	 */
+
+	/** @var Premium */
 	private $premium;
-	/**
-	 * @var ModulesManager
-	 */
+
+	/** @var ModulesManager */
 	private $modules_manager;
-	/**
-	 * @var ApiManager
-	 */
+
+	/** @var ApiManager */
 	private $api_manager;
-	/**
-	 * @var AssetFactory
-	 */
+
+	/** @var AssetFactory */
 	private $asset_factory;
 
 	public function __construct(
@@ -63,6 +58,7 @@ class Settings {
 
 		$this->id    = $this::OPTION_NAME;
 		$this->label = __( 'Wpify Woo', 'wpify-woo' );
+
 		// Check if the WpifyWoo Core settings have been initialized already
 		if ( ! apply_filters( 'wpify_woo_core_settings_initialized', false ) ) {
 			add_action( 'init', array( $this, 'register_settings' ) );
@@ -112,7 +108,7 @@ class Settings {
 	}
 
 	/**
-	 *  Get sections
+	 * Get sections
 	 * @return array
 	 */
 	public function get_sections(): array {
@@ -123,6 +119,29 @@ class Settings {
 		$sections = apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
 
 		return $sections;
+	}
+
+	/**
+	 * Get an array of enabled modules
+	 * @return array
+	 */
+	public function get_enabled_modules(): array {
+		return $this->get_settings( 'general' )['enabled_modules'] ?? array();
+	}
+
+	/**
+	 * Get settings for a specific module
+	 *
+	 * @param string $module Module name.
+	 *
+	 * @return array
+	 */
+	public function get_settings( string $module ): array {
+		return get_option( $this->get_settings_name( $module ), array() );
+	}
+
+	public function get_settings_name( string $module ): string {
+		return sprintf( '%s-%s', $this::OPTION_NAME, $module );
 	}
 
 	public function is_current( $tab = '', $section = '' ): bool {
@@ -137,7 +156,7 @@ class Settings {
 	}
 
 	/**
-	 *  Get settings array
+	 * Get settings array
 	 * @return array
 	 */
 	public function get_settings_items() {
@@ -265,31 +284,11 @@ class Settings {
             </div>
 
 			<?php
-			printf( '<a href="%s">%s</a>', add_query_arg( [ 'wpify-action' => 'download-log', 'wpify-nonce' => wp_create_nonce( 'download-log' ) ], admin_url() ), __( 'Download log', 'wpify-woo' ) );
+			printf( '<a href="%s">%s</a>', add_query_arg( [
+				'wpify-action' => 'download-log',
+				'wpify-nonce'  => wp_create_nonce( 'download-log' )
+			], admin_url() ), __( 'Download log', 'wpify-woo' ) );
 		}
-	}
-
-	/**
-	 * Get an array of enabled modules
-	 * @return array
-	 */
-	public function get_enabled_modules(): array {
-		return $this->get_settings( 'general' )['enabled_modules'] ?? array();
-	}
-
-	/**
-	 * Get settings for a specific module
-	 *
-	 * @param string $module Module name.
-	 *
-	 * @return array
-	 */
-	public function get_settings( string $module ): array {
-		return get_option( $this->get_settings_name( $module ), array() );
-	}
-
-	public function get_settings_name( string $module ): string {
-		return sprintf( '%s-%s', $this::OPTION_NAME, $module );
 	}
 
 

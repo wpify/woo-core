@@ -6,7 +6,7 @@ class ModulesManager {
 	private $modules = [];
 
 	public function add_module( $id, $module ) {
-		$this->modules[$id] = $module;
+		$this->modules[ $id ] = $module;
 	}
 
 	/**

@@ -20,11 +20,11 @@ class LicenseApi extends \WP_REST_Controller {
 	/**
 	 * ExampleApi constructor.
 	 */
-	public function __construct(License $license) {
+	public function __construct( License $license ) {
 		$this->license = $license;
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
-	
+
 	/**
 	 * Register the routes for the objects of the controller.
 	 */
@@ -64,7 +64,7 @@ class LicenseApi extends \WP_REST_Controller {
 	 */
 	public function activate_license( $request ) {
 		$data             = $request->get_params();
-		$data['site-url']  = defined('ICL_LANGUAGE_CODE') ? get_option( 'siteurl') : site_url();
+		$data['site-url'] = defined( 'ICL_LANGUAGE_CODE' ) ? get_option( 'siteurl' ) : site_url();
 
 		$result = $this->license->activate_license( $request->get_param( 'license' ), $data );
 		if ( is_wp_error( $result ) ) {
@@ -81,7 +81,7 @@ class LicenseApi extends \WP_REST_Controller {
 	 */
 	public function deactivate_license( $request ) {
 		$data             = $request->get_params();
-		$data['site-url']  = defined('ICL_LANGUAGE_CODE') ? get_option( 'siteurl') : site_url();
+		$data['site-url'] = defined( 'ICL_LANGUAGE_CODE' ) ? get_option( 'siteurl' ) : site_url();
 
 		$result = $this->license->deactivate_license( $request->get_param( 'license' ), $data );
 		if ( is_wp_error( $result ) ) {

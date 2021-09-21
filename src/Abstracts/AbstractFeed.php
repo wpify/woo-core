@@ -8,8 +8,7 @@ use Spatie\ArrayToXml\ArrayToXml;
  * Class AbstractModule
  * @package WpifyWoo\Abstracts
  */
-abstract class AbstractFeed{
-
+abstract class AbstractFeed {
 	public function generate_feed() {
 		$this->save_feed( $this->get_feed_xml() );
 	}
@@ -72,6 +71,20 @@ abstract class AbstractFeed{
 		];
 	}
 
+	/**
+	 * @param array $products
+	 *
+	 * @return array
+	 */
+	abstract public function data( array $product ): array;
+
+	public function add_tmp_data( array $data ) {
+		$data = array_merge( $this->get_tmp_data(), $data );
+		$this->save_tmp_data( $data );
+
+		return $data;
+	}
+
 	public function get_tmp_data() {
 		if ( ! file_exists( $this->get_tmp_file_path() ) ) {
 			return [];
@@ -92,20 +105,6 @@ abstract class AbstractFeed{
 
 	public function get_tmp_file_name() {
 		return sprintf( '%s_%s_tmp.json', $this->feed_name(), get_current_blog_id() );
-	}
-
-	/**
-	 * @param array $products
-	 *
-	 * @return array
-	 */
-	abstract public function data( array $product ): array;
-
-	public function add_tmp_data( array $data ) {
-		$data = array_merge( $this->get_tmp_data(), $data );
-		$this->save_tmp_data( $data );
-
-		return $data;
 	}
 
 	public function save_tmp_data( array $data ) {

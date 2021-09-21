@@ -2,8 +2,6 @@
 
 namespace Wpify\WpifyWooCore;
 
-use Wpify\WpifyWooCore\Admin\Settings;
-
 /**
  * Class WooCommerceIntegration
  * @package WpifyWoo
@@ -14,7 +12,7 @@ class WooCommerceIntegration {
 	 */
 	private $premium;
 
-	public function __construct( Premium $premium) {
+	public function __construct( Premium $premium ) {
 		$this->premium = $premium;
 
 	}
@@ -27,7 +25,7 @@ class WooCommerceIntegration {
 	 * @return bool
 	 */
 	public function is_module_enabled( string $module ): bool {
-		return in_array( $module, $this->get_enabled_modules(), true );
+		return in_array( $module, $this->get_modules(), true );
 	}
 
 	/**

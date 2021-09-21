@@ -3,10 +3,10 @@
 namespace Wpify\WpifyWooCore;
 
 use Wpify\Log\Log;
+use Wpify\Log\RotatingFileLog;
 use Wpify\WpifyWooCore\Abstracts\AbstractModule;
 use Wpify\WpifyWooCore\Admin\Settings;
 use Wpify\WpifyWooCore\Managers\ModulesManager;
-use Wpify\Log\RotatingFileLog;
 
 /**
  * Class License

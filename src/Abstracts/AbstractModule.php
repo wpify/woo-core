@@ -3,7 +3,7 @@
 namespace Wpify\WpifyWooCore\Abstracts;
 
 use Wpify\WpifyWooCore\Admin\Settings;
-use \Wpify\Core\Abstracts\AbstractComponent;
+use Wpify\WpifyWooCore\WooCommerceIntegration;
 
 /**
  * Class AbstractModule
@@ -11,26 +11,29 @@ use \Wpify\Core\Abstracts\AbstractComponent;
  */
 abstract class AbstractModule {
 	protected $requires_activation = false;
-	/**
-	 * Module ID
-	 * @var string $id Module ID.
-	 */
+
+	/** @var string $id */
 	private $id = '';
+
+	/** @var WooCommerceIntegration */
+	private $woocommerce_integration;
 
 	/**
 	 * Setup
 	 * @return void
 	 */
-	public function __construct() {
-		$this->id = $this->id();
-		
+	public function __construct( WooCommerceIntegration $woocommerce_integration ) {
+		$this->woocommerce_integration = $woocommerce_integration;
+		$this->id                      = $this->id();
+
 		add_filter(
-				'woocommerce_get_sections_' . Settings::OPTION_NAME,
-				array(
-						$this,
-						'add_settings_section',
-				)
+			'woocommerce_get_sections_' . Settings::OPTION_NAME,
+			array(
+				$this,
+				'add_settings_section',
+			)
 		);
+        
 		if ( $this->requires_activation && ! $this->is_activated() ) {
 			add_action( 'admin_notices', array( $this, 'activation_notice' ) );
 		}
@@ -99,7 +102,7 @@ abstract class AbstractModule {
 	 * @return bool
 	 */
 	public function is_module_enabled(): bool {
-		return in_array( $this->get_id(), $this->plugin->get_woocommerce_integration()->get_enabled_modules(), true );
+		return in_array( $this->get_id(), $this->woocommerce_integration->get_modules(), true );
 	}
 
 	/**
@@ -176,7 +179,6 @@ abstract class AbstractModule {
 	}
 
 	public function needs_activation() {
-		return true;
 		foreach ( $this->settings() as $setting ) {
 			if ( ! empty( $setting['type'] ) && 'license' === $setting['type'] ) {
 				return true;
@@ -190,10 +192,10 @@ abstract class AbstractModule {
 	 * Add activation notice if the license s not active yet.
 	 */
 	public function activation_notice() { ?>
-		<div class="error notice">
-			<p><?php printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">enter your license key</a> to start using the plugin!', 'wpify-woo' ), $this->name(),
-						admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings&section=' . $this->get_id() ) ); ?></p>
-		</div>
+        <div class="error notice">
+            <p><?php printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">enter your license key</a> to start using the plugin!', 'wpify-woo' ), $this->name(),
+					admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings&section=' . $this->get_id() ) ); ?></p>
+        </div>
 		<?php
 	}
 
@@ -201,11 +203,11 @@ abstract class AbstractModule {
 		return add_query_arg( [ 'section' => $this->id() ], admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings' ) );
 	}
 
-	public function is_enabled(  ) {
+	public function is_enabled() {
 
 	}
 
-	public function requires_activation(  ) {
+	public function requires_activation() {
 		return $this->requires_activation;
 	}
 }
