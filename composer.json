@@ -21,7 +21,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Wpify\\WpifyWooCore\\": "src/"
+      "Wpify\\WooCore\\": "src/"
     }
   }
 }
