@@ -1,6 +1,6 @@
 <?php
 
-namespace Wpify\WpifyWooCore\Abstracts;
+namespace Wpify\WooCore\Abstracts;
 
 use Spatie\ArrayToXml\ArrayToXml;
 

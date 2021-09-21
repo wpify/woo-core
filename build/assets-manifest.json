@@ -1,5 +1,5 @@
 {
-  "settings.css": "settings.css",
-  "settings.js": "settings.js",
-  "assets.php": "assets.php"
+  "settings.css": "autosettings.css",
+  "settings.js": "autosettings.js",
+  "assets.php": "autoassets.php"
 }

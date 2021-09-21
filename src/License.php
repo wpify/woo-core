@@ -1,12 +1,12 @@
 <?php
 
-namespace Wpify\WpifyWooCore;
+namespace Wpify\WooCore;
 
 use Wpify\Log\Log;
 use Wpify\Log\RotatingFileLog;
-use Wpify\WpifyWooCore\Abstracts\AbstractModule;
-use Wpify\WpifyWooCore\Admin\Settings;
-use Wpify\WpifyWooCore\Managers\ModulesManager;
+use Wpify\WooCore\Abstracts\AbstractModule;
+use Wpify\WooCore\Admin\Settings;
+use Wpify\WooCore\Managers\ModulesManager;
 
 /**
  * Class License

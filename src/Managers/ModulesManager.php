@@ -1,6 +1,6 @@
 <?php
 
-namespace Wpify\WpifyWooCore\Managers;
+namespace Wpify\WooCore\Managers;
 
 class ModulesManager {
 	private $modules = [];

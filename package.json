@@ -19,7 +19,7 @@
     "cover 97%"
   ],
   "devDependencies": {
-    "wpify-scripts": "^2.0.2"
+    "wpify-scripts": "^3.0.1"
   },
   "dependencies": {
     "@wordpress/block-editor": "^5.2.0",

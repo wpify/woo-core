@@ -1,6 +1,6 @@
 <?php
 
-namespace Wpify\WpifyWooCore;
+namespace Wpify\WooCore;
 
 use Puc_v4_Factory;
 

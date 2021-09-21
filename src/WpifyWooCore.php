@@ -1,10 +1,10 @@
 <?php
 
-namespace Wpify\WpifyWooCore;
+namespace Wpify\WooCore;
 
-use Wpify\WpifyWooCore\Admin\Settings;
-use Wpify\WpifyWooCore\Managers\ApiManager;
-use Wpify\WpifyWooCore\Managers\ModulesManager;
+use Wpify\WooCore\Admin\Settings;
+use Wpify\WooCore\Managers\ApiManager;
+use Wpify\WooCore\Managers\ModulesManager;
 
 class WpifyWooCore {
 	const PATH = __DIR__;

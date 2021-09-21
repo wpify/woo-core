@@ -1,16 +1,16 @@
 <?php
 
-namespace Wpify\WpifyWooCore\Admin;
+namespace Wpify\WooCore\Admin;
 
 use WC_Admin_Settings;
 use Wpify\Asset\AssetFactory;
 use Wpify\CustomFields\CustomFields;
-use Wpify\WpifyWooCore\License;
-use Wpify\WpifyWooCore\Managers\ApiManager;
-use Wpify\WpifyWooCore\Managers\ModulesManager;
-use Wpify\WpifyWooCore\Premium;
-use Wpify\WpifyWooCore\WooCommerceIntegration;
-use Wpify\WpifyWooCore\WpifyWooCore;
+use Wpify\WooCore\License;
+use Wpify\WooCore\Managers\ApiManager;
+use Wpify\WooCore\Managers\ModulesManager;
+use Wpify\WooCore\Premium;
+use Wpify\WooCore\WooCommerceIntegration;
+use Wpify\WooCore\WpifyWooCore;
 
 /**
  * Class Settings

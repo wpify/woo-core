@@ -1,10 +1,10 @@
 <?php
 
-namespace Wpify\WpifyWooCore\Api;
+namespace Wpify\WooCore\Api;
 
 use WP_REST_Response;
 use WP_REST_Server;
-use Wpify\WpifyWooCore\Managers\ApiManager;
+use Wpify\WooCore\Managers\ApiManager;
 
 class SettingsApi extends \WP_REST_Controller {
 

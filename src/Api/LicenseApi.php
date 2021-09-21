@@ -1,13 +1,13 @@
 <?php
 
-namespace Wpify\WpifyWooCore\Api;
+namespace Wpify\WooCore\Api;
 
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use Wpify\WpifyWooCore\License;
-use Wpify\WpifyWooCore\Managers\ApiManager;
+use Wpify\WooCore\License;
+use Wpify\WooCore\Managers\ApiManager;
 
 /**
  */

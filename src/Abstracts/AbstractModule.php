@@ -1,9 +1,9 @@
 <?php
 
-namespace Wpify\WpifyWooCore\Abstracts;
+namespace Wpify\WooCore\Abstracts;
 
-use Wpify\WpifyWooCore\Admin\Settings;
-use Wpify\WpifyWooCore\WooCommerceIntegration;
+use Wpify\WooCore\Admin\Settings;
+use Wpify\WooCore\WooCommerceIntegration;
 
 /**
  * Class AbstractModule
@@ -33,7 +33,7 @@ abstract class AbstractModule {
 				'add_settings_section',
 			)
 		);
-        
+
 		if ( $this->requires_activation && ! $this->is_activated() ) {
 			add_action( 'admin_notices', array( $this, 'activation_notice' ) );
 		}

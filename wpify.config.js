@@ -1,5 +1,4 @@
 module.exports = {
-	wordPressUrl: 'https://www.wpify-woo.test',
 	config: {
 		build: 'build',
 		entry: {
