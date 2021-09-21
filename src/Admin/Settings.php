@@ -61,6 +61,7 @@ class Settings {
 
 		// Check if the WpifyWoo Core settings have been initialized already
 		if ( ! apply_filters( 'wpify_woo_core_settings_initialized', false ) ) {
+			add_filter('wpify_woo_core_settings_initialized','__return_true');
 			add_action( 'init', array( $this, 'register_settings' ) );
 			add_action( 'init', array( $this, 'enqueue_admin_scripts' ) );
 			add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
