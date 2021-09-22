@@ -41,6 +41,8 @@ class Settings {
 	/** @var AssetFactory */
 	private $asset_factory;
 
+	private $initialized;
+
 	public function __construct(
 		CustomFields $custom_fields,
 		WooCommerceIntegration $woocommerce_integration,
@@ -59,10 +61,13 @@ class Settings {
 		$this->id    = $this::OPTION_NAME;
 		$this->label = __( 'Wpify Woo', 'wpify-woo' );
 
+		add_action( 'init', array( $this, 'register_settings' ) );
+
 		// Check if the WpifyWoo Core settings have been initialized already
-		if ( ! apply_filters( 'wpify_woo_core_settings_initialized', false ) ) {
-			add_filter('wpify_woo_core_settings_initialized','__return_true');
-			add_action( 'init', array( $this, 'register_settings' ) );
+		$this->initialized = apply_filters( 'wpify_woo_core_settings_initialized', false );
+		if ( ! $this->initialized ) {
+			add_filter( 'wpify_woo_core_settings_initialized', '__return_true' );
+
 			add_action( 'init', array( $this, 'enqueue_admin_scripts' ) );
 			add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
 			add_action( 'wcf_before_fields', array( $this, 'render_before_settings' ) );
@@ -91,7 +96,7 @@ class Settings {
 		$sections = $this->get_sections();
 
 		foreach ( $sections as $id => $label ) {
-			if ( ! $id || in_array( $id, $this->get_enabled_modules() ) ) {
+			if ( ( ! $this->initialized && ! $id ) || ( in_array( $id, $this->get_enabled_modules() ) && $this->modules_manager->get_module_by_id( $id ) ) ) {
 				$this->pages[ $id ] = $this->custom_fields->create_woocommerce_settings( array(
 					'tab'     => array(
 						'id'    => $this->id,
@@ -112,7 +117,8 @@ class Settings {
 	 * Get sections
 	 * @return array
 	 */
-	public function get_sections(): array {
+	public
+	function get_sections(): array {
 		$sections = array(
 			'' => __( 'General', 'wpify-woo' ),
 		);
@@ -126,7 +132,8 @@ class Settings {
 	 * Get an array of enabled modules
 	 * @return array
 	 */
-	public function get_enabled_modules(): array {
+	public
+	function get_enabled_modules(): array {
 		return $this->get_settings( 'general' )['enabled_modules'] ?? array();
 	}
 
@@ -137,15 +144,25 @@ class Settings {
 	 *
 	 * @return array
 	 */
-	public function get_settings( string $module ): array {
+	public
+	function get_settings(
+		string $module
+	): array {
 		return get_option( $this->get_settings_name( $module ), array() );
 	}
 
-	public function get_settings_name( string $module ): string {
+	public
+	function get_settings_name(
+		string $module
+	): string {
 		return sprintf( '%s-%s', $this::OPTION_NAME, $module );
 	}
 
-	public function is_current( $tab = '', $section = '' ): bool {
+	public
+	function is_current(
+		$tab = '',
+		$section = ''
+	): bool {
 		$current_tab     = empty( $_REQUEST['tab'] ) ? '' : $_REQUEST['tab'];
 		$current_section = empty( $_REQUEST['section'] ) ? '' : $_REQUEST['section'];
 
@@ -160,7 +177,8 @@ class Settings {
 	 * Get settings array
 	 * @return array
 	 */
-	public function get_settings_items() {
+	public
+	function get_settings_items() {
 		global $current_section;
 
 		$settings = array();
@@ -205,7 +223,8 @@ class Settings {
 		return $settings;
 	}
 
-	public function settings_general() {
+	public
+	function settings_general() {
 		return array(
 			array(
 				'type'    => 'multiswitch',
@@ -217,7 +236,8 @@ class Settings {
 		);
 	}
 
-	public function enqueue_admin_scripts() {
+	public
+	function enqueue_admin_scripts() {
 		$rest_url = $this->api_manager->get_rest_url();
 
 		$this->asset_factory->wp_script( dirname( WpifyWooCore::PATH ) . '/build/settings.css', [ 'is_admin' => true ] );
@@ -239,7 +259,10 @@ class Settings {
 		wp_set_script_translations( 'wpify-woo-settings.js', 'wpify-woo', '/languages' );
 	}
 
-	public function render_before_settings( $args ) {
+	public
+	function render_before_settings(
+		$args
+	) {
 		if ( $args['object_type'] === 'woocommerce_settings'
 		     && $args['tab']['id'] === 'wpify-woo-settings'
 		     && empty( $args['section']['id'] )
@@ -250,7 +273,10 @@ class Settings {
 		}
 	}
 
-	public function render_after_settings( $args ) {
+	public
+	function render_after_settings(
+		$args
+	) {
 		if ( $args['object_type'] === 'woocommerce_settings'
 		     && $args['tab']['id'] === 'wpify-woo-settings'
 		     && empty( $args['section']['id'] )
@@ -287,10 +313,8 @@ class Settings {
 			<?php
 			printf( '<a href="%s">%s</a>', add_query_arg( [
 				'wpify-action' => 'download-log',
-				'wpify-nonce'  => wp_create_nonce( 'download-log' )
+				'wpify-nonce'  => wp_create_nonce( 'download-log' ),
 			], admin_url() ), __( 'Download log', 'wpify-woo' ) );
 		}
 	}
-
-
 }
