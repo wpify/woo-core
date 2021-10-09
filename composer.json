@@ -2,6 +2,7 @@
   "name": "wpify/woo-core",
   "type": "library",
   "license": "GPL-2.0-or-later",
+  "minimum-stability": "dev",
   "authors": [
     {
       "name": "vasikgreif",
@@ -12,9 +13,7 @@
     "php": "^7.3||^8.0",
     "sentry/sdk": "^3.1",
     "wpify/custom-fields": "^2.0",
-    "wpify/log": "^1.0",
-    "wpify/asset": "^1.2",
-    "spatie/array-to-xml": "2.15.0"
+    "wpify/license": "dev-master"
   },
   "require-dev": {
     "symfony/var-dumper": "^5.2"

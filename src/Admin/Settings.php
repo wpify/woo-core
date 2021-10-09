@@ -5,8 +5,6 @@ namespace Wpify\WooCore\Admin;
 use WC_Admin_Settings;
 use Wpify\Asset\AssetFactory;
 use Wpify\CustomFields\CustomFields;
-use Wpify\WooCore\License;
-use Wpify\WooCore\Managers\ApiManager;
 use Wpify\WooCore\Managers\ModulesManager;
 use Wpify\WooCore\Premium;
 use Wpify\WooCore\WooCommerceIntegration;
@@ -35,9 +33,6 @@ class Settings {
 	/** @var ModulesManager */
 	private $modules_manager;
 
-	/** @var ApiManager */
-	private $api_manager;
-
 	/** @var AssetFactory */
 	private $asset_factory;
 
@@ -48,14 +43,12 @@ class Settings {
 		WooCommerceIntegration $woocommerce_integration,
 		Premium $premium,
 		ModulesManager $modules_manager,
-		ApiManager $api_manager,
 		AssetFactory $asset_factory
 	) {
 		$this->custom_fields           = $custom_fields;
 		$this->woocommerce_integration = $woocommerce_integration;
 		$this->premium                 = $premium;
 		$this->modules_manager         = $modules_manager;
-		$this->api_manager             = $api_manager;
 		$this->asset_factory           = $asset_factory;
 
 		$this->id    = $this::OPTION_NAME;
@@ -67,8 +60,6 @@ class Settings {
 		$this->initialized = apply_filters( 'wpify_woo_core_settings_initialized', false );
 		if ( ! $this->initialized ) {
 			add_filter( 'wpify_woo_core_settings_initialized', '__return_true' );
-
-			add_action( 'init', array( $this, 'enqueue_admin_scripts' ) );
 			add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
 			add_action( 'wcf_before_fields', array( $this, 'render_before_settings' ) );
 			add_action( 'wcf_after_fields', array( $this, 'render_after_settings' ) );
@@ -234,29 +225,6 @@ class Settings {
 				'desc'    => __( 'Select the modules you want to enable', 'wpify-woo' ),
 			),
 		);
-	}
-
-	public
-	function enqueue_admin_scripts() {
-		$rest_url = $this->api_manager->get_rest_url();
-
-		$this->asset_factory->wp_script( dirname( WpifyWooCore::PATH ) . '/build/settings.css', [ 'is_admin' => true ] );
-		$this->asset_factory->wp_script( dirname( WpifyWooCore::PATH ) . '/build/settings.js', [
-			'is_admin'  => true,
-			'variables' => [
-				'wpifyWooCoreSettings' => array(
-					'publicPath'    => dirname( WpifyWooCore::PATH ) . '/build/',
-					'restUrl'       => $rest_url,
-					'nonce'         => wp_create_nonce( $this->api_manager->get_nonce_action() ),
-					'activateUrl'   => $rest_url . '/license/activate',
-					'deactivateUrl' => $rest_url . '/license/deactivate',
-					'apiKey'        => License::API_KEY,
-					'apiSecret'     => License::API_SECRET,
-				),
-			],
-		] );
-
-		wp_set_script_translations( 'wpify-woo-settings.js', 'wpify-woo', '/languages' );
 	}
 
 	public

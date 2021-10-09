@@ -2,6 +2,7 @@
 
 namespace Wpify\WooCore\Abstracts;
 
+use Wpify\License\License;
 use Wpify\WooCore\Admin\Settings;
 use Wpify\WooCore\WooCommerceIntegration;
 
@@ -17,6 +18,8 @@ abstract class AbstractModule {
 
 	/** @var WooCommerceIntegration */
 	private $woocommerce_integration;
+
+	private $license = null;
 
 	/**
 	 * Setup
@@ -34,8 +37,12 @@ abstract class AbstractModule {
 			)
 		);
 
-		if ( $this->requires_activation && ! $this->is_activated() ) {
-			add_action( 'admin_notices', array( $this, 'activation_notice' ) );
+		if ( $this->requires_activation ) {
+			$enqueue       = isset( $_GET['section'] ) && $_GET['section'] === $this->id();
+			$this->license = new License( $this->id(), sprintf( '%s-%s', Settings::OPTION_NAME, $this->id() ), $enqueue );
+			if ( ! $this->license->is_activated() ) {
+				add_action( 'admin_notices', array( $this, 'activation_notice' ) );
+			}
 		}
 	}
 
@@ -44,46 +51,6 @@ abstract class AbstractModule {
 	 * @return mixed
 	 */
 	abstract public function id();
-
-	public function is_activated() {
-		return $this->decrypt_option_activated();
-	}
-
-	public function decrypt_option_activated() {
-		$option     = $this->get_option_activated();
-		$public_key = $this->get_option_public_key();
-		if ( ! $option || ! $public_key ) {
-			return null;
-		}
-		$decrypted = '';
-		openssl_public_decrypt( base64_decode( $option ), $decrypted, base64_decode( $public_key ) );
-		$result = json_decode( $decrypted );
-		if ( ! $result ) {
-			return null;
-		}
-
-		return $result;
-	}
-
-	/**
-	 * @return string|null
-	 */
-	public function get_option_activated(): ?string {
-		return get_option( $this->get_option_activated_name(), null );
-	}
-
-	public function get_option_activated_name() {
-		return sprintf( 'wpify_woo_%s_activated', $this->id() );
-	}
-
-	public function get_option_public_key() {
-		return get_option( $this->get_option_public_key_name() );
-	}
-
-	public function get_option_public_key_name() {
-		return sprintf( 'wpify_woo_%s_public_key', $this->id() );
-	}
-
 
 	public function add_settings_section( $tabs ) {
 		$tabs[ $this->id() ] = $this->name();
@@ -155,29 +122,6 @@ abstract class AbstractModule {
 		return array();
 	}
 
-	public function save_option_activated( $string ) {
-		return update_option( $this->get_option_activated_name(), $string );
-	}
-
-	public function delete_option_activated() {
-		return delete_option( $this->get_option_activated_name() );
-	}
-
-	public function save_option_public_key( $string ) {
-		return update_option( $this->get_option_public_key_name(), $string );
-	}
-
-	public function save_option_license( $license ) {
-		$option_key         = $this->get_option_key();
-		$options            = get_option( $option_key );
-		$options['license'] = $license;
-		update_option( $option_key, $options );
-	}
-
-	public function delete_option_public_key() {
-		return delete_option( $this->get_option_public_key_name() );
-	}
-
 	public function needs_activation() {
 		foreach ( $this->settings() as $setting ) {
 			if ( ! empty( $setting['type'] ) && 'license' === $setting['type'] ) {
@@ -204,10 +148,13 @@ abstract class AbstractModule {
 	}
 
 	public function is_enabled() {
-
 	}
 
 	public function requires_activation() {
 		return $this->requires_activation;
+	}
+
+	public function is_activated() {
+		return $this->license ? $this->license->is_activated() : true;
 	}
 }
