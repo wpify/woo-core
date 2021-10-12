@@ -3,7 +3,6 @@
 namespace Wpify\WooCore;
 
 use Wpify\WooCore\Admin\Settings;
-use Wpify\WooCore\Managers\ApiManager;
 use Wpify\WooCore\Managers\ModulesManager;
 
 class WpifyWooCore {
@@ -20,21 +19,15 @@ class WpifyWooCore {
 	 * @var ModulesManager
 	 */
 	private $modules_manager;
-	/**
-	 * @var Updates
-	 */
-	private $updates;
 
 	public function __construct(
 		WooCommerceIntegration $woocommerce_integration,
 		Settings $settings,
-		ModulesManager $modules_manager,
-		Updates $updates
+		ModulesManager $modules_manager
 	) {
 		$this->woocommerce_integration = $woocommerce_integration;
 		$this->settings                = $settings;
 		$this->modules_manager         = $modules_manager;
-		$this->updates                 = $updates;
 	}
 
 	/**
@@ -49,13 +42,6 @@ class WpifyWooCore {
 	 */
 	public function get_settings(): Settings {
 		return $this->settings;
-	}
-
-	/**
-	 * @return Updates
-	 */
-	public function get_updates(): Updates {
-		return $this->updates;
 	}
 
 }
