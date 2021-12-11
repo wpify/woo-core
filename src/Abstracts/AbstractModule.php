@@ -147,6 +147,10 @@ abstract class AbstractModule {
 		return add_query_arg( [ 'section' => $this->id() ], admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings' ) );
 	}
 
+	public function is_settings_page() {
+		return is_admin() && ! empty( $_GET['section'] ) && $_GET['section'] === $this->id();
+	}
+
 	public function is_enabled() {
 	}
 
