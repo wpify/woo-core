@@ -8,9 +8,11 @@ use Wpify\WooCore\WooCommerceIntegration;
 
 /**
  * Class AbstractModule
+ *
  * @package WpifyWoo\Abstracts
  */
 abstract class AbstractModule {
+	private $settings;
 	protected $requires_activation = false;
 
 	/** @var string $id */
@@ -23,6 +25,7 @@ abstract class AbstractModule {
 
 	/**
 	 * Setup
+	 *
 	 * @return void
 	 */
 	public function __construct( WooCommerceIntegration $woocommerce_integration ) {
@@ -48,6 +51,7 @@ abstract class AbstractModule {
 
 	/**
 	 * Module ID - use underscores
+	 *
 	 * @return mixed
 	 */
 	abstract public function id();
@@ -60,12 +64,14 @@ abstract class AbstractModule {
 
 	/**
 	 * Module name
+	 *
 	 * @return mixed
 	 */
 	abstract public function name();
 
 	/**
 	 * Check if the module is enabled.
+	 *
 	 * @return bool
 	 */
 	public function is_module_enabled(): bool {
@@ -74,6 +80,7 @@ abstract class AbstractModule {
 
 	/**
 	 * Get module ID
+	 *
 	 * @return string
 	 */
 	public function get_id(): string {
@@ -85,8 +92,8 @@ abstract class AbstractModule {
 	 *
 	 * @return mixed|null
 	 */
-	public function get_setting( $id, $raw = false ) {
-		$setting = isset( $this->get_settings( $raw )[ $id ] ) ? $this->get_settings( $raw )[ $id ] : null;;
+	public function get_setting( $id ) {
+		$setting = isset( $this->get_settings()[ $id ] ) ? $this->get_settings()[ $id ] : null;;
 		$setting = apply_filters( 'wpify_woo_setting', $setting, $id, $this->id() );
 
 		return apply_filters( "wpify_woo_setting_{$id}", $setting, $id, $this->id() );
@@ -94,20 +101,22 @@ abstract class AbstractModule {
 
 	/**
 	 * Get module settings
+	 *
 	 * @return array
 	 */
-	public function get_settings( $raw = false ): array {
-		$settings = get_option( $this->get_option_key(), array() );
+	public function get_settings(): array {
+		if ( empty( $this->settings ) ) {
+			$this->settings = get_option( $this->get_option_key(), array() );
 
-		if ( ! $raw ) {
 			foreach ( $this->settings() as $key => $item ) {
 				if ( isset( $item['id'] ) && ! isset( $settings[ $item['id'] ] ) ) {
-					$settings[ $item['id'] ] = isset( $item['default_value'] ) ? $item['default_value'] : '';
+					$this->settings[ $item['id'] ] = isset( $item['default_value'] ) ? $item['default_value'] : '';
 				}
 			}
 		}
 
-		return $settings;
+
+		return $this->settings;
 	}
 
 	public function get_option_key() {
@@ -116,6 +125,7 @@ abstract class AbstractModule {
 
 	/**
 	 * Module Settings
+	 *
 	 * @return array Settings.
 	 */
 	public function settings(): array {
