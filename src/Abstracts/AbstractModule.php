@@ -12,7 +12,6 @@ use Wpify\WooCore\WooCommerceIntegration;
  * @package WpifyWoo\Abstracts
  */
 abstract class AbstractModule {
-	private $settings;
 	protected $requires_activation = false;
 
 	/** @var string $id */
@@ -105,18 +104,7 @@ abstract class AbstractModule {
 	 * @return array
 	 */
 	public function get_settings(): array {
-		if ( empty( $this->settings ) ) {
-			$this->settings = get_option( $this->get_option_key(), array() );
-
-			foreach ( $this->settings() as $key => $item ) {
-				if ( isset( $item['id'] ) && ! isset( $settings[ $item['id'] ] ) ) {
-					$this->settings[ $item['id'] ] = isset( $item['default_value'] ) ? $item['default_value'] : '';
-				}
-			}
-		}
-
-
-		return $this->settings;
+		return get_option( $this->get_option_key(), array() );
 	}
 
 	public function get_option_key() {
