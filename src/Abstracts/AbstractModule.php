@@ -146,7 +146,8 @@ abstract class AbstractModule {
 	}
 
 	public function is_settings_page() {
-		return is_admin() && ! empty( $_GET['section'] ) && $_GET['section'] === $this->id();
+		// Load items only in admin (for settings pages) or rest (for async lists)
+		return (wp_is_json_request() || is_admin()) && ! empty( $_GET['section'] ) && $_GET['section'] === $this->id();
 	}
 
 	public function is_enabled() {
