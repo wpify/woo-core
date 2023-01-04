@@ -204,10 +204,13 @@ class Settings {
 
 		$settings = array(
 			array(
-				'type'  => 'group',
-				'id'    => $this->get_settings_name( $current_section ),
-				'title' => $this->label,
-				'items' => $settings,
+				'type'          => 'group',
+				'id'            => $this->get_settings_name( $current_section ),
+				'title'         => $this->label,
+				'items'         => $settings,
+				'integrations'  => [
+					'wpml' => true,
+				],
 			),
 		);
 
