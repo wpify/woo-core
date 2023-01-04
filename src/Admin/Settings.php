@@ -108,8 +108,7 @@ class Settings {
 	 * Get sections
 	 * @return array
 	 */
-	public
-	function get_sections(): array {
+	public function get_sections(): array {
 		$sections = array(
 			'' => __( 'General', 'wpify-woo' ),
 		);
@@ -123,8 +122,7 @@ class Settings {
 	 * Get an array of enabled modules
 	 * @return array
 	 */
-	public
-	function get_enabled_modules(): array {
+	public function get_enabled_modules(): array {
 		return $this->get_settings( 'general' )['enabled_modules'] ?? array();
 	}
 
@@ -142,18 +140,21 @@ class Settings {
 		return get_option( $this->get_settings_name( $module ), array() );
 	}
 
-	public
-	function get_settings_name(
-		string $module
-	): string {
-		return sprintf( '%s-%s', $this::OPTION_NAME, $module );
+	public function get_settings_name( string $module ): string {
+		$key = sprintf( '%s-%s', $this::OPTION_NAME, $module );
+		if ( 'general' !== $module ) {
+			if (\defined('ICL_LANGUAGE_CODE')) {
+				$default_lang = apply_filters('wpml_default_language', null);
+
+				if ($default_lang !== ICL_LANGUAGE_CODE) {
+					$key = sprintf('%s_%s', $key, ICL_LANGUAGE_CODE);
+				}
+			}
+		}
+		return $key;
 	}
 
-	public
-	function is_current(
-		$tab = '',
-		$section = ''
-	): bool {
+	public function is_current( $tab = '', $section = '' ): bool {
 		$current_tab     = empty( $_REQUEST['tab'] ) ? '' : $_REQUEST['tab'];
 		$current_section = empty( $_REQUEST['section'] ) ? '' : $_REQUEST['section'];
 
@@ -168,8 +169,7 @@ class Settings {
 	 * Get settings array
 	 * @return array
 	 */
-	public
-	function get_settings_items() {
+	public function get_settings_items() {
 		global $current_section;
 
 		$settings = array();
@@ -222,8 +222,7 @@ class Settings {
 		return $settings;
 	}
 
-	public
-	function settings_general() {
+	public function settings_general() {
 		return array(
 			array(
 				'type'    => 'multiswitch',
@@ -249,10 +248,7 @@ class Settings {
 		}
 	}
 
-	public
-	function render_after_settings(
-		$args
-	) {
+	public function render_after_settings( $args ) {
 		if ( $args['object_type'] === 'woocommerce_settings'
 		     && $args['tab']['id'] === 'wpify-woo-settings'
 		     && empty( $args['section']['id'] )
