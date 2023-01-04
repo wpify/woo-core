@@ -41,7 +41,7 @@ abstract class AbstractModule {
 
 		if ( $this->requires_activation ) {
 			$enqueue       = isset( $_GET['section'] ) && $_GET['section'] === $this->id();
-			$this->license = new License( $this->id(), sprintf( '%s-%s', Settings::OPTION_NAME, $this->id() ), $enqueue );
+			$this->license = new License( $this->id(), $this->get_option_key(), $enqueue );
 			if ( ! $this->license->is_activated() ) {
 				add_action( 'admin_notices', array( $this, 'activation_notice' ) );
 			}
@@ -108,7 +108,12 @@ abstract class AbstractModule {
 	}
 
 	public function get_option_key() {
-		return sprintf( '%s-%s', Settings::OPTION_NAME, $this->id() );
+		$key = \sprintf( '%s-%s', Settings::OPTION_NAME, $this->id() );
+		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
+			$key = sprintf( '%s_%s', $key, ICL_LANGUAGE_CODE );
+		}
+
+		return $key;
 	}
 
 	/**

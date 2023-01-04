@@ -187,7 +187,15 @@ class Settings {
 		$settings = apply_filters( 'woocommerce_get_settings_' . $this->id, $settings );
 
 		foreach ( $settings as $key => $setting ) {
+
 			if ( $setting['type'] === 'license' ) {
+				if (defined('ICL_LANGUAGE_CODE')) {
+					$default_lang = apply_filters('wpml_default_language', NULL );
+					if ($default_lang !== ICL_LANGUAGE_CODE) {
+                        unset($settings[$key]);
+                        break;
+                    }
+                }
 				$module       = $this->modules_manager->get_module_by_id( $current_section );
 				$is_activated = $module->is_activated();
 
