@@ -8,7 +8,6 @@ use Wpify\WooCore\WooCommerceIntegration;
 
 /**
  * Class AbstractModule
- *
  * @package WpifyWoo\Abstracts
  */
 abstract class AbstractModule {
@@ -24,7 +23,6 @@ abstract class AbstractModule {
 
 	/**
 	 * Setup
-	 *
 	 * @return void
 	 */
 	public function __construct( WooCommerceIntegration $woocommerce_integration ) {
@@ -40,7 +38,7 @@ abstract class AbstractModule {
 		);
 
 		if ( $this->requires_activation ) {
-			$enqueue       = isset( $_GET['section'] ) && $_GET['section'] === $this->id();
+			$enqueue = isset( $_GET['section'] ) && $_GET['section'] === $this->id();
 			$this->license = new License( $this->id(), $this->get_option_key(), $enqueue );
 			if ( ! $this->license->is_activated() ) {
 				add_action( 'admin_notices', array( $this, 'activation_notice' ) );
@@ -50,7 +48,6 @@ abstract class AbstractModule {
 
 	/**
 	 * Module ID - use underscores
-	 *
 	 * @return mixed
 	 */
 	abstract public function id();
@@ -63,14 +60,12 @@ abstract class AbstractModule {
 
 	/**
 	 * Module name
-	 *
 	 * @return mixed
 	 */
 	abstract public function name();
 
 	/**
 	 * Check if the module is enabled.
-	 *
 	 * @return bool
 	 */
 	public function is_module_enabled(): bool {
@@ -79,7 +74,6 @@ abstract class AbstractModule {
 
 	/**
 	 * Get module ID
-	 *
 	 * @return string
 	 */
 	public function get_id(): string {
@@ -100,7 +94,6 @@ abstract class AbstractModule {
 
 	/**
 	 * Get module settings
-	 *
 	 * @return array
 	 */
 	public function get_settings(): array {
@@ -110,7 +103,10 @@ abstract class AbstractModule {
 	public function get_option_key() {
 		$key = \sprintf( '%s-%s', Settings::OPTION_NAME, $this->id() );
 		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
-			$key = sprintf( '%s_%s', $key, ICL_LANGUAGE_CODE );
+			$default_lang = apply_filters( 'wpml_default_language', null );
+			if ( $default_lang !== ICL_LANGUAGE_CODE ) {
+				$key = sprintf( '%s_%s', $key, ICL_LANGUAGE_CODE );
+			}
 		}
 
 		return $key;
@@ -118,7 +114,6 @@ abstract class AbstractModule {
 
 	/**
 	 * Module Settings
-	 *
 	 * @return array Settings.
 	 */
 	public function settings(): array {
@@ -140,8 +135,10 @@ abstract class AbstractModule {
 	 */
 	public function activation_notice() { ?>
         <div class="error notice">
-            <p><?php printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">enter your license key</a> to start using the plugin!', 'wpify-woo' ), $this->name(),
-					admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings&section=' . $this->get_id() ) ); ?></p>
+            <p><?php
+				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">enter your license key</a> to start using the plugin!', 'wpify-woo' ),
+				        $this->name(),
+				        admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings&section=' . $this->get_id() ) ); ?></p>
         </div>
 		<?php
 	}
@@ -152,7 +149,7 @@ abstract class AbstractModule {
 
 	public function is_settings_page() {
 		// Load items only in admin (for settings pages) or rest (for async lists)
-		return (wp_is_json_request() || is_admin()) && ! empty( $_GET['section'] ) && $_GET['section'] === $this->id();
+		return ( wp_is_json_request() || is_admin() ) && ! empty( $_GET['section'] ) && $_GET['section'] === $this->id();
 	}
 
 	public function is_enabled() {
