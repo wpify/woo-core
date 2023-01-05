@@ -37,9 +37,15 @@ abstract class AbstractModule {
 			)
 		);
 
+		if ( is_admin() && defined( 'ICL_LANGUAGE_CODE' ) && false === get_option( $this->get_option_key() ) ) {
+			add_filter( 'option_' . $this->get_option_key(), function () {
+				return get_option( $this->get_option_key( true ), array() );
+			} );
+		}
+
 		if ( $this->requires_activation ) {
 			$enqueue = isset( $_GET['section'] ) && $_GET['section'] === $this->id();
-			$this->license = new License( $this->id(), $this->get_option_key(true), $enqueue );
+			$this->license = new License( $this->id(), $this->get_option_key( true ), $enqueue );
 			if ( ! $this->license->is_activated() ) {
 				add_action( 'admin_notices', array( $this, 'activation_notice' ) );
 			}
@@ -97,6 +103,14 @@ abstract class AbstractModule {
 	 * @return array
 	 */
 	public function get_settings(): array {
+		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
+			$default_lang = apply_filters( 'wpml_default_language', null );
+			if ( $default_lang !== ICL_LANGUAGE_CODE && get_option( $this->get_option_key() ) === false ) {
+				// Fallback to default language settings if the translated option does not exist at all.
+				return get_option( $this->get_option_key( true ), array() );
+			}
+		}
+
 		return get_option( $this->get_option_key(), array() );
 	}
 

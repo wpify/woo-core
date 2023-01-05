@@ -133,10 +133,7 @@ class Settings {
 	 *
 	 * @return array
 	 */
-	public
-	function get_settings(
-		string $module
-	): array {
+	public function get_settings( string $module ): array {
 		return get_option( $this->get_settings_name( $module ), array() );
 	}
 
