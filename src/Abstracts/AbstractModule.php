@@ -37,10 +37,13 @@ abstract class AbstractModule {
 			)
 		);
 
-		if ( is_admin() && defined( 'ICL_LANGUAGE_CODE' ) && false === get_option( $this->get_option_key() ) ) {
-			add_filter( 'option_' . $this->get_option_key(), function () {
-				return get_option( $this->get_option_key( true ), array() );
-			} );
+		if ( is_admin() && defined( 'ICL_LANGUAGE_CODE' ) && false ===  get_option( $this->get_option_key() ) ) {
+			$default_lang = apply_filters( 'wpml_default_language', null );
+			if (ICL_LANGUAGE_CODE !== $default_lang) {
+				add_filter( 'default_option_' . $this->get_option_key(), function () {
+					return get_option( $this->get_option_key( true ), array() );
+				} );
+			}
 		}
 
 		if ( $this->requires_activation ) {
