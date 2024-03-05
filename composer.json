@@ -9,13 +9,15 @@
       "email": "info@vaclavgreif.cz"
     }
   ],
-  "require": {
-    "php": "^7.3||^8.0",
-    "wpify/custom-fields": "dev-master",
-    "wpify/license": "^1"
+  "config": {
+    "platform": {
+      "php": "7.4.33"
+    }
   },
-  "require-dev": {
-    "symfony/var-dumper": "^5.2"
+  "require": {
+    "php": "^7.4||>=8.0",
+    "wpify/custom-fields": "^3.12",
+    "wpify/license": "^1.0"
   },
   "autoload": {
     "psr-4": {
