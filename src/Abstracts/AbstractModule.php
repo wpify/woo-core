@@ -182,4 +182,8 @@ abstract class AbstractModule {
 	public function is_activated() {
 		return $this->license ? $this->license->is_activated() : true;
 	}
+
+	public function get_license(  ) {
+		return $this->license;
+	}
 }
