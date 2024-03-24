@@ -17,7 +17,7 @@
   "require": {
     "php": "^7.4||>=8.0",
     "wpify/custom-fields": "^3.12",
-    "wpify/license": "dev-master"
+    "wpify/license": "^2"
   },
   "autoload": {
     "psr-4": {
