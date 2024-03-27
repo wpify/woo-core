@@ -48,7 +48,7 @@ abstract class AbstractModule {
 
 		if ( $this->requires_activation ) {
 			$enqueue = isset( $_GET['section'] ) && $_GET['section'] === $this->id();
-			$this->license = new License( $this->id(), $enqueue );
+			$this->license = new License( $this->plugin_slug(), $enqueue );
 			if ( ! $this->license->is_activated() ) {
 				add_action( 'admin_notices', array( $this, 'activation_notice' ) );
 			}
@@ -63,9 +63,9 @@ abstract class AbstractModule {
 
 	/**
 	 * Plugin slug, needed for license activation.
-	 * @return mixed
+	 * @return string
 	 */
-	abstract public function plugin_slug();
+	abstract public function plugin_slug(): string;
 
 	public function add_settings_section( $tabs ) {
 		$tabs[ $this->id() ] = $this->name();
