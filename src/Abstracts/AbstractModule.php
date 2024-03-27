@@ -61,6 +61,12 @@ abstract class AbstractModule {
 	 */
 	abstract public function id();
 
+	/**
+	 * Plugin slug, needed for license activation.
+	 * @return mixed
+	 */
+	abstract public function plugin_slug();
+
 	public function add_settings_section( $tabs ) {
 		$tabs[ $this->id() ] = $this->name();
 
