@@ -183,31 +183,7 @@ class Settings {
 		$settings = apply_filters( 'wpify_woo_settings_' . $current_section, $settings );
 		$settings = apply_filters( 'woocommerce_get_settings_' . $this->id, $settings );
 
-		foreach ( $settings as $key => $setting ) {
-
-			if ( $setting['type'] === 'license' ) {
-				if (defined('ICL_LANGUAGE_CODE')) {
-					$default_lang = apply_filters('wpml_default_language', NULL );
-					if ($default_lang !== ICL_LANGUAGE_CODE) {
-                        unset($settings[$key]);
-                        break;
-                    }
-                }
-				$module       = $this->modules_manager->get_module_by_id( $current_section );
-				$is_activated = $module->is_activated();
-
-				$settings[ $key ]['activated'] = $is_activated ? 1 : 0;
-				$settings[ $key ]['moduleId']  = $module->id();
-
-				if ( ! $is_activated ) {
-					$settings = array( $settings[ $key ] );
-
-					break;
-				}
-			}
-		}
-
-		$settings = array(
+		return array(
 			array(
 				'type'          => 'group',
 				'id'            => $this->get_settings_name( $current_section ),
@@ -215,8 +191,6 @@ class Settings {
 				'items'         => $settings
 			),
 		);
-
-		return $settings;
 	}
 
 	public function settings_general() {
