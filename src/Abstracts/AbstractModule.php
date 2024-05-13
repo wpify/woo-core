@@ -162,7 +162,7 @@ abstract class AbstractModule {
 	public function activation_notice() { ?>
         <div class="error notice">
             <p><?php
-				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">enter your license key</a> to start using the plugin!', 'wpify-woo' ),
+				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">activate the domain</a> by connecting it with your WPify account!', 'wpify-woo' ),
 				        $this->name(),
 				        admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings&section=' . $this->get_id() ) ); ?></p>
         </div>
