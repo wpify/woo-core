@@ -48,7 +48,7 @@ abstract class AbstractModule {
 
 		if ( $this->requires_activation ) {
 			$enqueue = isset( $_GET['section'] ) && $_GET['section'] === $this->id();
-			$this->license = new License( $this->plugin_slug(), $enqueue );
+			$this->license = new License( $this->plugin_slug(), $enqueue, is_multisite() ? get_current_network_id() : 0 );
 			if ( ! $this->license->is_activated() ) {
 				add_action( 'admin_notices', array( $this, 'activation_notice' ) );
 			}
