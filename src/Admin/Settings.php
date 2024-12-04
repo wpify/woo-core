@@ -99,6 +99,7 @@ class Settings {
 				'id'          => $id ?: 'general',
 				'class'       => 'wpify-woo-settings',
 				'option_name' => $this->get_settings_name( $id ?: 'general' ),
+				'tabs'        => $this->is_current( $this->id, $id ) ? $this->get_settings_tabs() : array(),
 				'items'       => $this->is_current( $this->id, $id ) ? $this->get_settings_items() : array(),
 			) );
 		}
@@ -185,15 +186,23 @@ class Settings {
 		$settings = apply_filters( 'woocommerce_get_settings_' . $this->id, $settings );
 
 		return $settings;
+	}
 
-//		return array(
-//			array(
-//				'type'          => 'group',
-//				'id'            => $this->get_settings_name( $current_section ),
-//				'title'         => $this->label,
-//				'items'         => $settings
-//			),
-//		);
+	/**
+	 * Get settings tabs array
+	 * @return array
+	 */
+	public function get_settings_tabs() {
+		global $current_section;
+		$tabs = array();
+		if ( $current_section === null && isset( $_GET['section'] ) ) {
+			$current_section = \sanitize_title( $_GET['section'] );
+		}
+		if ( ! $current_section ) {
+			$current_section = 'general';
+		}
+
+		return \apply_filters( 'wpify_woo_settings_tabs_' . $current_section, $tabs );
 	}
 
 	public function settings_general() {
