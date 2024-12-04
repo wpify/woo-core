@@ -87,20 +87,20 @@ class Settings {
 		$sections = $this->get_sections();
 
 		foreach ( $sections as $id => $label ) {
-			if ( ( ! $this->initialized && ! $id ) || ( in_array( $id, $this->get_enabled_modules() ) && $this->modules_manager->get_module_by_id( $id ) ) ) {
-				$this->pages[ $id ] = $this->custom_fields->create_woocommerce_settings( array(
-					'tab'     => array(
-						'id'    => $this->id,
-						'label' => $this->label,
-					),
-					'section' => array(
-						'id'    => $id,
-						'label' => $label,
-					),
-					'class'   => 'wpify-woo-settings',
-					'items'   => $this->is_current( $this->id, $id ) ? $this->get_settings_items() : array(),
-				) );
-			}
+			$this->pages[ $id ] = $this->custom_fields->create_woocommerce_settings( array(
+				'tab'         => array(
+					'id'    => $this->id,
+					'label' => $this->label,
+				),
+				'section'     => array(
+					'id'    => $id,
+					'label' => $label,
+				),
+				'id'          => $id ?: 'general',
+				'class'       => 'wpify-woo-settings',
+				'option_name' => $this->get_settings_name( $id ?: 'general' ),
+				'items'       => $this->is_current( $this->id, $id ) ? $this->get_settings_items() : array(),
+			) );
 		}
 	}
 
@@ -140,14 +140,15 @@ class Settings {
 	public function get_settings_name( string $module ): string {
 		$key = sprintf( '%s-%s', $this::OPTION_NAME, $module );
 		if ( 'general' !== $module ) {
-			if (\defined('ICL_LANGUAGE_CODE')) {
-				$default_lang = apply_filters('wpml_default_language', null);
+			if ( \defined( 'ICL_LANGUAGE_CODE' ) ) {
+				$default_lang = apply_filters( 'wpml_default_language', null );
 
-				if ($default_lang !== ICL_LANGUAGE_CODE) {
-					$key = sprintf('%s_%s', $key, ICL_LANGUAGE_CODE);
+				if ( $default_lang !== ICL_LANGUAGE_CODE ) {
+					$key = sprintf( '%s_%s', $key, ICL_LANGUAGE_CODE );
 				}
 			}
 		}
+
 		return $key;
 	}
 
@@ -183,20 +184,22 @@ class Settings {
 		$settings = apply_filters( 'wpify_woo_settings_' . $current_section, $settings );
 		$settings = apply_filters( 'woocommerce_get_settings_' . $this->id, $settings );
 
-		return array(
-			array(
-				'type'          => 'group',
-				'id'            => $this->get_settings_name( $current_section ),
-				'title'         => $this->label,
-				'items'         => $settings
-			),
-		);
+		return $settings;
+
+//		return array(
+//			array(
+//				'type'          => 'group',
+//				'id'            => $this->get_settings_name( $current_section ),
+//				'title'         => $this->label,
+//				'items'         => $settings
+//			),
+//		);
 	}
 
 	public function settings_general() {
 		return array(
 			array(
-				'type'    => 'multiswitch',
+				'type'    => 'multi_toggle',
 				'id'      => 'enabled_modules',
 				'label'   => __( 'Enabled modules', 'wpify-woo' ),
 				'options' => $this->woocommerce_integration->get_modules(),
