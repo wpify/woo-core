@@ -87,21 +87,25 @@ class Settings {
 		$sections = $this->get_sections();
 
 		foreach ( $sections as $id => $label ) {
-			$this->pages[ $id ] = $this->custom_fields->create_woocommerce_settings( array(
-				'tab'         => array(
-					'id'    => $this->id,
-					'label' => $this->label,
-				),
-				'section'     => array(
-					'id'    => $id,
-					'label' => $label,
-				),
-				'id'          => $id ?: 'general',
-				'class'       => 'wpify-woo-settings',
-				'option_name' => $this->get_settings_name( $id ?: 'general' ),
-				'tabs'        => $this->is_current( $this->id, $id ) ? $this->get_settings_tabs() : array(),
-				'items'       => $this->is_current( $this->id, $id ) ? $this->get_settings_items() : array(),
-			) );
+			if ( ! $this->initialized && ! $id || in_array( $id, $this->get_enabled_modules() ) && $this->modules_manager->get_module_by_id( $id ) ) {
+				$this->pages[ $id ] = $this->custom_fields->create_woocommerce_settings(
+					array(
+						'tab'         => array(
+							'id'    => $this->id,
+							'label' => $this->label,
+						),
+						'section'     => array(
+							'id'    => $id,
+							'label' => $label,
+						),
+						'id'          => $id ?: 'general',
+						'class'       => 'wpify-woo-settings',
+						'option_name' => $this->get_settings_name( $id ?: 'general' ),
+						'tabs'        => $this->is_current( $this->id, $id ) ? $this->get_settings_tabs() : array(),
+						'items'       => $this->is_current( $this->id, $id ) ? $this->get_settings_items() : array(),
+					),
+				);
+			}
 		}
 	}
 
