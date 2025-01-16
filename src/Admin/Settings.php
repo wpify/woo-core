@@ -183,7 +183,10 @@ class Settings {
 
 		if ( ! $current_section ) {
 			$current_section = 'general';
-			$settings        = $this->settings_general();
+		}
+
+		if ( 'general' === $current_section ) {
+			$settings = $this->settings_general();
 		}
 
 		$settings = apply_filters( 'wpify_woo_settings_' . $current_section, $settings );
