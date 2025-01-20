@@ -63,6 +63,8 @@ class Settings {
 			add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
 			add_action( 'wcf_before_fields', array( $this, 'render_before_settings' ) );
 			add_action( 'wcf_after_fields', array( $this, 'render_after_settings' ) );
+			add_action( 'admin_menu', [ $this, 'register_menu_page' ] );
+
 
 			/** Handle activation/deactivation messages */
 
@@ -88,37 +90,51 @@ class Settings {
 
 		foreach ( $sections as $id => $label ) {
 			if ( ! $this->initialized && ! $id || in_array( $id, $this->get_enabled_modules() ) && $this->modules_manager->get_module_by_id( $id ) ) {
-				$this->pages[ $id ] = $this->custom_fields->create_woocommerce_settings(
-					array(
-						'tab'         => array(
-							'id'    => $this->id,
-							'label' => $this->label,
-						),
-						'section'     => array(
-							'id'    => $id,
-							'label' => $label,
-						),
-						'id'          => $id ?: 'general',
-						'class'       => 'wpify-woo-settings',
-						'option_name' => $this->get_settings_name( $id ?: 'general' ),
-						'tabs'        => $this->is_current( $this->id, $id ) ? $this->get_settings_tabs() : array(),
-						'items'       => $this->is_current( $this->id, $id ) ? $this->get_settings_items() : array(),
-					),
-				);
+
+				$module = $this->modules_manager->get_module_by_id( $id );
+                if ($module->settings_version === 2) {
+	                $this->pages[ $id ] = $this->custom_fields->create_options_page( array(
+		                'page_title'  => $module->name(),
+		                'menu_title'  => $module->name(),
+		                'menu_slug'   => sprintf( 'wpify-woo/%s', $id ),
+		                'id'          => $id ?: 'general',
+		                'parent_slug' => 'wpify-woo',
+		                'class'       => 'wpify-woo-settings',
+		                'option_name' => $this->get_settings_name( $id ?: 'general' ),
+		                'tabs'        => $this->is_current(  '', $id ) ? $this->get_settings_tabs() : array(),
+		                'items'       => $this->is_current( '',  $id ) ? $this->get_settings_items() : array(),
+	                ) );
+                } else {
+	                $this->pages[ $id ] = $this->custom_fields->create_woocommerce_settings(
+		                array(
+			                'tab'         => array(
+				                'id'    => $this->id,
+				                'label' => $this->label,
+			                ),
+			                'section'     => array(
+				                'id'    => $id,
+				                'label' => $label,
+			                ),
+			                'id'          => $id ?: 'general',
+			                'class'       => 'wpify-woo-settings',
+			                'option_name' => $this->get_settings_name( $id ?: 'general' ),
+			                'tabs'        => $this->is_current( $this->id, $id ) ? $this->get_settings_tabs() : array(),
+			                'items'       => $this->is_current( $this->id, $id ) ? $this->get_settings_items() : array(),
+		                ),
+	                );
+                }
 			}
 		}
 	}
 
+
 	/**
 	 * Get sections
+	 *
 	 * @return array
 	 */
 	public function get_sections(): array {
-		$sections = array(
-			'' => __( 'General', 'wpify-woo' ),
-		);
-
-		$sections = apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
+		$sections = \apply_filters( 'woocommerce_get_sections_' . $this->id, [] );
 
 		return $sections;
 	}
@@ -129,6 +145,17 @@ class Settings {
 	 */
 	public function get_enabled_modules(): array {
 		return $this->get_settings( 'general' )['enabled_modules'] ?? array();
+	}
+
+	public function enable_module( $module ) {
+		$general_settings = $this->get_settings( 'general' );
+		$enabled_modules  = $general_settings['enabled_modules'] ?? array();
+
+		if ( ! \in_array( $module, $enabled_modules ) ) {
+			$enabled_modules[]                   = $module;
+			$general_settings['enabled_modules'] = $enabled_modules;
+			update_option( $this->get_settings_name( 'general' ), $general_settings );
+		}
 	}
 
 	/**
@@ -165,8 +192,22 @@ class Settings {
 			return true;
 		}
 
+		$current_module = $this->get_current_module();
+		if ( $current_module === $section ) {
+			return \true;
+		}
+
 		return false;
 	}
+
+	public function get_current_module(  ) {
+		$current_page     = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
+		if (!str_contains($current_page, 'wpify-woo/')) {
+			return false;
+		}
+		return explode('/', $current_page)[1] ?? 'general';
+	}
+
 
 	/**
 	 * Get settings array
@@ -180,6 +221,10 @@ class Settings {
 		if ( $current_section === null && isset( $_GET['section'] ) ) {
 			$current_section = sanitize_title( $_GET['section'] );
 		}
+
+        if ($this->get_current_module()) {
+            $current_section = $this->get_current_module();
+        }
 
 		if ( ! $current_section ) {
 			$current_section = 'general';
@@ -205,6 +250,11 @@ class Settings {
 		if ( $current_section === null && isset( $_GET['section'] ) ) {
 			$current_section = \sanitize_title( $_GET['section'] );
 		}
+
+		if ($this->get_current_module()) {
+			$current_section = $this->get_current_module();
+		}
+
 		if ( ! $current_section ) {
 			$current_section = 'general';
 		}
@@ -279,4 +329,24 @@ class Settings {
 			], admin_url() ), __( 'Download log', 'wpify-woo' ) );
 		}
 	}
+
+	public function register_menu_page() {
+		add_menu_page(
+			__( 'WPify Woo', 'wpify-woo' ),
+			__( 'WPify Woo', 'wpify-woo' ),
+			'manage_options', // user capabilities
+			'wpify-woo-dashboard',
+			[ $this, 'render_dashboard' ],
+			'dashicons-images-alt2', // icon (from Dashicons for example)
+			59
+		);
+		do_action( 'wpify_woo_settings_menu_page_registered' );
+	}
+
+	public function render_dashboard() { ?>
+        <div class="wrap">
+            <h1><?php _e( 'WPify Woo', 'wpify-woo' ); ?></h1>
+            <p><?php _e( 'Welcome to WPify Woo!', 'wpify-woo' ); ?></p>
+        </div>
+	<?php }
 }

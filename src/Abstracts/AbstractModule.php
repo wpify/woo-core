@@ -12,6 +12,7 @@ use Wpify\WooCore\WooCommerceIntegration;
  */
 abstract class AbstractModule {
 	protected $requires_activation = false;
+	protected int $settings_version = 1;
 
 	/** @var string $id */
 	private $id = '';
@@ -53,6 +54,11 @@ abstract class AbstractModule {
 				add_action( 'admin_notices', array( $this, 'activation_notice' ) );
 			}
 		}
+
+        if ($this->settings_version === 2) {
+	        add_action( 'admin_menu', [ $this, 'register_menu_page' ], 20 );
+        }
+
 	}
 
 	/**
@@ -191,5 +197,12 @@ abstract class AbstractModule {
 
 	public function get_license(  ) {
 		return $this->license;
+	}
+
+	public function register_menu_page(  ) {
+		if (did_action('wpify_woo_settings_menu_page_registered')) {
+			// Register the submenu page.
+			\add_submenu_page('wpify-woo-dashboard', $this->name(), $this->name(), 'manage_options', sprintf('wpify-woo/%s', $this->id), array($this, 'render_settings_page'));
+		}
 	}
 }
