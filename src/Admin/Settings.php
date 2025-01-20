@@ -64,7 +64,7 @@ class Settings {
 			add_action( 'wcf_before_fields', array( $this, 'render_before_settings' ) );
 			add_action( 'wcf_after_fields', array( $this, 'render_after_settings' ) );
 			add_action( 'admin_menu', [ $this, 'register_menu_page' ] );
-			add_action('wpify_custom_fields_before_options',[$this,'render_menu_bar']);
+			add_action('wpifycf_before_options',[$this,'render_menu_bar']);
 
 			/** Handle activation/deactivation messages */
 
@@ -347,6 +347,23 @@ class Settings {
         <div class="wrap">
             <h1><?php _e( 'WPify Woo', 'wpify-woo' ); ?></h1>
             <p><?php _e( 'Welcome to WPify Woo!', 'wpify-woo' ); ?></p>
+
+	        <?php $options = $this->custom_fields->create_options_page(
+                    [
+                        'page_title' => 'WPify Woo',
+                        'menu_title' => 'WPify Woo',
+                        'menu_slug' => 'wpify-woo',
+                        'id' => 'general',
+                        'parent_slug' => 'wpify-woo',
+                        'class' => 'wpify-woo-settings',
+                        'option_name' => $this->get_settings_name('general'),
+                        'tabs' => $this->get_settings_tabs(),
+                        'items' => $this->get_settings_items()
+                    ]
+            );
+            
+            die(var_dump($options));?>
+            
         </div>
 	<?php }
 
@@ -354,6 +371,35 @@ class Settings {
 		if ($options->parent_slug !== 'wpify-woo') {
 			return;
 		} ?>
+        <style type="text/css">
+            form {
+                display: flex;
+                background: white;
+                padding: 20px;
+                gap: 50px;
+                -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.42);
+                -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.42);
+                box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.42);
+            }
+            .wpifycf-app {
+                border-right: 1px solid #e5e5e5;
+            }
+            .nav-tab-wrapper {
+                display: flex;
+                flex-direction: column;
+                border-bottom: none;
+            }
+            .nav-tab-wrapper .nav-tab {
+                background: white;
+                text-align: left;
+                padding: 10px 20px;
+                border: none;
+            }
+            .nav-tab-wrapper .nav-tab-active {
+                border-left: 4px solid #00A0D2;
+            }
+
+        </style>
         <div style="background: white; padding: 20px;">
             <h1>WPIfy Woo</h1>
         </div>
