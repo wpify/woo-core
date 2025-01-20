@@ -64,7 +64,7 @@ class Settings {
 			add_action( 'wcf_before_fields', array( $this, 'render_before_settings' ) );
 			add_action( 'wcf_after_fields', array( $this, 'render_after_settings' ) );
 			add_action( 'admin_menu', [ $this, 'register_menu_page' ] );
-
+			add_action('wpify_custom_fields_before_options',[$this,'render_menu_bar']);
 
 			/** Handle activation/deactivation messages */
 
@@ -349,4 +349,14 @@ class Settings {
             <p><?php _e( 'Welcome to WPify Woo!', 'wpify-woo' ); ?></p>
         </div>
 	<?php }
+
+	public function render_menu_bar( $options ) {
+		if ($options->parent_slug !== 'wpify-woo') {
+			return;
+		} ?>
+        <div style="background: white; padding: 20px;">
+            <h1>WPIfy Woo</h1>
+        </div>
+		<?php
+	}
 }
