@@ -180,6 +180,15 @@ abstract class AbstractModule {
 	}
 
 	public function is_settings_page() {
+		$page = $_GET['page'] ?? '';
+
+		if (\str_contains($page, 'wpify-woo/')) {
+			$section = explode('/', $page)[1] ?? '';
+			if ($section === $this->id()) {
+				return true;
+			}
+
+		}
 		// Load items only in admin (for settings pages) or rest (for async lists)
 		return ( wp_is_json_request() || is_admin() ) && ! empty( $_GET['section'] ) && $_GET['section'] === $this->id();
 	}
@@ -204,5 +213,9 @@ abstract class AbstractModule {
 			// Register the submenu page.
 			\add_submenu_page('wpify-woo-dashboard', $this->name(), $this->name(), 'manage_options', sprintf('wpify-woo/%s', $this->id), array($this, 'render_settings_page'));
 		}
+	}
+
+	public function get_settings_version(): int {
+		return $this->settings_version;
 	}
 }

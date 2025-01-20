@@ -92,7 +92,7 @@ class Settings {
 			if ( ! $this->initialized && ! $id || in_array( $id, $this->get_enabled_modules() ) && $this->modules_manager->get_module_by_id( $id ) ) {
 
 				$module = $this->modules_manager->get_module_by_id( $id );
-                if ($module->settings_version === 2) {
+                if ($module->get_settings_version() === 2) {
 	                $this->pages[ $id ] = $this->custom_fields->create_options_page( array(
 		                'page_title'  => $module->name(),
 		                'menu_title'  => $module->name(),
