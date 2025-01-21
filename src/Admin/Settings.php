@@ -15,7 +15,7 @@ use Wpify\WooCore\WpifyWooCore;
  * @package WpifyWooCore\Admin
  */
 class Settings {
-	const OPTION_NAME = 'wpify-settings';
+	const OPTION_NAME = 'wpify-woo-settings';
 	const DASHBOARD_SLUG = 'wpify';
 
 	private $id;
