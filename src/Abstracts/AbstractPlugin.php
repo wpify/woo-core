@@ -125,28 +125,4 @@ abstract class AbstractPlugin {
 
 		return array_merge( $plugin_meta, $new_links );
 	}
-
-	/**
-	 * After activate plugin action
-	 *
-	 * @return void
-	 */
-	public function activate() {
-	}
-
-	/**
-	 * After deactivate plugin action
-	 *
-	 * @return void
-	 */
-	public function deactivate() {
-	}
-
-	/**
-	 * After uninstall plugin action
-	 *
-	 * @return void
-	 */
-	public function uninstall() {
-	}
 }
