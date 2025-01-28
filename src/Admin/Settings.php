@@ -15,7 +15,7 @@ use Wpify\WooCore\WpifyWooCore;
  * @package WpifyWooCore\Admin
  */
 class Settings {
-	const OPTION_NAME = 'wpify-woo-settings';
+	const OPTION_NAME    = 'wpify-woo-settings';
 	const DASHBOARD_SLUG = 'wpify';
 
 	private $id;
@@ -46,10 +46,13 @@ class Settings {
 		$this->modules_manager         = $modules_manager;
 		$this->asset_factory           = $asset_factory;
 		$this->id                      = $this::OPTION_NAME;
-		$this->label                   = __( 'Wpify Woo', 'wpify-woo' );
+		$this->label                   = __( 'WPify Woo', 'wpify-woo' );
+
 		add_action( 'init', array( $this, 'register_settings' ) );
+
 		// Check if the WpifyWoo Core settings have been initialized already
-		$this->initialized = apply_filters( 'wpify_woo_core_settings_initialized', \false );
+		$this->initialized = apply_filters( 'wpify_woo_core_settings_initialized', false );
+
 		if ( ! $this->initialized ) {
 			add_filter( 'wpify_woo_core_settings_initialized', '__return_true' );
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ), 9999 );
@@ -169,7 +172,7 @@ class Settings {
 	public function get_settings_name( string $module ): string {
 		$key = sprintf( '%s-%s', $this::OPTION_NAME, $module );
 		if ( 'general' !== $module ) {
-			if ( \defined( 'WpifyWooFakturoidDeps\ICL_LANGUAGE_CODE' ) ) {
+			if ( \defined( 'ICL_LANGUAGE_CODE' ) ) {
 				$default_lang = apply_filters( 'wpml_default_language', null );
 				if ( $default_lang !== ICL_LANGUAGE_CODE ) {
 					$key = sprintf( '%s_%s', $key, ICL_LANGUAGE_CODE );
@@ -183,21 +186,41 @@ class Settings {
 	public function is_current( $tab = '', $section = '' ): bool {
 		$current_tab     = empty( $_REQUEST['tab'] ) ? '' : $_REQUEST['tab'];
 		$current_section = empty( $_REQUEST['section'] ) ? '' : $_REQUEST['section'];
+
 		if ( $tab === $current_tab && $section === $current_section ) {
-			return \true;
-		}
-		$current_module = $this->get_current_module();
-		if ( $current_module === $section ) {
-			return \true;
+			return true;
 		}
 
-		return \false;
+		$current_module = $this->get_current_module();
+
+		if ( $current_module === $section ) {
+			return true;
+		}
+
+		foreach ( $this->modules_manager->get_modules() as $module ) {
+			$option_name = $this->get_settings_name( $module->get_id() );
+			if ( isset( $_REQUEST[ $option_name ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public function get_current_module() {
+		foreach ( $this->modules_manager->get_modules() as $module ) {
+			$module_id   = $module->get_id();
+			$option_name = $this->get_settings_name( $module_id );
+
+			if ( isset( $_REQUEST[ $option_name ] ) ) {
+				return $module_id;
+			}
+		}
+
 		$current_page = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
+
 		if ( ! str_contains( $current_page, 'wpify/' ) ) {
-			return \false;
+			return false;
 		}
 
 		return explode( '/', $current_page )[1] ?? 'general';
@@ -209,19 +232,25 @@ class Settings {
 	 */
 	public function get_settings_items() {
 		global $current_section;
+
 		$settings = array();
+
 		if ( $current_section === null && isset( $_GET['section'] ) ) {
 			$current_section = sanitize_title( $_GET['section'] );
 		}
+
 		if ( $this->get_current_module() ) {
 			$current_section = $this->get_current_module();
 		}
+
 		if ( ! $current_section ) {
 			$current_section = 'general';
 		}
+
 		if ( 'general' === $current_section ) {
 			$settings = $this->settings_general();
 		}
+
 		$settings = apply_filters( 'wpify_woo_settings_' . $current_section, $settings );
 		$settings = apply_filters( 'woocommerce_get_settings_' . $this->id, $settings );
 
@@ -234,18 +263,22 @@ class Settings {
 	 */
 	public function get_settings_tabs() {
 		global $current_section;
+
 		$tabs = array();
+
 		if ( $current_section === null && isset( $_GET['section'] ) ) {
-			$current_section = \sanitize_title( $_GET['section'] );
+			$current_section = sanitize_title( $_GET['section'] );
 		}
+
 		if ( $this->get_current_module() ) {
 			$current_section = $this->get_current_module();
 		}
+
 		if ( ! $current_section ) {
 			$current_section = 'general';
 		}
 
-		return \apply_filters( 'wpify_woo_settings_tabs_' . $current_section, $tabs );
+		return apply_filters( 'wpify_woo_settings_tabs_' . $current_section, $tabs );
 	}
 
 	public function settings_general() {
@@ -255,15 +288,15 @@ class Settings {
 				'id'      => 'enabled_modules',
 				'label'   => __( 'Enabled modules', 'wpify-woo' ),
 				'options' => $this->woocommerce_integration->get_modules(),
-				'desc'    => __( 'Select the modules you want to enable', 'wpify-woo' )
-			)
+				'desc'    => __( 'Select the modules you want to enable', 'wpify-woo' ),
+			),
 		);
 	}
 
 	public function render_before_settings( $args ) {
 		if ( $args['object_type'] === 'woocommerce_settings' && $args['tab']['id'] === 'wpify-woo-settings' && empty( $args['section']['id'] ) ) {
 			?>
-            <div class="wpify-woo-settings__wrapper">
+			<div class="wpify-woo-settings__wrapper">
 			<?php
 		}
 	}
@@ -271,61 +304,60 @@ class Settings {
 	public function render_after_settings( $args ) {
 		if ( $args['object_type'] === 'woocommerce_settings' && $args['tab']['id'] === 'wpify-woo-settings' && empty( $args['section']['id'] ) ) {
 			?>
-
-            <div class="wpify-woo-settings__upsells-wrapper">
-                <div class="wpify-woo-settings__upsells-inner">
-                    <h3>
+			<div class="wpify-woo-settings__upsells-wrapper">
+				<div class="wpify-woo-settings__upsells-inner">
+					<h3>
 						<?php
 						_e( 'Do you enjoy this plugin?', 'wpify-woo' );
 						?>
-                        <a href="https://wordpress.org/support/plugin/wpify-woo/reviews/">
+						<a href="https://wordpress.org/support/plugin/wpify-woo/reviews/">
 							<?php
 							_e( 'Rate us on Wordpress.org', 'wpify-woo' );
 							?>
-                        </a>
-                    </h3>
-                    <h2><?php
+						</a>
+					</h3>
+					<h2><?php
 						_e( 'Get premium extensions!', 'wpify-woo' );
 						?></h2>
-                    <div class="wpify-woo-settings__upsells">
+					<div class="wpify-woo-settings__upsells">
 						<?php
 						foreach ( $this->premium->get_extensions() as $extension ) {
 							?>
-                            <div class="wpify-woo-settings__upsell">
-                                <h3><?php
+							<div class="wpify-woo-settings__upsell">
+								<h3><?php
 									echo $extension['title'];
 									?></h3>
-                                <ul>
+								<ul>
 									<?php
 									foreach ( $extension['html_description'] as $item ) {
 										?>
-                                        <li><?php
+										<li><?php
 											echo $item;
 											?></li>
 										<?php
 									}
 									?>
-                                </ul>
-                                <a href="<?php
+								</ul>
+								<a href="<?php
 								echo esc_url( $extension['url'] );
 								?>"
-                                   target="_blank"><?php
+								   target="_blank"><?php
 									_e( 'Get now!', 'wpify-woo' );
 									?></a>
-                            </div>
+							</div>
 							<?php
 						}
 						?>
-                    </div>
-                </div>
-            </div>
-            </div>
+					</div>
+				</div>
+			</div>
+			</div>
 
 			<?php
 			printf( '<a href="%s">%s</a>', add_query_arg( [
-				'wpify-action' => 'download-log',
-				'wpify-nonce'  => wp_create_nonce( 'download-log' )
-			], admin_url() ), __( 'Download log', 'wpify-woo' ) );
+				                                              'wpify-action' => 'download-log',
+				                                              'wpify-nonce'  => wp_create_nonce( 'download-log' ),
+			                                              ], admin_url() ), __( 'Download log', 'wpify-woo' ) );
 		}
 	}
 
@@ -337,7 +369,7 @@ class Settings {
 			$this::DASHBOARD_SLUG,
 			[ $this, 'render_dashboard' ],
 			'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTUwIiBoZWlnaHQ9IjU1MCIgdmlld0JveD0iMCAwIDU1MCA1NTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IG9wYWNpdHk9IjAuMyIgd2lkdGg9IjUzMiIgaGVpZ2h0PSI3OCIgcng9IjM5IiB0cmFuc2Zvcm09Im1hdHJpeCgtNC4zNzExNGUtMDggMSAxIDQuMzcxMTRlLTA4IDM2Ny43NSA5LjAwMDEyKSIgZmlsbD0id2hpdGUiLz4KPHJlY3Qgb3BhY2l0eT0iMC4zIiB3aWR0aD0iNTMwIiBoZWlnaHQ9Ijc4IiByeD0iMzkiIHRyYW5zZm9ybT0ibWF0cml4KC00LjM3MTE0ZS0wOCAxIDEgNC4zNzExNGUtMDggMjA0Ljc1IDkuMDAwMTIpIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCBvcGFjaXR5PSIwLjgiIHdpZHRoPSI1NTcuODgyIiBoZWlnaHQ9Ijc4LjE1ODUiIHJ4PSIzOS4wNzkyIiB0cmFuc2Zvcm09Im1hdHJpeCgwLjMzODc4MSAwLjk0MDg2NSAwLjk0MDg2NSAtMC4zMzg3ODEgMzEuNzUgMjQuNDc4OCkiIGZpbGw9IndoaXRlIi8+CjxyZWN0IG9wYWNpdHk9IjAuOCIgd2lkdGg9IjU2MC42NzYiIGhlaWdodD0iNzguMTU4NSIgcng9IjM5LjA3OTIiIHRyYW5zZm9ybT0ibWF0cml4KDAuMzM4NzgxIDAuOTQwODY1IDAuOTQwODY1IC0wLjMzODc4MSAxOTMuMjQ5IDI0LjQ3ODgpIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCBvcGFjaXR5PSIwLjgiIHdpZHRoPSIyNTkuNjQ2IiBoZWlnaHQ9Ijc4LjE1ODUiIHJ4PSIzOS4wNzkyIiB0cmFuc2Zvcm09Im1hdHJpeCgwLjMzODc4MSAwLjk0MDg2NSAwLjk0MDg2NSAtMC4zMzg3ODEgMzU2Ljc1IDI0LjQ3ODYpIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=', // icon (from Dashicons for example)
-			59
+			59,
 		);
 
 		add_submenu_page(
@@ -348,19 +380,19 @@ class Settings {
 			$this::DASHBOARD_SLUG,
 			[ $this, 'render_dashboard' ],
 		);
+
 		do_action( 'wpify_woo_settings_menu_page_registered' );
 	}
 
 	public static function add_admin_body_class( $admin_body_class = '' ) {
-
 		$current_page = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
+
 		if ( ! str_contains( $current_page, 'wpify' ) ) {
 			return $admin_body_class;
 		}
 
-		$classes   = explode( ' ', trim( $admin_body_class ) );
-		$classes[] = 'wpify-admin-page';
-
+		$classes          = explode( ' ', trim( $admin_body_class ) );
+		$classes[]        = 'wpify-admin-page';
 		$admin_body_class = implode( ' ', array_unique( $classes ) );
 
 		return " $admin_body_class ";
@@ -393,6 +425,7 @@ class Settings {
 
 		$html = sprintf( '<h2>%s</h2>', __( 'Installed plugins', 'wpify' ) );
 		$html .= $this->get_wpify_modules_blocks( $installed_plugins, true );
+
 		if ( $extensions ) {
 			$html .= sprintf( '<h2>%s</h2>', __( 'Our other plugins', 'wpify' ) );
 			$html .= $this->get_wpify_modules_blocks( $extensions_map );
@@ -509,67 +542,47 @@ class Settings {
 		}
 
 		?>
-        <h2><?php _e( 'Wpify News', 'wpify' ) ?></h2>
-        <div class="wpify__cards">
+		<h2><?php _e( 'Wpify News', 'wpify' ) ?></h2>
+		<div class="wpify__cards">
 
 			<?php foreach ( $posts as $post ) { ?>
-                <div class="wpify__card" style="max-width:100%">
+				<div class="wpify__card" style="max-width:100%">
 					<?php
 					$embedded  = (array) $post->_embedded;
 					$thumbnail = $embedded['wp:featuredmedia'][0]->source_url;
 					if ( $thumbnail ) {
 						?>
-                        <a href="<?php echo esc_url( $post->link ); ?>" target="_blank">
-                            <img src="<?php echo esc_url( $thumbnail ); ?>" loading="lazy"
-                                 style="width: 100%; height: auto">
-                        </a>
+						<a href="<?php echo esc_url( $post->link ); ?>" target="_blank">
+							<img src="<?php echo esc_url( $thumbnail ); ?>" loading="lazy"
+							     style="width: 100%; height: auto">
+						</a>
 					<?php } ?>
-                    <div class="wpify__card-body">
-                        <h3><a href="<?php echo esc_url( $post->link ); ?>" target="_blank">
+					<div class="wpify__card-body">
+						<h3><a href="<?php echo esc_url( $post->link ); ?>" target="_blank">
 								<?php echo esc_html( $post->title->rendered ); ?>
-                            </a></h3>
+							</a></h3>
 						<?php echo $post->excerpt->rendered; ?>
-                    </div>
-                </div>
+					</div>
+				</div>
 				<?php
 			}
 			?>
-        </div>
+		</div>
 		<?php
 	}
 
 	public function render_dashboard() {
 		?>
-        <div class="wpify-dashboard__wrap wrap">
-            <div class="wpify-dashboard__content">
-                <h1><?php
-					_e( 'WPify Plugins Dashboard', 'wpify' );
-					?></h1>
-                <p><?php
-					_e( 'Welcome to WPify Plugins!', 'wpify' );
-					?></p>
-
+		<div class="wpify-dashboard__wrap wrap">
+			<div class="wpify-dashboard__content">
 				<?php
-				$options = $this->custom_fields->create_options_page( [
-					'page_title'  => 'WPify Woo',
-					'menu_title'  => 'WPify Woo',
-					'menu_slug'   => 'wpify-woo',
-					'id'          => 'general',
-					'parent_slug' => 'wpify-woo',
-					'class'       => 'wpify-woo-settings',
-					'option_name' => $this->get_settings_name( 'general' ),
-					'tabs'        => $this->get_settings_tabs(),
-					'items'       => $this->get_settings_items()
-				] );
-
 				echo $this->get_wpify_plugins_overwiev();
-				//die( var_dump( $options ) );
 				?>
-            </div>
-            <div class="wpify-dashboard__sidebar">
+			</div>
+			<div class="wpify-dashboard__sidebar">
 				<?php $this->get_wpify_posts(); ?>
-            </div>
-        </div>
+			</div>
+		</div>
 		<?php
 	}
 
@@ -581,6 +594,7 @@ class Settings {
 		if ( ! $screen || ! str_contains( $current_page, 'wpify' ) ) {
 			return;
 		}
+
 		global $title;
 
 		$data = array(
@@ -591,7 +605,7 @@ class Settings {
 					'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 6.75c0-1.768 0-2.652.55-3.2C4.097 3 4.981 3 6.75 3s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55C3 9.403 3 8.519 3 6.75m0 10.507c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55C3 19.91 3 19.026 3 17.258M13.5 6.75c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55c-.55-.548-.55-1.432-.55-3.2m0 10.507c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55c-.55-.548-.55-1.432-.55-3.2"/></svg>',
 					'label' => __( 'Dashboard', 'wpify' ),
 					'link'  => add_query_arg( [ 'page' => $this::DASHBOARD_SLUG, ], admin_url( 'admin.php' ) ),
-				)
+				),
 			),
 			'doc_link' => 'https://wpify.io/dokumentace/',
 		);
@@ -599,7 +613,7 @@ class Settings {
 		$data = apply_filters( 'wpify_admin_menu_bar_data', $data );
 
 		?>
-        <style type="text/css">
+		<style type="text/css">
             .wpify-admin-page #wpcontent {
                 padding-left: 0;
             }
@@ -793,7 +807,7 @@ class Settings {
 				<?php foreach ( $data['menu'] as $item ) {
 					$url_components = parse_url( $item['link'] );
 					parse_str( $url_components['query'], $query_params );
-					$menu_page    = isset( $query_params['page'] ) ? $query_params['page'] : '';
+					$menu_page = isset( $query_params['page'] ) ? $query_params['page'] : '';
 					$active_class = ( $current_page === $menu_page ) ? ' current' : '';
 					printf( '<a class="wpify__menu-bar-item%s" href="%s">%s<span>%s</span></a>', esc_attr( $active_class ), esc_url( $item['link'] ), $item['icon'], esc_html( $item['label'] ) );
 				}

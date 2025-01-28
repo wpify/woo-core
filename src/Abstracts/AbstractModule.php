@@ -11,8 +11,8 @@ use Wpify\WooCore\WooCommerceIntegration;
  * @package WpifyWoo\Abstracts
  */
 abstract class AbstractModule {
-	protected $requires_activation = false;
-	protected int $settings_version = 1;
+	protected     $requires_activation = false;
+	protected int $settings_version    = 1;
 
 	/** @var string $id */
 	private $id = '';
@@ -29,12 +29,15 @@ abstract class AbstractModule {
 	public function __construct( WooCommerceIntegration $woocommerce_integration ) {
 		$this->woocommerce_integration = $woocommerce_integration;
 		$this->id                      = $this->id();
+
 		add_filter( 'woocommerce_get_sections_' . Settings::OPTION_NAME, array( $this, 'add_settings_section' ) );
-		if ( is_admin() && defined( 'WpifyWooFakturoidDeps\ICL_LANGUAGE_CODE' ) && \false === get_option( $this->get_option_key() ) ) {
+
+		if ( is_admin() && defined( 'ICL_LANGUAGE_CODE' ) && false === get_option( $this->get_option_key() ) ) {
 			$default_lang = apply_filters( 'wpml_default_language', null );
+
 			if ( ICL_LANGUAGE_CODE !== $default_lang ) {
 				add_filter( 'default_option_' . $this->get_option_key(), function () {
-					return get_option( $this->get_option_key( \true ), array() );
+					return get_option( $this->get_option_key( true ), array() );
 				} );
 			}
 		}
@@ -80,7 +83,7 @@ abstract class AbstractModule {
 	 * @return bool
 	 */
 	public function is_module_enabled(): bool {
-		return in_array( $this->get_id(), $this->woocommerce_integration->get_modules(), \true );
+		return in_array( $this->get_id(), $this->woocommerce_integration->get_modules(), true );
 	}
 
 	/**
@@ -108,23 +111,23 @@ abstract class AbstractModule {
 	 * @return array
 	 */
 	public function get_settings(): array {
-		if ( defined( 'WpifyWooFakturoidDeps\ICL_LANGUAGE_CODE' ) ) {
+		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
 			$default_lang = apply_filters( 'wpml_default_language', null );
-			if ( $default_lang !== ICL_LANGUAGE_CODE && get_option( $this->get_option_key() ) === \false ) {
+			if ( $default_lang !== ICL_LANGUAGE_CODE && get_option( $this->get_option_key() ) === false ) {
 				// Fallback to default language settings if the translated option does not exist at all.
-				return get_option( $this->get_option_key( \true ), array() );
+				return get_option( $this->get_option_key( true ), array() );
 			}
 		}
 
 		return get_option( $this->get_option_key(), array() );
 	}
 
-	public function get_option_key( $raw = \false ) {
+	public function get_option_key( $raw = false ) {
 		$key = \sprintf( '%s-%s', Settings::OPTION_NAME, $this->id() );
 		if ( $raw ) {
 			return $key;
 		}
-		if ( defined( 'WpifyWooFakturoidDeps\ICL_LANGUAGE_CODE' ) ) {
+		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
 			$default_lang = apply_filters( 'wpml_default_language', null );
 			if ( $default_lang !== ICL_LANGUAGE_CODE ) {
 				$key = sprintf( '%s_%s', $key, ICL_LANGUAGE_CODE );
@@ -145,11 +148,11 @@ abstract class AbstractModule {
 	public function needs_activation() {
 		foreach ( $this->settings() as $setting ) {
 			if ( ! empty( $setting['type'] ) && 'license' === $setting['type'] ) {
-				return \true;
+				return true;
 			}
 		}
 
-		return \false;
+		return false;
 	}
 
 	/**
@@ -157,20 +160,20 @@ abstract class AbstractModule {
 	 */
 	public function activation_notice() {
 		?>
-        <div class="error notice">
-            <p><?php
+		<div class="error notice">
+			<p><?php
 				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">activate the domain</a> by connecting it with your WPify account!', 'wpify-woo' ), $this->name(), admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings&section=' . $this->get_id() ) );
 				?></p>
-        </div>
+		</div>
 		<?php
 	}
 
 	public function get_settings_url() {
 		if ( $this->settings_version === 2 ) {
-			return add_query_arg( [ 'page' => sprintf( 'wpify/%s', $this->id ) ], admin_url( 'admin.php' ) );
+			return add_query_arg( array( 'page' => sprintf( 'wpify/%s', $this->id ) ), admin_url( 'admin.php' ) );
 		}
 
-		return add_query_arg( [ 'section' => $this->id() ], admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings' ) );
+		return add_query_arg( array( 'section' => $this->id() ), admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings' ) );
 	}
 
 	public function get_documentation_url() {
@@ -179,11 +182,16 @@ abstract class AbstractModule {
 
 	public function is_settings_page() {
 		$page = $_GET['page'] ?? '';
-		if ( \str_contains( $page, 'wpify/' ) ) {
+		if ( str_contains( $page, 'wpify/' ) ) {
 			$section = explode( '/', $page )[1] ?? '';
 			if ( $section === $this->id() ) {
-				return \true;
+				return true;
 			}
+		}
+
+		$option_name = sprintf( '%s-%s', Settings::OPTION_NAME, $this->id() );
+		if ( isset( $_POST[ $option_name ] ) ) {
+			return true;
 		}
 
 		// Load items only in admin (for settings pages) or rest (for async lists)
@@ -198,7 +206,7 @@ abstract class AbstractModule {
 	}
 
 	public function is_activated() {
-		return $this->license ? $this->license->is_activated() : \true;
+		return $this->license ? $this->license->is_activated() : true;
 	}
 
 	public function get_license() {
@@ -208,13 +216,13 @@ abstract class AbstractModule {
 	public function register_menu_page() {
 		if ( did_action( 'wpify_woo_settings_menu_page_registered' ) ) {
 			// Register the submenu page.
-			\add_submenu_page(
+			add_submenu_page(
 				'wpify',
 				$this->name(),
 				$this->name(),
 				'manage_options',
 				sprintf( 'wpify/%s', $this->id ),
-				array( $this, 'render_settings_page' )
+				array( $this, 'render_settings_page' ),
 			);
 		}
 	}
