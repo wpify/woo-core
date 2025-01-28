@@ -117,7 +117,7 @@ abstract class AbstractPlugin {
 	public function add_row_meta_links( $plugin_meta, $plugin_file ): array {
 		$new_links = array();
 
-		if ( strpos( $plugin_file, $this->plugin_utils->get_plugin_file() ) ) {
+		if ( strpos( $this->plugin_utils->get_plugin_file(), $plugin_file ) ) {
 			$new_links = array(
 				'wpify-doc' => sprintf( '<a href="%s" target="_blank">%s</a>', $this->documentation_url(), __( 'Documentation', 'wpify-woo' ) ),
 			);
