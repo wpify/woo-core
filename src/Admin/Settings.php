@@ -368,31 +368,31 @@ class Settings {
 
 	public function get_wpify_plugins_overwiev() {
 		$installed_plugins = $this->get_plugins();
-		$response          = wp_remote_get( 'https://wpify.io/wp-json/wpify/v1/plugins-list' );
-		$extensions        = [];
+		$extensions        = get_transient( 'wpify_woo_extensions' );
 
-		if ( ! is_wp_error( $response ) ) {
-			$extensions = json_decode( $response['body'], true )['plugins'];
+		if ( false === $extensions ) {
+			$response = wp_remote_get( 'https://wpify.io/wp-json/wpify/v1/plugins-list' );
+
+			if ( ! is_wp_error( $response ) ) {
+				$extensions = json_decode( $response['body'], true )['plugins'];
+				set_transient( 'wpify_woo_extensions', $extensions, DAY_IN_SECONDS );
+			}
 		}
 
-		//var_dump( $extensions );
-		// Přemapujeme $extensions pro snadnější kontrolu přítomnosti hodnot
-		$extensions_map = [];
+		$extensions_map = array();
 		foreach ( $extensions as $extension ) {
 			$extensions_map[ $extension['slug'] ] = $extension;
 		}
 
-		// Aktualizujeme $modules s odpovídajícími hodnotami z $extensions
 		foreach ( $installed_plugins as $slug => $plugin ) {
 			if ( isset( $extensions_map[ $slug ] ) ) {
-				$installed_plugins[ $slug ] = array_merge( $extensions_map[ $slug ], $plugin );
-				unset( $extensions_map[ $slug ] ); // Odebereme shodu z mapy
+				$installed_plugins[ $slug ] = array_merge( $plugin, $extensions_map[ $slug ] );
+				unset( $extensions_map[ $slug ] );
 			}
 		}
 
 		$html = sprintf( '<h2>%s</h2>', __( 'Installed plugins', 'wpify' ) );
 		$html .= $this->get_wpify_modules_blocks( $installed_plugins, true );
-
 		if ( $extensions ) {
 			$html .= sprintf( '<h2>%s</h2>', __( 'Our other plugins', 'wpify' ) );
 			$html .= $this->get_wpify_modules_blocks( $extensions_map );
@@ -406,20 +406,31 @@ class Settings {
 		?>
         <div class="wpify__cards">
 
-			<?php foreach ( $plugins as $slug => $plugin ) { ?>
+			<?php foreach ( $plugins as $slug => $plugin ) {
+				?>
                 <div class="wpify__card">
                     <div class="wpify__card-head">
-						<?php if ( isset( $plugin['icon'] ) && $plugin['icon'] ) { ?>
-                            <img src="<?= $plugin['icon'] ?>" alt="<?= $plugin['title'] ?>" width="50" height="50">
-						<?php } ?>
+						<?php
+						if ( isset( $plugin['icon'] ) && $plugin['icon'] ) {
+							?>
+                            <img src="<?php
+							echo $plugin['icon'];
+							?>" alt="<?php
+							echo $plugin['title'];
+							?>" width="50" height="50">
+							<?php
+						}
+						?>
                         <div>
                             <h3>
-								<?php echo $plugin['title'] ?? $plugin['Name']; ?>
+								<?php
+								echo $plugin['title'];
+								?>
                             </h3>
 							<?php
 							$metas = [];
-							if ( isset( $plugin['Version'] ) ) {
-								$metas[] = $plugin['Version'];
+							if ( isset( $plugin['version'] ) ) {
+								$metas[] = $plugin['version'];
 							}
 							if ( ! $installed && isset( $plugin['price'] ) ) {
 								$metas[] = $plugin['price'];
@@ -432,24 +443,47 @@ class Settings {
                         </div>
                     </div>
                     <div class="wpify__card-body">
-						<?php if ( ! $installed ) {
+						<?php
+						if ( ! $installed ) {
 							echo $plugin['desc'] ?? '';
-						} ?>
+						}
+						?>
                     </div>
                     <div class="wpify__card-footer">
 						<?php
-						if ( isset( $plugin['doc_link'] ) && $plugin['doc_link'] ) { ?>
-                            <a href="<?php echo esc_url( $plugin['doc_link'] ); ?>"
-                               target="_blank"><?php _e( 'Documentation', 'wpify' ) ?></a>
-						<?php } ?>
+						if ( isset( $plugin['doc_link'] ) && $plugin['doc_link'] ) {
+							?>
+                            <a href="<?php
+							echo esc_url( $plugin['doc_link'] );
+							?>"
+                               target="_blank"><?php
+								_e( 'Documentation', 'wpify' );
+								?></a>
+							<?php
+						}
+						?>
                         <div style="flex: 1"></div>
-						<?php if ( $installed && isset( $plugin['settings'] ) ) { ?>
-                            <span><a class="button" href="<?php echo esc_url( $plugin['settings'] ); ?>"
-                                     role="button"><?php _e( 'Settings', 'wpify' ) ?></a></span>
-						<?php } else { ?>
-                            <span><a class="install-now button" href="<?php echo esc_url( $plugin['link'] ); ?>"
-                                     role="button"><?php _e( 'Get plugin', 'wpify' ) ?></a></span>
-						<?php } ?>
+						<?php
+						if ( $installed && isset( $plugin['settings'] ) ) {
+							?>
+                            <span><a class="button" href="<?php
+								echo esc_url( $plugin['settings'] );
+								?>"
+                                     role="button"><?php
+									_e( 'Settings', 'wpify' );
+									?></a></span>
+							<?php
+						} else {
+							?>
+                            <span><a class="install-now button" href="<?php
+								echo esc_url( $plugin['link'] );
+								?>"
+                                     role="button"><?php
+									_e( 'Get plugin', 'wpify' );
+									?></a></span>
+							<?php
+						}
+						?>
                     </div>
                 </div>
 				<?php
@@ -759,7 +793,7 @@ class Settings {
 				<?php foreach ( $data['menu'] as $item ) {
 					$url_components = parse_url( $item['link'] );
 					parse_str( $url_components['query'], $query_params );
-					$menu_page = isset( $query_params['page'] ) ? $query_params['page'] : '';
+					$menu_page    = isset( $query_params['page'] ) ? $query_params['page'] : '';
 					$active_class = ( $current_page === $menu_page ) ? ' current' : '';
 					printf( '<a class="wpify__menu-bar-item%s" href="%s">%s<span>%s</span></a>', esc_attr( $active_class ), esc_url( $item['link'] ), $item['icon'], esc_html( $item['label'] ) );
 				}

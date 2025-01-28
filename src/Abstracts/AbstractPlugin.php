@@ -75,11 +75,13 @@ abstract class AbstractPlugin {
 	 * @return mixed
 	 */
 	public function add_plugin( $plugins ) {
-		$plugins[ $this->id() ] = array_merge(
-			array(
-				'settings' => $this->settings_url(),
-			),
-			$this->plugin_utils->get_plugin_info()
+		$plugins[ $this->id() ] = array(
+			'title'    => $this->plugin_utils->get_plugin_name(),
+			'desc'     => $this->plugin_utils->get_plugin_description(),
+			'icon'     => '',
+			'version'  => $this->plugin_utils->get_plugin_version(),
+			'doc_link' => $this->documentation_url(),
+			'settings' => $this->settings_url(),
 		);
 
 		return $plugins;
