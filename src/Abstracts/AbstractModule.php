@@ -31,10 +31,10 @@ abstract class AbstractModule {
 		$this->id                      = $this->id();
 
 		add_filter( 'woocommerce_get_sections_' . Settings::OPTION_NAME, array( $this, 'add_settings_section' ) );
+		add_filter('wpify_get_sections_' . $this->parent_settings_id(), array($this, 'add_settings_section'));
 
 		if ( is_admin() && defined( 'ICL_LANGUAGE_CODE' ) && false === get_option( $this->get_option_key() ) ) {
 			$default_lang = apply_filters( 'wpml_default_language', null );
-
 			if ( ICL_LANGUAGE_CODE !== $default_lang ) {
 				add_filter( 'default_option_' . $this->get_option_key(), function () {
 					return get_option( $this->get_option_key( true ), array() );
@@ -66,6 +66,14 @@ abstract class AbstractModule {
 	 */
 	abstract public function plugin_slug(): string;
 
+	/**
+	 * Parent settings page ID for sections
+	 * @return string
+	 */
+
+	public function parent_settings_id(): string{
+		return $this->plugin_slug();
+	}
 	public function add_settings_section( $tabs ) {
 		$tabs[ $this->id() ] = $this->name();
 
@@ -236,12 +244,14 @@ abstract class AbstractModule {
 			return $data;
 		}
 
-		$data['title']    = $this->name();
+		$plugin = null; // TODO get plugin class
+
+		$data['title']    = $plugin ? $plugin->name() : $this->name();
 		$data['icon']     = '';
 		$data['menu'][]   = array(
 			'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 5h-3m-4.25-2v4M13 5H3m4 7H3m7.75-2v4M21 12H11m10 7h-3m-4.25-2v4M13 19H3"/></svg>',
 			'label' => __( 'Settings', 'wpify' ),
-			'link'  => $this->get_settings_url(),
+			'link'  => $this->get_settings_url()
 		);
 		$data['doc_link'] = $this->get_documentation_url();
 
