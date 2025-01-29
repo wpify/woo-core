@@ -11,8 +11,8 @@ use Wpify\WooCore\WooCommerceIntegration;
  * @package WpifyWoo\Abstracts
  */
 abstract class AbstractModule {
-	protected     $requires_activation = false;
-	protected int $settings_version    = 1;
+	protected $requires_activation = false;
+	protected int $settings_version = 1;
 
 	/** @var string $id */
 	private $id = '';
@@ -30,8 +30,8 @@ abstract class AbstractModule {
 		$this->woocommerce_integration = $woocommerce_integration;
 		$this->id                      = $this->id();
 
-		add_filter( 'woocommerce_get_sections_' . Settings::OPTION_NAME, array( $this, 'add_settings_section' ) );
-		add_filter('wpify_get_sections_' . $this->parent_settings_id(), array($this, 'add_settings_section'));
+		//add_filter( 'woocommerce_get_sections_' . Settings::OPTION_NAME, array( $this, 'add_settings_section' ) );
+		add_filter( 'wpify_get_sections_' . $this->parent_settings_id(), array( $this, 'add_settings_section' ) );
 
 		if ( is_admin() && defined( 'ICL_LANGUAGE_CODE' ) && false === get_option( $this->get_option_key() ) ) {
 			$default_lang = apply_filters( 'wpml_default_language', null );
@@ -67,20 +67,6 @@ abstract class AbstractModule {
 	abstract public function plugin_slug(): string;
 
 	/**
-	 * Parent settings page ID for sections
-	 * @return string
-	 */
-
-	public function parent_settings_id(): string{
-		return $this->plugin_slug();
-	}
-	public function add_settings_section( $tabs ) {
-		$tabs[ $this->id() ] = $this->name();
-
-		return $tabs;
-	}
-
-	/**
 	 * Module name
 	 * @return mixed
 	 */
@@ -100,6 +86,61 @@ abstract class AbstractModule {
 	 */
 	public function get_id(): string {
 		return $this->id;
+	}
+
+	/**
+	 * Parent settings page ID for sections
+	 * @return string
+	 */
+	public function parent_settings_id(): string {
+		return $this->plugin_slug();
+	}
+
+	/**
+	 * Menu slug for settings page url
+	 * @return string
+	 */
+	public function get_menu_slug() {
+		return sprintf( 'wpify/%s/%s', $this->parent_settings_id(), $this->id );
+	}
+
+	/**
+	 * Module settings full url
+	 * @return string
+	 */
+	public function get_settings_url() {
+		if ( $this->settings_version === 2 ) {
+			return add_query_arg( array( 'page' => $this->get_menu_slug() ), admin_url( 'admin.php' ) );
+		}
+
+		return add_query_arg( array( 'section' => $this->id() ), admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings' ) );
+	}
+
+	/**
+	 * Module documentation url
+	 * @return string
+	 */
+	public function get_documentation_url() {
+		return '';
+	}
+
+	/**
+	 * Add module section into settings
+	 *
+	 * @param $sections
+	 *
+	 * @return array
+	 */
+	public function add_settings_section( $sections ) {
+		$sections[ $this->id() ] = array(
+			'title'     => $this->name(),
+			'parent'    => $this->parent_settings_id(),
+			'menu_slug' => $this->get_menu_slug(),
+			'url'       => $this->get_settings_url(),
+			'option_id' => $this->id(),
+		);
+
+		return $sections;
 	}
 
 	/**
@@ -168,24 +209,12 @@ abstract class AbstractModule {
 	 */
 	public function activation_notice() {
 		?>
-		<div class="error notice">
-			<p><?php
+        <div class="error notice">
+            <p><?php
 				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">activate the domain</a> by connecting it with your WPify account!', 'wpify-woo' ), $this->name(), admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings&section=' . $this->get_id() ) );
 				?></p>
-		</div>
+        </div>
 		<?php
-	}
-
-	public function get_settings_url() {
-		if ( $this->settings_version === 2 ) {
-			return add_query_arg( array( 'page' => sprintf( 'wpify/%s', $this->id ) ), admin_url( 'admin.php' ) );
-		}
-
-		return add_query_arg( array( 'section' => $this->id() ), admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings' ) );
-	}
-
-	public function get_documentation_url() {
-		return '';
 	}
 
 	public function is_settings_page() {

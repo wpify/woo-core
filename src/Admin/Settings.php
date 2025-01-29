@@ -15,7 +15,7 @@ use Wpify\WooCore\WpifyWooCore;
  * @package WpifyWooCore\Admin
  */
 class Settings {
-	const OPTION_NAME    = 'wpify-woo-settings';
+	const OPTION_NAME = 'wpify-woo-settings';
 	const DASHBOARD_SLUG = 'wpify';
 
 	private $id;
@@ -82,11 +82,9 @@ class Settings {
 
 	public function register_settings() {
 		$plugins = $this->get_plugins();
-		dump( $plugins );
 		if ( empty( $plugins ) ) {
 			return;
 		}
-
 		foreach ( $plugins as $plugin_id => $plugin ) {
 			$this->pages[ $plugin_id ] = $this->custom_fields->create_options_page( array(
 				'page_title'  => $plugin['title'],
@@ -103,12 +101,16 @@ class Settings {
 			$sections = $this->get_sections( $plugin['option_id'] );
 
 			foreach ( $sections as $section_id => $section ) {
+				if ( empty( $section_id ) ) {
+					continue;
+				}
+
 				$this->pages[ $section_id ] = $this->custom_fields->create_options_page( array(
-					'page_title'  => $section,
-					'menu_title'  => $section,
-					'menu_slug'   => sprintf( 'wpify/%s', $section_id ),
-					'id'          => $section_id,
-					'parent_slug' => $plugin['option_id'],
+					'page_title'  => $section['title'],
+					'menu_title'  => $section['title'],
+					'menu_slug'   => $section['menu_slug'],
+					'id'          => $section['id'],
+					'parent_slug' => $section['parent'],
 					'class'       => 'wpify-woo-settings',
 					'option_name' => $this->get_settings_name( $section_id ),
 					'tabs'        => $this->is_current( '', $section_id ) ? $this->get_settings_tabs() : array(),
@@ -158,11 +160,8 @@ class Settings {
 		if ( ! $subpage ) {
 			$subpage = explode( '/', $current_page )[1] ?? '';
 		}
-		$sections = array( '' => __( 'General', 'wpify-woo' ) );
-		//$sections = \apply_filters( 'woocommerce_get_sections_' . $this->id, [] );
-		$sections = apply_filters( 'wpify_get_sections_' . $subpage, [] );
 
-		return $sections;
+		return apply_filters( 'wpify_get_sections_' . $subpage, [] );
 	}
 
 	/**
@@ -209,6 +208,7 @@ class Settings {
 	}
 
 	public function is_current( $tab = '', $section = '' ): bool {
+		$current_page    = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
 		$current_tab     = empty( $_REQUEST['tab'] ) ? '' : $_REQUEST['tab'];
 		$current_section = empty( $_REQUEST['section'] ) ? '' : $_REQUEST['section'];
 
@@ -220,6 +220,12 @@ class Settings {
 
 		if ( $current_module === $section ) {
 			return true;
+		}
+
+		foreach ( $this->get_sections() as $module ) {
+			if ( $current_page == $module['menu_slug'] ) {
+				return true;
+			}
 		}
 
 		foreach ( $this->modules_manager->get_modules() as $module ) {
@@ -248,7 +254,9 @@ class Settings {
 			return false;
 		}
 
-		return explode( '/', $current_page )[1] ?? 'general';
+		$page_attributes = explode( '/', $current_page );
+
+		return end( $page_attributes );
 	}
 
 	/**
@@ -272,14 +280,7 @@ class Settings {
 			$current_section = 'general';
 		}
 
-		if ( 'general' === $current_section ) {
-			$settings = $this->settings_general();
-		}
-
-		$settings = apply_filters( 'wpify_woo_settings_' . $current_section, $settings );
-		$settings = apply_filters( 'woocommerce_get_settings_' . $this->id, $settings );
-
-		return $settings;
+		return apply_filters( 'wpify_woo_settings_' . $current_section, $settings );
 	}
 
 	/**
@@ -887,7 +888,7 @@ class Settings {
 					$url_components = parse_url( $item['link'] );
 					parse_str( $url_components['query'], $query_params );
 					$menu_page    = isset( $query_params['page'] ) ? $query_params['page'] : '';
-					$active_class = ( $current_page === $menu_page ) ? ' current' : '';
+					$active_class = str_contains( $current_page, $menu_page ) ? ' current' : '';
 					printf( '<a class="wpify__menu-bar-item%s" href="%s">%s<span>%s</span></a>', esc_attr( $active_class ), esc_url( $item['link'] ), $item['icon'], esc_html( $item['label'] ) );
 				}
 				if ( $data['doc_link'] ) {
@@ -954,13 +955,10 @@ class Settings {
 		if ( ! empty( $data['sections'] ) && is_array( $data['sections'] ) ) {
 			?>
             <div class="wpify__menu-section-bar">
-				<?php
-				foreach ( $data['sections'] as $id => $section ) {
-					$link = add_query_arg( array( 'page' => sprintf( 'wpify/%s', $id ) ), admin_url( 'admin.php' ) );
-					?>
-                    <a class="wpify__menu-section-bar-item <?php echo str_contains( $current_page, $id ) ? 'current' : '' ?>"
-                       href="<?php echo $link ?>"
-                       title="<?php echo $section ?>"><?php echo $section ?></a>
+				<?php foreach ( $data['sections'] as $id => $section ) { ?>
+                    <a class="wpify__menu-section-bar-item <?php echo $current_page === $section['menu_slug'] ? 'current' : '' ?>"
+                       href="<?php echo $section['url'] ?>"
+                       title="<?php echo $section['title'] ?>"><?php echo $section['title'] ?></a>
 				<?php } ?>
             </div>
 			<?php
