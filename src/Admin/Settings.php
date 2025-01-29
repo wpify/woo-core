@@ -81,42 +81,59 @@ class Settings {
 	}
 
 	public function register_settings() {
-		$sections = $this->get_sections();
-		foreach ( $sections as $id => $label ) {
-			if ( ! $this->initialized && ! $id || in_array( $id, $this->get_enabled_modules() ) && $this->modules_manager->get_module_by_id( $id ) ) {
-				$module = $this->modules_manager->get_module_by_id( $id );
-				if ( empty( $id ) || $module->get_settings_version() === 2 ) {
-					$id                 = $id ?: 'general';
-					$this->pages[ $id ] = $this->custom_fields->create_options_page( array(
-						'page_title'  => $module ? $module->name() : 'General',
-						'menu_title'  => $module ? $module->name() : 'General',
-						'menu_slug'   => sprintf( 'wpify/%s', $id ),
-						'id'          => $id ?: 'general',
-						'parent_slug' => $this::DASHBOARD_SLUG,
-						'class'       => 'wpify-woo-settings',
-						'option_name' => $this->get_settings_name( $id ?: 'general' ),
-						'tabs'        => $this->is_current( '', $id ) ? $this->get_settings_tabs() : array(),
-						'items'       => $this->is_current( '', $id ) ? $this->get_settings_items() : array()
-					) );
-				} else {
-					$this->pages[ $id ] = $this->custom_fields->create_woocommerce_settings( array(
-						'tab'         => array(
-							'id'    => $this->id,
-							'label' => $this->label
-						),
-						'section'     => array(
-							'id'    => $id,
-							'label' => $label
-						),
-						'id'          => $id ?: 'general',
-						'class'       => 'wpify-woo-settings',
-						'option_name' => $this->get_settings_name( $id ?: 'general' ),
-						'tabs'        => $this->is_current( $this->id, $id ) ? $this->get_settings_tabs() : array(),
-						'items'       => $this->is_current( $this->id, $id ) ? $this->get_settings_items() : array()
-					) );
-				}
+		$plugins = $this->get_plugins();
+		dump( $plugins );
+		if ( empty( $plugins ) ) {
+			return;
+		}
+
+		foreach ( $plugins as $plugin_id => $plugin ) {
+			$this->pages[ $plugin_id ] = $this->custom_fields->create_options_page( array(
+				'page_title'  => $plugin['title'],
+				'menu_title'  => $plugin['title'],
+				'menu_slug'   => sprintf( 'wpify/%s', $plugin['option_id'] ),
+				'id'          => $plugin_id,
+				'parent_slug' => $this::DASHBOARD_SLUG,
+				'class'       => 'wpify-woo-settings',
+				'option_name' => $this->get_settings_name( $plugin['option_id'] ),
+				'tabs'        => $this->is_current( '', $plugin_id ) ? $this->get_settings_tabs() : array(),
+				'items'       => $this->is_current( '', $plugin_id ) ? $this->get_settings_items() : array()
+			) );
+
+			$sections = $this->get_sections( $plugin['option_id'] );
+
+			foreach ( $sections as $section_id => $section ) {
+				$this->pages[ $section_id ] = $this->custom_fields->create_options_page( array(
+					'page_title'  => $section,
+					'menu_title'  => $section,
+					'menu_slug'   => sprintf( 'wpify/%s', $section_id ),
+					'id'          => $section_id,
+					'parent_slug' => $plugin['option_id'],
+					'class'       => 'wpify-woo-settings',
+					'option_name' => $this->get_settings_name( $section_id ),
+					'tabs'        => $this->is_current( '', $section_id ) ? $this->get_settings_tabs() : array(),
+					'items'       => $this->is_current( '', $section_id ) ? $this->get_settings_items() : array()
+				) );
 			}
 		}
+
+//		} else {
+//			$this->pages[ $id ] = $this->custom_fields->create_woocommerce_settings( array(
+//				'tab'         => array(
+//					'id'    => $this->id,
+//					'label' => $this->label
+//				),
+//				'section'     => array(
+//					'id'    => $id,
+//					'label' => $label
+//				),
+//				'id'          => $id ?: 'general',
+//				'class'       => 'wpify-woo-settings',
+//				'option_name' => $this->get_settings_name( $id ?: 'general' ),
+//				'tabs'        => $this->is_current( $this->id, $id ) ? $this->get_settings_tabs() : array(),
+//				'items'       => $this->is_current( $this->id, $id ) ? $this->get_settings_items() : array()
+//			) );
+//		}
 	}
 
 	/**
@@ -133,13 +150,14 @@ class Settings {
 	 *
 	 * @return array
 	 */
-	public function get_sections(): array {
+	public function get_sections( $subpage = null ): array {
 		$current_page = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
 		if ( ! str_contains( $current_page, 'wpify/' ) ) {
 			return [];
 		}
-		$subpage = explode( '/', $current_page )[1] ?? '';
-
+		if ( ! $subpage ) {
+			$subpage = explode( '/', $current_page )[1] ?? '';
+		}
 		$sections = array( '' => __( 'General', 'wpify-woo' ) );
 		//$sections = \apply_filters( 'woocommerce_get_sections_' . $this->id, [] );
 		$sections = apply_filters( 'wpify_get_sections_' . $subpage, [] );

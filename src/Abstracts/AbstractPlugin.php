@@ -50,6 +50,15 @@ abstract class AbstractPlugin {
 	}
 
 	/**
+	 * Plugin base option id
+	 *
+	 * @return string|null
+	 */
+	public function base_option_id(): ?string {
+		return $this->id();
+	}
+
+	/**
 	 * Plugin settings url
 	 *
 	 * @return string
@@ -76,12 +85,13 @@ abstract class AbstractPlugin {
 	 */
 	public function add_plugin( $plugins ) {
 		$plugins[ $this->id() ] = array(
-			'title'    => $this->plugin_utils->get_plugin_name(),
-			'desc'     => $this->plugin_utils->get_plugin_description(),
-			'icon'     => '',
-			'version'  => $this->plugin_utils->get_plugin_version(),
-			'doc_link' => $this->documentation_url(),
-			'settings' => $this->settings_url(),
+			'title'     => $this->plugin_utils->get_plugin_name(),
+			'desc'      => $this->plugin_utils->get_plugin_description(),
+			'icon'      => '',
+			'version'   => $this->plugin_utils->get_plugin_version(),
+			'doc_link'  => $this->documentation_url(),
+			'option_id' => $this->base_option_id(),
+			'settings'  => $this->settings_url()
 		);
 
 		return $plugins;
