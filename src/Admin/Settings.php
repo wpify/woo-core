@@ -925,28 +925,28 @@ class Settings {
                 color: red;
             }
 
-            .wpifycf-field-toggle .components-form-toggle {
-                height: 24px;
+            .form-table .components-form-toggle {
+                height: 28px;
             }
 
-            .wpifycf-field-toggle .components-form-toggle .components-form-toggle__track {
-                width: 54px;
-                height: 32px;
+            .form-table .components-form-toggle .components-form-toggle__track {
+                width: 50px;
+                height: 28px;
                 border-radius: 16px;
                 border-color: #cccccc;
             }
-            .wpifycf-field-toggle .components-form-toggle.is-checked .components-form-toggle__track {
+            .form-table .components-form-toggle.is-checked .components-form-toggle__track {
                 background-color: #00A0D2;
                 border-color: #00A0D2;
             }
 
-            .wpifycf-field-toggle .components-form-toggle .components-form-toggle__thumb {
-                width: 28px;
-                height: 28px;
+            .form-table .components-form-toggle .components-form-toggle__thumb {
+                width: 24px;
+                height: 24px;
                 background-color: #555555;
             }
 
-            .wpifycf-field-toggle .components-form-toggle.is-checked .components-form-toggle__thumb {
+            .form-table .components-form-toggle.is-checked .components-form-toggle__thumb {
                 transform: translateX(22px);
             }
 
