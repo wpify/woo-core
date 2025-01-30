@@ -84,7 +84,7 @@ abstract class AbstractPlugin {
 	 * @return mixed
 	 */
 	public function add_plugin( $plugins ) {
-		$plugins[ $this->id() ] = array(
+		$plugins[ $this->base_option_id() ] = array(
 			'title'        => $this->plugin_utils->get_plugin_name(),
 			'desc'         => $this->plugin_utils->get_plugin_description(),
 			'icon'         => '',
