@@ -85,13 +85,15 @@ abstract class AbstractPlugin {
 	 */
 	public function add_plugin( $plugins ) {
 		$plugins[ $this->id() ] = array(
-			'title'     => $this->plugin_utils->get_plugin_name(),
-			'desc'      => $this->plugin_utils->get_plugin_description(),
-			'icon'      => '',
-			'version'   => $this->plugin_utils->get_plugin_version(),
-			'doc_link'  => $this->documentation_url(),
-			'option_id' => $this->base_option_id(),
-			'settings'  => $this->settings_url()
+			'title'        => $this->plugin_utils->get_plugin_name(),
+			'desc'         => $this->plugin_utils->get_plugin_description(),
+			'icon'         => '',
+			'version'      => $this->plugin_utils->get_plugin_version(),
+			'doc_link'     => $this->documentation_url(),
+			'option_id'    => $this->base_option_id(),
+			'settings_url' => $this->settings_url(),
+			'tabs'         => array(),
+			'settings'     => array()
 		);
 
 		return $plugins;

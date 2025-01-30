@@ -48,13 +48,12 @@ class Settings {
 		$this->id                      = $this::OPTION_NAME;
 		$this->label                   = __( 'WPify Woo', 'wpify-woo' );
 
-		add_action( 'init', array( $this, 'register_settings' ) );
-
 		// Check if the WpifyWoo Core settings have been initialized already
 		$this->initialized = apply_filters( 'wpify_woo_core_settings_initialized', false );
 
 		if ( ! $this->initialized ) {
 			add_filter( 'wpify_woo_core_settings_initialized', '__return_true' );
+			add_action( 'init', array( $this, 'register_settings' ) );
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ), 9999 );
 			add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
 			add_action( 'wcf_before_fields', array( $this, 'render_before_settings' ) );
@@ -85,8 +84,9 @@ class Settings {
 		if ( empty( $plugins ) ) {
 			return;
 		}
+		$this->pages = array();
 		foreach ( $plugins as $plugin_id => $plugin ) {
-			$this->pages[ $plugin_id ] = $this->custom_fields->create_options_page( array(
+			$this->pages[ $plugin_id ] = array(
 				'page_title'  => $plugin['title'],
 				'menu_title'  => $plugin['title'],
 				'menu_slug'   => sprintf( 'wpify/%s', $plugin['option_id'] ),
@@ -94,29 +94,39 @@ class Settings {
 				'parent_slug' => $this::DASHBOARD_SLUG,
 				'class'       => 'wpify-woo-settings',
 				'option_name' => $this->get_settings_name( $plugin['option_id'] ),
-				'tabs'        => $this->is_current( '', $plugin_id ) ? $this->get_settings_tabs() : array(),
-				'items'       => $this->is_current( '', $plugin_id ) ? $this->get_settings_items() : array()
-			) );
-
-			$sections = $this->get_sections( $plugin['option_id'] );
-
+				'tabs'        => $this->is_current( '', $plugin_id ) ? $plugin['tabs'] : array(),
+				'items'       => $this->is_current( '', $plugin_id ) ? $plugin['settings'] : array()
+			);
+			$sections                  = $this->get_sections( $plugin['option_id'] );
 			foreach ( $sections as $section_id => $section ) {
 				if ( empty( $section_id ) ) {
 					continue;
 				}
 
-				$this->pages[ $section_id ] = $this->custom_fields->create_options_page( array(
+				if ( isset( $this->pages[ $section_id ] ) ) {
+					$this->pages[ $section_id ]['page_title']  = $section['title'];
+					$this->pages[ $section_id ]['option_name'] = $this->get_settings_name( $section['option_id'] );
+					$this->pages[ $section_id ]['tabs']        = $this->is_current( '', $section_id ) ? $section['tabs'] : array();
+					$this->pages[ $section_id ]['items']       = $this->is_current( '', $section_id ) ? $section['settings'] : array();
+					continue;
+				}
+
+				$this->pages[ $section_id ] = array(
 					'page_title'  => $section['title'],
 					'menu_title'  => $section['title'],
 					'menu_slug'   => $section['menu_slug'],
-					'id'          => $section['id'],
+					'id'          => $section_id,
 					'parent_slug' => $section['parent'],
 					'class'       => 'wpify-woo-settings',
-					'option_name' => $this->get_settings_name( $section_id ),
-					'tabs'        => $this->is_current( '', $section_id ) ? $this->get_settings_tabs() : array(),
-					'items'       => $this->is_current( '', $section_id ) ? $this->get_settings_items() : array()
-				) );
+					'option_name' => $this->get_settings_name( $section['option_id'] ),
+					'tabs'        => $this->is_current( '', $section_id ) ? $section['tabs'] : array(),
+					'items'       => $this->is_current( '', $section_id ) ? $section['settings'] : array()
+				);
 			}
+		}
+
+		foreach ( $this->pages as $page ) {
+			$this->custom_fields->create_options_page( $page );
 		}
 
 //		} else {
@@ -153,11 +163,12 @@ class Settings {
 	 * @return array
 	 */
 	public function get_sections( $subpage = null ): array {
-		$current_page = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
-		if ( ! str_contains( $current_page, 'wpify/' ) ) {
-			return [];
-		}
 		if ( ! $subpage ) {
+			$current_page = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
+			if ( ! str_contains( $current_page, 'wpify/' ) ) {
+				return [];
+			}
+
 			$subpage = explode( '/', $current_page )[1] ?? '';
 		}
 
@@ -307,6 +318,7 @@ class Settings {
 		return apply_filters( 'wpify_woo_settings_tabs_' . $current_section, $tabs );
 	}
 
+    // UNUSED
 	public function settings_general() {
 		return array(
 			array(
@@ -319,6 +331,7 @@ class Settings {
 		);
 	}
 
+    // UNUSED
 	public function render_before_settings( $args ) {
 		if ( $args['object_type'] === 'woocommerce_settings' && $args['tab']['id'] === 'wpify-woo-settings' && empty( $args['section']['id'] ) ) {
 			?>
@@ -327,6 +340,7 @@ class Settings {
 		}
 	}
 
+    // UNUSED
 	public function render_after_settings( $args ) {
 		if ( $args['object_type'] === 'woocommerce_settings' && $args['tab']['id'] === 'wpify-woo-settings' && empty( $args['section']['id'] ) ) {
 			?>
@@ -523,10 +537,10 @@ class Settings {
 						?>
                         <div style="flex: 1"></div>
 						<?php
-						if ( $installed && isset( $plugin['settings'] ) ) {
+						if ( $installed && isset( $plugin['settings_url'] ) ) {
 							?>
                             <span><a class="button" href="<?php
-								echo esc_url( $plugin['settings'] );
+								echo esc_url( $plugin['settings_url'] );
 								?>"
                                      role="button"><?php
 									_e( 'Settings', 'wpify' );
@@ -616,14 +630,18 @@ class Settings {
 		/** @var \WP_Screen $screen */
 		$screen       = get_current_screen();
 		$current_page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+
 		if ( ! $screen || ! str_contains( $current_page, 'wpify' ) ) {
 			return;
 		}
-		$sections = $this->get_sections();
+
 		global $title;
-		$data = array(
+
+		$data             = array(
 			'title'    => $title,
 			'icon'     => '',
+			'parent'   => '',
+			'plugin'   => '',
 			'menu'     => array(
 				array(
 					'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 6.75c0-1.768 0-2.652.55-3.2C4.097 3 4.981 3 6.75 3s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55C3 9.403 3 8.519 3 6.75m0 10.507c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55C3 19.91 3 19.026 3 17.258M13.5 6.75c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55c-.55-.548-.55-1.432-.55-3.2m0 10.507c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55c-.55-.548-.55-1.432-.55-3.2"/></svg>',
@@ -631,10 +649,17 @@ class Settings {
 					'link'  => add_query_arg( [ 'page' => $this::DASHBOARD_SLUG ], admin_url( 'admin.php' ) )
 				)
 			),
-			'sections' => $sections,
 			'doc_link' => 'https://wpify.io/dokumentace/'
 		);
-		$data = apply_filters( 'wpify_admin_menu_bar_data', $data );
+		$data             = apply_filters( 'wpify_admin_menu_bar_data', $data );
+		$data['sections'] = $this->get_sections( $data['parent'] );
+
+		$plugins = $this->get_plugins();
+		if ( isset( $plugins[ $data['parent'] ] ) ) {
+			$data['title'] = $plugins[ $data['parent'] ]['title'];
+			$data['icon']  = $plugins[ $data['parent'] ]['icon'];
+		}
+
 		?>
         <style type="text/css">
             .wpify-admin-page #wpcontent {
@@ -781,7 +806,7 @@ class Settings {
             form {
                 display: flex;
                 background: white;
-                gap: 20px;
+                column-gap: 40px;
                 padding: 20px;
                 border-radius: 7px;
                 flex-wrap: wrap;
@@ -802,9 +827,13 @@ class Settings {
                 }
             }
 
+            .wpifycf-app:empty {
+                display: none;
+            }
+
             .form-table {
                 @media screen and (min-width: 783px) {
-                    width: 75%;
+                    flex: 1;
                 }
             }
 
@@ -887,8 +916,8 @@ class Settings {
 				foreach ( $data['menu'] as $item ) {
 					$url_components = parse_url( $item['link'] );
 					parse_str( $url_components['query'], $query_params );
-					$menu_page    = isset( $query_params['page'] ) ? $query_params['page'] : '';
-					$active_class = str_contains( $current_page, $menu_page ) ? ' current' : '';
+					$menu_page    = $query_params['page'] ?? '';
+					$active_class = $current_page === $menu_page ? ' current' : '';
 					printf( '<a class="wpify__menu-bar-item%s" href="%s">%s<span>%s</span></a>', esc_attr( $active_class ), esc_url( $item['link'] ), $item['icon'], esc_html( $item['label'] ) );
 				}
 				if ( $data['doc_link'] ) {

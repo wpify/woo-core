@@ -101,7 +101,7 @@ abstract class AbstractModule {
 	 * @return string
 	 */
 	public function get_menu_slug() {
-		return sprintf( 'wpify/%s/%s', $this->parent_settings_id(), $this->id );
+		return sprintf( 'wpify/%s', $this->id );
 	}
 
 	/**
@@ -138,6 +138,8 @@ abstract class AbstractModule {
 			'menu_slug' => $this->get_menu_slug(),
 			'url'       => $this->get_settings_url(),
 			'option_id' => $this->id(),
+			'tabs'  => $this->settings_tabs(),
+			'settings'  => $this->settings()
 		);
 
 		return $sections;
@@ -184,6 +186,14 @@ abstract class AbstractModule {
 		}
 
 		return $key;
+	}
+
+	/**
+	 * Module Settings tabs
+	 * @return array Settings tabs.
+	 */
+	public function settings_tabs(): array {
+		return array();
 	}
 
 	/**
@@ -250,6 +260,7 @@ abstract class AbstractModule {
 		return $this->license;
 	}
 
+    // UNUSED
 	public function register_menu_page() {
 		if ( did_action( 'wpify_woo_settings_menu_page_registered' ) ) {
 			// Register the submenu page.
@@ -273,10 +284,10 @@ abstract class AbstractModule {
 			return $data;
 		}
 
-		$plugin = null; // TODO get plugin class
-
-		$data['title']    = $plugin ? $plugin->name() : $this->name();
+		$data['title']    = '';
 		$data['icon']     = '';
+		$data['parent'] = $this->parent_settings_id();
+		$data['plugin'] = $this->plugin_slug();
 		$data['menu'][]   = array(
 			'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 5h-3m-4.25-2v4M13 5H3m4 7H3m7.75-2v4M21 12H11m10 7h-3m-4.25-2v4M13 19H3"/></svg>',
 			'label' => __( 'Settings', 'wpify' ),
