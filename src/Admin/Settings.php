@@ -103,11 +103,13 @@ class Settings {
 					continue;
 				}
 
-				if ( isset( $this->pages[ $section_id ] ) ) {
-					$this->pages[ $section_id ]['page_title']  = $section['title'];
-					$this->pages[ $section_id ]['option_name'] = $this->get_settings_name( $section['option_id'] );
-					$this->pages[ $section_id ]['tabs']        = $this->is_current( '', $section_id ) ? $section['tabs'] : array();
-					$this->pages[ $section_id ]['items']       = $this->is_current( '', $section_id ) ? $section['settings'] : array();
+				if ( isset( $this->pages[ $section_id ] ) || $plugin['option_id'] === $section['option_id'] ) {
+					$this->pages[ $plugin_id ]['page_title']  = $section['title'];
+					$this->pages[ $plugin_id ]['menu_slug']   = $section['menu_slug'];
+					$this->pages[ $plugin_id ]['id']          = $section_id;
+					$this->pages[ $plugin_id ]['option_name'] = $this->get_settings_name( $section['option_id'] );
+					$this->pages[ $plugin_id ]['tabs']        = $this->is_current( '', $section_id ) ? $section['tabs'] : array();
+					$this->pages[ $plugin_id ]['items']       = $this->is_current( '', $section_id ) ? $section['settings'] : array();
 					continue;
 				}
 
@@ -318,7 +320,7 @@ class Settings {
 		return apply_filters( 'wpify_woo_settings_tabs_' . $current_section, $tabs );
 	}
 
-    // UNUSED
+	// UNUSED
 	public function settings_general() {
 		return array(
 			array(
@@ -331,7 +333,7 @@ class Settings {
 		);
 	}
 
-    // UNUSED
+	// UNUSED
 	public function render_before_settings( $args ) {
 		if ( $args['object_type'] === 'woocommerce_settings' && $args['tab']['id'] === 'wpify-woo-settings' && empty( $args['section']['id'] ) ) {
 			?>
@@ -340,7 +342,7 @@ class Settings {
 		}
 	}
 
-    // UNUSED
+	// UNUSED
 	public function render_after_settings( $args ) {
 		if ( $args['object_type'] === 'woocommerce_settings' && $args['tab']['id'] === 'wpify-woo-settings' && empty( $args['section']['id'] ) ) {
 			?>
@@ -656,8 +658,9 @@ class Settings {
 
 		$plugins = $this->get_plugins();
 		if ( isset( $plugins[ $data['parent'] ] ) ) {
-			$data['title'] = $plugins[ $data['parent'] ]['title'];
-			$data['icon']  = $plugins[ $data['parent'] ]['icon'];
+			$data['title']    = $plugins[ $data['parent'] ]['title'];
+			$data['icon']     = $plugins[ $data['parent'] ]['icon'];
+			$data['doc_link'] = $data['doc_link'] ?: $plugins[ $data['parent'] ]['doc_link'];
 		}
 
 		?>

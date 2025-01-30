@@ -59,12 +59,20 @@ abstract class AbstractPlugin {
 	}
 
 	/**
+	 * Menu slug for settings page url
+	 * @return string
+	 */
+	public function get_menu_slug(): string {
+		return sprintf( 'wpify/%s', $this->id() );
+	}
+
+	/**
 	 * Plugin settings url
 	 *
 	 * @return string
 	 */
 	public function settings_url(): string {
-		return add_query_arg( [ 'page' => sprintf( 'wpify/%s', $this->id() ) ], admin_url( 'admin.php' ) );
+		return add_query_arg( [ 'page' => $this->get_menu_slug() ], admin_url( 'admin.php' ) );
 	}
 
 	/**
@@ -77,6 +85,22 @@ abstract class AbstractPlugin {
 	}
 
 	/**
+	 * Plugin general Settings tabs
+	 * @return array Settings tabs.
+	 */
+	public function settings_tabs(): array {
+		return array();
+	}
+
+	/**
+	 * Plugin general Settings
+	 * @return array Settings.
+	 */
+	public function settings(): array {
+		return array();
+	}
+
+	/**
 	 * Register plugin into WPify dashboard
 	 *
 	 * @param $plugins
@@ -84,16 +108,17 @@ abstract class AbstractPlugin {
 	 * @return mixed
 	 */
 	public function add_plugin( $plugins ) {
-		$plugins[ $this->base_option_id() ] = array(
+		$plugins[ $this->id() ] = array(
 			'title'        => $this->plugin_utils->get_plugin_name(),
 			'desc'         => $this->plugin_utils->get_plugin_description(),
 			'icon'         => '',
 			'version'      => $this->plugin_utils->get_plugin_version(),
 			'doc_link'     => $this->documentation_url(),
+			'menu_slug'    => $this->get_menu_slug(),
 			'option_id'    => $this->base_option_id(),
 			'settings_url' => $this->settings_url(),
-			'tabs'         => array(),
-			'settings'     => array()
+			'tabs'         => $this->settings_tabs(),
+			'settings'     => $this->settings()
 		);
 
 		return $plugins;
