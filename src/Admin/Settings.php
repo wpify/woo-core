@@ -814,6 +814,30 @@ class Settings {
                 align-items: center;
             }
 
+            .wpify__modules-toggle {
+                flex-flow: row;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+
+            .wpify__modules-toggle .components-base-control  {
+                flex: 1;
+                width: 300px;
+                padding: 10px 20px;
+                border-radius: 7px;
+                -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.42);
+                -moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.42);
+                box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.42);
+            }
+
+            .wpify__modules-toggle .components-base-control h3  {
+                margin: 10px 0;
+            }
+
+            .wpify__modules-toggle .components-base-control .components-form-toggle  {
+                margin: 20px 10px 20px 0;
+            }
+
             form {
                 display: flex;
                 background: white;
