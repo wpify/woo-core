@@ -910,7 +910,7 @@ class Settings {
 				}
 				?>
                 <div class="wpify__menu-bar-name"><?php
-					echo esc_html( $title );
+					echo esc_html( $data['title'] );
 					?></div>
 				<?php
 				foreach ( $data['menu'] as $item ) {
