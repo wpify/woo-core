@@ -89,7 +89,7 @@ class Settings {
 			$this->pages[ $plugin_id ] = array(
 				'page_title'  => $plugin['title'],
 				'menu_title'  => $plugin['title'],
-				'menu_slug'   => sprintf( 'wpify/%s', $plugin['option_id'] ),
+				'menu_slug'   => $plugin['menu_slug'],
 				'id'          => $plugin_id,
 				'parent_slug' => $this::DASHBOARD_SLUG,
 				'class'       => 'wpify-woo-settings',
@@ -105,9 +105,8 @@ class Settings {
 
 				if ( isset( $this->pages[ $section_id ] ) || $plugin['option_id'] === $section['option_id'] ) {
 					$this->pages[ $plugin_id ]['page_title']  = $section['title'];
-					$this->pages[ $plugin_id ]['menu_slug']   = $section['menu_slug'];
 					$this->pages[ $plugin_id ]['id']          = $section_id;
-					$this->pages[ $plugin_id ]['option_name'] = $this->get_settings_name( $section['option_id'] );
+					$this->pages[ $plugin_id ]['option_name'] = $section['option_name'] ?? $this->get_settings_name( $section['option_id'] );
 					$this->pages[ $plugin_id ]['tabs']        = $this->is_current( '', $section_id ) ? $section['tabs'] : array();
 					$this->pages[ $plugin_id ]['items']       = $this->is_current( '', $section_id ) ? $section['settings'] : array();
 					continue;
@@ -120,7 +119,7 @@ class Settings {
 					'id'          => $section_id,
 					'parent_slug' => $section['parent'],
 					'class'       => 'wpify-woo-settings',
-					'option_name' => $this->get_settings_name( $section['option_id'] ),
+					'option_name' => $section['option_name'] ?? $this->get_settings_name( $section['option_id'] ),
 					'tabs'        => $this->is_current( '', $section_id ) ? $section['tabs'] : array(),
 					'items'       => $this->is_current( '', $section_id ) ? $section['settings'] : array()
 				);
@@ -639,7 +638,7 @@ class Settings {
 
 		global $title;
 
-		$data             = array(
+		$data     = array(
 			'title'    => $title,
 			'icon'     => '',
 			'parent'   => '',
@@ -653,14 +652,21 @@ class Settings {
 			),
 			'doc_link' => 'https://wpify.io/dokumentace/'
 		);
-		$data             = apply_filters( 'wpify_admin_menu_bar_data', $data );
-		$data['sections'] = $this->get_sections( $data['parent'] );
+		$data     = apply_filters( 'wpify_admin_menu_bar_data', $data );
+		$sections = $this->get_sections( $data['parent'] );
+
+		foreach ( $sections as $section_id => $section ) {
+			if ( isset( $section['in_menubar'] ) && ! $section['in_menubar'] ) {
+				unset( $sections[ $section_id ] );
+			}
+		}
+		$data['sections'] = $sections;
 
 		$plugins = $this->get_plugins();
-		if ( isset( $plugins[ $data['parent'] ] ) ) {
-			$data['title']    = $plugins[ $data['parent'] ]['title'];
-			$data['icon']     = $plugins[ $data['parent'] ]['icon'];
-			$data['doc_link'] = $data['doc_link'] ?: $plugins[ $data['parent'] ]['doc_link'];
+		if ( isset( $plugins[ $data['plugin'] ] ) ) {
+			$data['title']    = $plugins[ $data['plugin'] ]['title'];
+			$data['icon']     = $plugins[ $data['plugin'] ]['icon'];
+			$data['doc_link'] = $data['doc_link'] ?: $plugins[ $data['plugin'] ]['doc_link'];
 		}
 
 		?>
@@ -687,6 +693,7 @@ class Settings {
                 justify-content: space-between;
                 align-content: center;
                 min-height: 60px;
+                border-bottom: 1px solid #e5e5e5;
             }
 
             .wpify__menu-bar-column {
@@ -744,6 +751,7 @@ class Settings {
                 display: flex;
                 justify-content: start;
                 align-content: center;
+                border-bottom: 1px solid #e5e5e5;
             }
 
             .wpify__menu-section-bar-item {
@@ -900,6 +908,60 @@ class Settings {
                     max-width: 300px;
                 }
             }
+
+            input[type=color], input[type=date], input[type=datetime-local], input[type=datetime], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], select, textarea {
+                padding: 5px 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            .wpifycf-select .wpifycf-select__control {
+                padding: 5px 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            .wpifycf-select .wpifycf-select__clear-indicator {
+                color: red;
+            }
+
+            .wpifycf-field-toggle .components-form-toggle {
+                height: 24px;
+            }
+
+            .wpifycf-field-toggle .components-form-toggle .components-form-toggle__track {
+                width: 54px;
+                height: 32px;
+                border-radius: 16px;
+                border-color: #cccccc;
+            }
+            .wpifycf-field-toggle .components-form-toggle.is-checked .components-form-toggle__track {
+                background-color: #00A0D2;
+                border-color: #00A0D2;
+            }
+
+            .wpifycf-field-toggle .components-form-toggle .components-form-toggle__thumb {
+                width: 28px;
+                height: 28px;
+                background-color: #555555;
+            }
+
+            .wpifycf-field-toggle .components-form-toggle.is-checked .components-form-toggle__thumb {
+                transform: translateX(22px);
+            }
+
+            .wpify-admin-page form p .button-primary {
+                background: #00A0D2;
+                border-color: #00A0D2;
+                color: white;
+                padding: 7px 25px;
+                text-transform: uppercase;
+            }
+
+            .wpify-admin-page form p .button-primary:hover, .wpify-admin-page form p .button-primary:active {
+                background: #826eb4;
+                border-color: #826eb4;
+            }
         </style>
         <div class="wpify__menu-bar">
             <div class="wpify__menu-bar-column">
@@ -913,7 +975,7 @@ class Settings {
 				}
 				?>
                 <div class="wpify__menu-bar-name"><?php
-					echo esc_html( $data['title'] );
+					echo esc_html( $data['title'] ?: $title );
 					?></div>
 				<?php
 				foreach ( $data['menu'] as $item ) {

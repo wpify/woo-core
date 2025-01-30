@@ -125,6 +125,14 @@ abstract class AbstractModule {
 	}
 
 	/**
+	 * Display module in admin menu bar
+	 * @return bool
+	 */
+	public function display_in_menubar(): bool {
+		return true;
+	}
+
+	/**
 	 * Add module section into settings
 	 *
 	 * @param $sections
@@ -133,13 +141,14 @@ abstract class AbstractModule {
 	 */
 	public function add_settings_section( $sections ) {
 		$sections[ $this->id() ] = array(
-			'title'     => $this->name(),
-			'parent'    => $this->parent_settings_id(),
-			'menu_slug' => $this->get_menu_slug(),
-			'url'       => $this->get_settings_url(),
-			'option_id' => $this->id(),
-			'tabs'  => $this->settings_tabs(),
-			'settings'  => $this->settings()
+			'title'      => $this->name(),
+			'parent'     => $this->parent_settings_id(),
+			'menu_slug'  => $this->get_menu_slug(),
+			'url'        => $this->get_settings_url(),
+			'option_id'  => $this->id(),
+			'tabs'       => $this->settings_tabs(),
+			'settings'   => $this->settings(),
+			'in_menubar' => $this->display_in_menubar(),
 		);
 
 		return $sections;
@@ -260,7 +269,7 @@ abstract class AbstractModule {
 		return $this->license;
 	}
 
-    // UNUSED
+	// UNUSED
 	public function register_menu_page() {
 		if ( did_action( 'wpify_woo_settings_menu_page_registered' ) ) {
 			// Register the submenu page.
@@ -284,10 +293,8 @@ abstract class AbstractModule {
 			return $data;
 		}
 
-		$data['title']    = '';
-		$data['icon']     = '';
-		$data['parent'] = $this->parent_settings_id();
-		$data['plugin'] = $this->plugin_slug();
+		$data['parent']   = $this->parent_settings_id();
+		$data['plugin']   = $this->plugin_slug();
 		$data['menu'][]   = array(
 			'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 5h-3m-4.25-2v4M13 5H3m4 7H3m7.75-2v4M21 12H11m10 7h-3m-4.25-2v4M13 19H3"/></svg>',
 			'label' => __( 'Settings', 'wpify' ),
