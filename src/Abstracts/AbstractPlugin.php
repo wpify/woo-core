@@ -85,6 +85,15 @@ abstract class AbstractPlugin {
 	}
 
 	/**
+	 * Plugin support url
+	 *
+	 * @return string
+	 */
+	public function support_url(): string {
+		return '';
+	}
+
+	/**
 	 * Plugin general Settings tabs
 	 * @return array Settings tabs.
 	 */
@@ -114,6 +123,7 @@ abstract class AbstractPlugin {
 			'icon'         => '',
 			'version'      => $this->plugin_utils->get_plugin_version(),
 			'doc_link'     => $this->documentation_url(),
+			'support_url'  => $this->support_url(),
 			'menu_slug'    => $this->get_menu_slug(),
 			'option_id'    => $this->base_option_id(),
 			'settings_url' => $this->settings_url(),

@@ -16,6 +16,8 @@ use Wpify\WooCore\WpifyWooCore;
  */
 class Settings {
 	const OPTION_NAME = 'wpify-woo-settings';
+	const SUPPORT_ID = 'wpify-support';
+	const SUPPORT_MENU_SLUG = 'wpify/support';
 	const DASHBOARD_SLUG = 'wpify';
 
 	private $id;
@@ -234,7 +236,7 @@ class Settings {
 			return true;
 		}
 
-        // crap - always true
+		// crap - always true
 //		foreach ( $this->get_sections() as $module ) {
 //			if ( $current_page == $module['menu_slug'] ) {
 //				return true;
@@ -423,6 +425,14 @@ class Settings {
 			[ $this, 'render_dashboard' ],
 		);
 
+		add_submenu_page(
+			$this::SUPPORT_ID,
+			__( 'WPify Plugins Support', 'wpify' ),
+			__( 'Support', 'wpify' ),
+			'manage_options',
+			$this::SUPPORT_MENU_SLUG,
+			[ $this, 'render_support' ],
+		);
 		do_action( 'wpify_woo_settings_menu_page_registered' );
 	}
 
@@ -628,6 +638,19 @@ class Settings {
 		<?php
 	}
 
+	public function render_support() {
+		?>
+        <div class="wpify-dashboard__wrap wrap">
+            <div class="wpify-dashboard__content">
+                SUPPORT PAGE
+            </div>
+            <div class="wpify-dashboard__sidebar">
+				<?php $this->get_wpify_posts(); ?>
+            </div>
+        </div>
+		<?php
+	}
+
 	public function render_menu_bar() {
 		/** @var \WP_Screen $screen */
 		$screen       = get_current_screen();
@@ -640,18 +663,19 @@ class Settings {
 		global $title;
 
 		$data     = array(
-			'title'    => $title,
-			'icon'     => '',
-			'parent'   => '',
-			'plugin'   => '',
-			'menu'     => array(
+			'title'       => $title,
+			'icon'        => '',
+			'parent'      => '',
+			'plugin'      => '',
+			'menu'        => array(
 				array(
 					'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 6.75c0-1.768 0-2.652.55-3.2C4.097 3 4.981 3 6.75 3s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55C3 9.403 3 8.519 3 6.75m0 10.507c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55C3 19.91 3 19.026 3 17.258M13.5 6.75c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55c-.55-.548-.55-1.432-.55-3.2m0 10.507c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55c-.55-.548-.55-1.432-.55-3.2"/></svg>',
 					'label' => __( 'Dashboard', 'wpify' ),
 					'link'  => add_query_arg( [ 'page' => $this::DASHBOARD_SLUG ], admin_url( 'admin.php' ) )
 				)
 			),
-			'doc_link' => 'https://wpify.io/dokumentace/'
+			'support_url' => add_query_arg( [ 'page' => $this::SUPPORT_MENU_SLUG ], admin_url( 'admin.php' ) ),
+			'doc_link'    => 'https://wpify.io/dokumentace/'
 		);
 		$data     = apply_filters( 'wpify_admin_menu_bar_data', $data );
 		$sections = $this->get_sections( $data['parent'] );
@@ -665,9 +689,10 @@ class Settings {
 
 		$plugins = $this->get_plugins();
 		if ( isset( $plugins[ $data['plugin'] ] ) ) {
-			$data['title']    = $plugins[ $data['plugin'] ]['title'];
-			$data['icon']     = $plugins[ $data['plugin'] ]['icon'];
-			$data['doc_link'] = $data['doc_link'] ?: $plugins[ $data['plugin'] ]['doc_link'];
+			$data['title']       = $plugins[ $data['plugin'] ]['title'];
+			$data['icon']        = $plugins[ $data['plugin'] ]['icon'];
+			$data['doc_link']    = $data['doc_link'] ?: $plugins[ $data['plugin'] ]['doc_link'];
+			$data['support_url'] = $plugins[ $data['plugin'] ]['support_url'] ?: $data['support_url'];
 		}
 
 		?>
@@ -695,13 +720,29 @@ class Settings {
                 align-content: center;
                 min-height: 60px;
                 border-bottom: 1px solid #e5e5e5;
+
+                @media screen and (max-width: 600px) {
+                    padding-top: 50px;
+                    flex-wrap: wrap;
+                }
             }
 
             .wpify__menu-bar-column {
                 display: flex;
                 align-content: center;
                 flex-wrap: wrap;
-                gap: 20px;
+                column-gap: 20px;
+            }
+
+            .wpify__menu-bar-column.menu-column {
+                @media screen and (min-width: 600px) {
+                    flex: 1;
+                }
+
+                @media screen and (max-width: 600px) {
+                    order: 3;
+                    width: 100%;
+                }
             }
 
             .wpify__menu-bar-column > * {
@@ -722,6 +763,7 @@ class Settings {
             .wpify__menu-bar-name {
                 font-size: 18px;
                 font-weight: bold;
+                margin-right: 20px;
             }
 
             .wpify__menu-bar-item {
@@ -750,6 +792,7 @@ class Settings {
                 background: white;
                 padding: 0 20px;
                 display: flex;
+                flex-wrap: wrap;
                 justify-content: start;
                 align-content: center;
                 border-bottom: 1px solid #e5e5e5;
@@ -821,7 +864,7 @@ class Settings {
                 gap: 20px;
             }
 
-            .wpify__modules-toggle .components-base-control  {
+            .wpify__modules-toggle .components-base-control {
                 flex: 1;
                 width: 300px;
                 padding: 10px 20px;
@@ -831,11 +874,19 @@ class Settings {
                 box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.42);
             }
 
-            .wpify__modules-toggle .components-base-control h3  {
+            .wpify__modules-toggle .components-base-control .components-toggle-control__label > span {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: baseline;
+            }
+
+            .wpify__modules-toggle .components-base-control h3 {
+                width: 100%;
                 margin: 10px 0;
             }
 
-            .wpify__modules-toggle .components-base-control .components-form-toggle  {
+            .wpify__modules-toggle .components-base-control .components-form-toggle {
                 margin: 20px 10px 20px 0;
             }
 
@@ -960,6 +1011,7 @@ class Settings {
                 border-radius: 16px;
                 border-color: #cccccc;
             }
+
             .form-table .components-form-toggle.is-checked .components-form-toggle__track {
                 background-color: #00A0D2;
                 border-color: #00A0D2;
@@ -989,7 +1041,7 @@ class Settings {
             }
         </style>
         <div class="wpify__menu-bar">
-            <div class="wpify__menu-bar-column">
+            <div class="wpify__menu-bar-column title-column">
 				<?php
 				if ( $data['icon'] ) {
 					?>
@@ -999,9 +1051,13 @@ class Settings {
 					<?php
 				}
 				?>
-                <div class="wpify__menu-bar-name"><?php
+                <div class="wpify__menu-bar-name">
+					<?php
 					echo esc_html( $data['title'] ?: $title );
-					?></div>
+					?>
+                </div>
+            </div>
+            <div class="wpify__menu-bar-column menu-column">
 				<?php
 				foreach ( $data['menu'] as $item ) {
 					$url_components = parse_url( $item['link'] );
@@ -1015,7 +1071,7 @@ class Settings {
 					printf( '<a class="wpify__menu-bar-item" href="%s" target="_blank">%s<span>%s</span></a>', esc_url( $data['doc_link'] ), $doc_icon, __( 'Documentation', 'wpify' ) );
 				}
 				$support_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"><path d="M21 12a9 9 0 1 1-18 0a9 9 0 0 1 18 0"/><path d="M12 13.496c0-2.003 2-1.503 2-3.506c0-2.659-4-2.659-4 0m2 6.007v-.5"/></g></svg>';
-				printf( '<a class="wpify__menu-bar-item" href="%s">%s<span>%s</span></a>', esc_url( '#' ), $support_icon, __( 'Support', 'wpify' ) );
+				printf( '<a class="wpify__menu-bar-item" href="%s">%s<span>%s</span></a>', esc_url( $data['support_url'] ), $support_icon, __( 'Support', 'wpify' ) );
 				?>
             </div>
             <div class="wpify__menu-bar-column">
