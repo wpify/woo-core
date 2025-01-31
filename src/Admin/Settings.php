@@ -463,7 +463,7 @@ class Settings {
 		$installed_plugins = $this->get_plugins();
 		$extensions        = get_transient( 'wpify_woo_extensions' );
 
-		if ( false === $extensions ) {
+		if ( ! $extensions ) {
 			$response = wp_remote_get( 'https://wpify.io/wp-json/wpify/v1/plugins-list' );
 
 			if ( ! is_wp_error( $response ) ) {
@@ -473,21 +473,23 @@ class Settings {
 		}
 
 		$extensions_map = array();
-		foreach ( $extensions as $extension ) {
-			$extensions_map[ $extension['slug'] ] = $extension;
-		}
+		if ( $extensions ) {
+			foreach ( $extensions as $extension ) {
+				$extensions_map[ $extension['slug'] ] = $extension;
+			}
 
-		foreach ( $installed_plugins as $slug => $plugin ) {
-			if ( isset( $extensions_map[ $slug ] ) ) {
-				$installed_plugins[ $slug ] = array_merge( $plugin, $extensions_map[ $slug ] );
-				unset( $extensions_map[ $slug ] );
+			foreach ( $installed_plugins as $slug => $plugin ) {
+				if ( isset( $extensions_map[ $slug ] ) ) {
+					$installed_plugins[ $slug ] = array_merge( $plugin, $extensions_map[ $slug ] );
+					unset( $extensions_map[ $slug ] );
+				}
 			}
 		}
 
 		$html = sprintf( '<h2>%s</h2>', __( 'Installed plugins', 'wpify' ) );
 		$html .= $this->get_wpify_modules_blocks( $installed_plugins, true );
 
-		if ( $extensions ) {
+		if ( $extensions_map ) {
 			$html .= sprintf( '<h2>%s</h2>', __( 'Our other plugins', 'wpify' ) );
 			$html .= $this->get_wpify_modules_blocks( $extensions_map );
 		}
