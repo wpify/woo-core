@@ -234,19 +234,17 @@ class Settings {
 			return true;
 		}
 
-        // crap - always true
-//		foreach ( $this->get_sections() as $module ) {
-//			if ( $current_page == $module['menu_slug'] ) {
-//				return true;
-//			}
-//		}
-
 		foreach ( $this->modules_manager->get_modules() as $module ) {
 			$option_name = $this->get_settings_name( $module->get_id() );
 			if ( isset( $_REQUEST[ $option_name ] ) ) {
 				return true;
 			}
 		}
+
+		if (wp_is_json_request() && isset($_GET['module_id']) && $_GET['module_id'] === $section) {
+			return true;
+		}
+
 
 		return false;
 	}
