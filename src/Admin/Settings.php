@@ -12,6 +12,7 @@ use Wpify\WooCore\WpifyWooCore;
 
 /**
  * Class Settings
+ *
  * @package WpifyWooCore\Admin
  */
 class Settings {
@@ -95,7 +96,7 @@ class Settings {
 				'class'       => 'wpify-woo-settings',
 				'option_name' => $this->get_settings_name( $plugin['option_id'] ),
 				'tabs'        => $this->is_current( '', $plugin_id ) ? $plugin['tabs'] : array(),
-				'items'       => $this->is_current( '', $plugin_id ) ? $plugin['settings'] : array()
+				'items'       => $this->is_current( '', $plugin_id ) ? $plugin['settings'] : array(),
 			);
 			$sections                  = $this->get_sections( $plugin['option_id'] );
 			foreach ( $sections as $section_id => $section ) {
@@ -121,7 +122,7 @@ class Settings {
 					'class'       => 'wpify-woo-settings',
 					'option_name' => $section['option_name'] ?? $this->get_settings_name( $section['option_id'] ),
 					'tabs'        => $this->is_current( '', $section_id ) ? $section['tabs'] : array(),
-					'items'       => $this->is_current( '', $section_id ) ? $section['settings'] : array()
+					'items'       => $this->is_current( '', $section_id ) ? $section['settings'] : array(),
 				);
 			}
 		}
@@ -178,6 +179,7 @@ class Settings {
 
 	/**
 	 * Get an array of enabled modules
+	 *
 	 * @return array
 	 */
 	public function get_enabled_modules(): array {
@@ -220,7 +222,6 @@ class Settings {
 	}
 
 	public function is_current( $tab = '', $section = '' ): bool {
-		$current_page    = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
 		$current_tab     = empty( $_REQUEST['tab'] ) ? '' : $_REQUEST['tab'];
 		$current_section = empty( $_REQUEST['section'] ) ? '' : $_REQUEST['section'];
 
@@ -241,10 +242,17 @@ class Settings {
 			}
 		}
 
-		if (wp_is_json_request() && isset($_GET['module_id']) && $_GET['module_id'] === $section) {
+		if ( wp_is_json_request() && isset( $_GET['module_id'] ) && $_GET['module_id'] === $section ) {
 			return true;
 		}
 
+		if ( isset( $_POST['option_page'] ) && $_POST['option_page'] === $this->get_settings_name( $section ) ) {
+			return true;
+		}
+
+		if ( isset( $_POST['option_page'] ) && str_contains( $_POST['option_page'], $section ) ) {
+			return true;
+		}
 
 		return false;
 	}
@@ -272,6 +280,7 @@ class Settings {
 
 	/**
 	 * Get settings array
+	 *
 	 * @return array
 	 */
 	public function get_settings_items() {
@@ -296,6 +305,7 @@ class Settings {
 
 	/**
 	 * Get settings tabs array
+	 *
 	 * @return array
 	 */
 	public function get_settings_tabs() {
@@ -408,7 +418,8 @@ class Settings {
 			'manage_options',
 			$this::DASHBOARD_SLUG,
 			[ $this, 'render_dashboard' ],
-			'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTUwIiBoZWlnaHQ9IjU1MCIgdmlld0JveD0iMCAwIDU1MCA1NTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IG9wYWNpdHk9IjAuMyIgd2lkdGg9IjUzMiIgaGVpZ2h0PSI3OCIgcng9IjM5IiB0cmFuc2Zvcm09Im1hdHJpeCgtNC4zNzExNGUtMDggMSAxIDQuMzcxMTRlLTA4IDM2Ny43NSA5LjAwMDEyKSIgZmlsbD0id2hpdGUiLz4KPHJlY3Qgb3BhY2l0eT0iMC4zIiB3aWR0aD0iNTMwIiBoZWlnaHQ9Ijc4IiByeD0iMzkiIHRyYW5zZm9ybT0ibWF0cml4KC00LjM3MTE0ZS0wOCAxIDEgNC4zNzExNGUtMDggMjA0Ljc1IDkuMDAwMTIpIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCBvcGFjaXR5PSIwLjgiIHdpZHRoPSI1NTcuODgyIiBoZWlnaHQ9Ijc4LjE1ODUiIHJ4PSIzOS4wNzkyIiB0cmFuc2Zvcm09Im1hdHJpeCgwLjMzODc4MSAwLjk0MDg2NSAwLjk0MDg2NSAtMC4zMzg3ODEgMzEuNzUgMjQuNDc4OCkiIGZpbGw9IndoaXRlIi8+CjxyZWN0IG9wYWNpdHk9IjAuOCIgd2lkdGg9IjU2MC42NzYiIGhlaWdodD0iNzguMTU4NSIgcng9IjM5LjA3OTIiIHRyYW5zZm9ybT0ibWF0cml4KDAuMzM4NzgxIDAuOTQwODY1IDAuOTQwODY1IC0wLjMzODc4MSAxOTMuMjQ5IDI0LjQ3ODgpIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCBvcGFjaXR5PSIwLjgiIHdpZHRoPSIyNTkuNjQ2IiBoZWlnaHQ9Ijc4LjE1ODUiIHJ4PSIzOS4wNzkyIiB0cmFuc2Zvcm09Im1hdHJpeCgwLjMzODc4MSAwLjk0MDg2NSAwLjk0MDg2NSAtMC4zMzg3ODEgMzU2Ljc1IDI0LjQ3ODYpIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=', // icon (from Dashicons for example)
+			'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTUwIiBoZWlnaHQ9IjU1MCIgdmlld0JveD0iMCAwIDU1MCA1NTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IG9wYWNpdHk9IjAuMyIgd2lkdGg9IjUzMiIgaGVpZ2h0PSI3OCIgcng9IjM5IiB0cmFuc2Zvcm09Im1hdHJpeCgtNC4zNzExNGUtMDggMSAxIDQuMzcxMTRlLTA4IDM2Ny43NSA5LjAwMDEyKSIgZmlsbD0id2hpdGUiLz4KPHJlY3Qgb3BhY2l0eT0iMC4zIiB3aWR0aD0iNTMwIiBoZWlnaHQ9Ijc4IiByeD0iMzkiIHRyYW5zZm9ybT0ibWF0cml4KC00LjM3MTE0ZS0wOCAxIDEgNC4zNzExNGUtMDggMjA0Ljc1IDkuMDAwMTIpIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCBvcGFjaXR5PSIwLjgiIHdpZHRoPSI1NTcuODgyIiBoZWlnaHQ9Ijc4LjE1ODUiIHJ4PSIzOS4wNzkyIiB0cmFuc2Zvcm09Im1hdHJpeCgwLjMzODc4MSAwLjk0MDg2NSAwLjk0MDg2NSAtMC4zMzg3ODEgMzEuNzUgMjQuNDc4OCkiIGZpbGw9IndoaXRlIi8+CjxyZWN0IG9wYWNpdHk9IjAuOCIgd2lkdGg9IjU2MC42NzYiIGhlaWdodD0iNzguMTU4NSIgcng9IjM5LjA3OTIiIHRyYW5zZm9ybT0ibWF0cml4KDAuMzM4NzgxIDAuOTQwODY1IDAuOTQwODY1IC0wLjMzODc4MSAxOTMuMjQ5IDI0LjQ3ODgpIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCBvcGFjaXR5PSIwLjgiIHdpZHRoPSIyNTkuNjQ2IiBoZWlnaHQ9Ijc4LjE1ODUiIHJ4PSIzOS4wNzkyIiB0cmFuc2Zvcm09Im1hdHJpeCgwLjMzODc4MSAwLjk0MDg2NSAwLjk0MDg2NSAtMC4zMzg3ODEgMzU2Ljc1IDI0LjQ3ODYpIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=',
+			// icon (from Dashicons for example)
 			59,
 		);
 
@@ -646,10 +657,10 @@ class Settings {
 				array(
 					'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 6.75c0-1.768 0-2.652.55-3.2C4.097 3 4.981 3 6.75 3s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55C3 9.403 3 8.519 3 6.75m0 10.507c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55C3 19.91 3 19.026 3 17.258M13.5 6.75c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55c-.55-.548-.55-1.432-.55-3.2m0 10.507c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55c-.55-.548-.55-1.432-.55-3.2"/></svg>',
 					'label' => __( 'Dashboard', 'wpify' ),
-					'link'  => add_query_arg( [ 'page' => $this::DASHBOARD_SLUG ], admin_url( 'admin.php' ) )
-				)
+					'link'  => add_query_arg( [ 'page' => $this::DASHBOARD_SLUG ], admin_url( 'admin.php' ) ),
+				),
 			),
-			'doc_link' => 'https://wpify.io/dokumentace/'
+			'doc_link' => 'https://wpify.io/dokumentace/',
 		);
 		$data     = apply_filters( 'wpify_admin_menu_bar_data', $data );
 		$sections = $this->get_sections( $data['parent'] );
@@ -819,7 +830,7 @@ class Settings {
                 gap: 20px;
             }
 
-            .wpify__modules-toggle .components-base-control  {
+            .wpify__modules-toggle .components-base-control {
                 flex: 1;
                 width: 300px;
                 padding: 10px 20px;
@@ -829,11 +840,11 @@ class Settings {
                 box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.42);
             }
 
-            .wpify__modules-toggle .components-base-control h3  {
+            .wpify__modules-toggle .components-base-control h3 {
                 margin: 10px 0;
             }
 
-            .wpify__modules-toggle .components-base-control .components-form-toggle  {
+            .wpify__modules-toggle .components-base-control .components-form-toggle {
                 margin: 20px 10px 20px 0;
             }
 
@@ -958,6 +969,7 @@ class Settings {
                 border-radius: 16px;
                 border-color: #cccccc;
             }
+
             .form-table .components-form-toggle.is-checked .components-form-toggle__track {
                 background-color: #00A0D2;
                 border-color: #00A0D2;
@@ -1009,10 +1021,12 @@ class Settings {
 					printf( '<a class="wpify__menu-bar-item%s" href="%s">%s<span>%s</span></a>', esc_attr( $active_class ), esc_url( $item['link'] ), $item['icon'], esc_html( $item['label'] ) );
 				}
 				if ( $data['doc_link'] ) {
-					$doc_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"><path d="M5 20.25c0 .414.336.75.75.75h10.652C17.565 21 18 20.635 18 19.4v-1.445M5 20.25A2.25 2.25 0 0 1 7.25 18h10.152q.339 0 .598-.045M5 20.25V6.2c0-1.136-.072-2.389 1.092-2.982C6.52 3 7.08 3 8.2 3h9.2c1.236 0 1.6.437 1.6 1.6v11.8c0 .995-.282 1.425-1 1.555"/><path d="m9.6 10.323l1.379 1.575a.3.3 0 0 0 .466-.022L14.245 8"/></g></svg>';
+					$doc_icon
+						= '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"><path d="M5 20.25c0 .414.336.75.75.75h10.652C17.565 21 18 20.635 18 19.4v-1.445M5 20.25A2.25 2.25 0 0 1 7.25 18h10.152q.339 0 .598-.045M5 20.25V6.2c0-1.136-.072-2.389 1.092-2.982C6.52 3 7.08 3 8.2 3h9.2c1.236 0 1.6.437 1.6 1.6v11.8c0 .995-.282 1.425-1 1.555"/><path d="m9.6 10.323l1.379 1.575a.3.3 0 0 0 .466-.022L14.245 8"/></g></svg>';
 					printf( '<a class="wpify__menu-bar-item" href="%s" target="_blank">%s<span>%s</span></a>', esc_url( $data['doc_link'] ), $doc_icon, __( 'Documentation', 'wpify' ) );
 				}
-				$support_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"><path d="M21 12a9 9 0 1 1-18 0a9 9 0 0 1 18 0"/><path d="M12 13.496c0-2.003 2-1.503 2-3.506c0-2.659-4-2.659-4 0m2 6.007v-.5"/></g></svg>';
+				$support_icon
+					= '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"><path d="M21 12a9 9 0 1 1-18 0a9 9 0 0 1 18 0"/><path d="M12 13.496c0-2.003 2-1.503 2-3.506c0-2.659-4-2.659-4 0m2 6.007v-.5"/></g></svg>';
 				printf( '<a class="wpify__menu-bar-item" href="%s">%s<span>%s</span></a>', esc_url( '#' ), $support_icon, __( 'Support', 'wpify' ) );
 				?>
             </div>
