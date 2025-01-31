@@ -234,11 +234,12 @@ class Settings {
 			return true;
 		}
 
-		foreach ( $this->get_sections() as $module ) {
-			if ( $current_page == $module['menu_slug'] ) {
-				return true;
-			}
-		}
+        // crap - always true
+//		foreach ( $this->get_sections() as $module ) {
+//			if ( $current_page == $module['menu_slug'] ) {
+//				return true;
+//			}
+//		}
 
 		foreach ( $this->modules_manager->get_modules() as $module ) {
 			$option_name = $this->get_settings_name( $module->get_id() );
