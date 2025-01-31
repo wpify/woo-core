@@ -435,12 +435,13 @@ class Settings {
 		);
 
 		add_submenu_page(
-			$this::SUPPORT_ID,
+			$this::DASHBOARD_SLUG,
 			__( 'WPify Plugins Support', 'wpify' ),
 			__( 'Support', 'wpify' ),
 			'manage_options',
 			$this::SUPPORT_MENU_SLUG,
 			[ $this, 'render_support' ],
+            99
 		);
 		do_action( 'wpify_woo_settings_menu_page_registered' );
 	}
@@ -653,7 +654,43 @@ class Settings {
 		?>
         <div class="wpify-dashboard__wrap wrap">
             <div class="wpify-dashboard__content">
-                SUPPORT PAGE
+                <div class="wpify__cards">
+                    <div class="wpify__card" style="max-width:100%">
+                        <div class="wpify__card-body">
+                            <h2><?php _e( 'Frequently Asked Questions', 'wpify' ); ?></h2>
+
+                            <div class="faq">
+                                <h3><?php _e( 'How do the pricing plans work?', 'wpify' ); ?></h3>
+                                <p><?php _e( 'When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew at a discounted price.', 'wpify' ); ?></p>
+                            </div>
+
+                            <div class="faq">
+                                <h3><?php _e( 'Will the plugin work if I do not renew my license?', 'wpify' ); ?></h3>
+                                <p><?php _e( 'Yes, the plugin will continue to work, but you will no longer have access to updates and support.', 'wpify' ); ?></p>
+                            </div>
+
+                            <div class="faq">
+                                <h3><?php _e( 'I need a feature that the plugin does not currently support.', 'wpify' ); ?></h3>
+                                <p><?php _e( 'Let us know, and we will consider adding the requested functionality.', 'wpify' ); ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wpify__card">
+                        <div class="wpify__card-body">
+                            <h3><?php _e( 'Do you have any other questions?', 'wpify' ); ?></h3>
+                            <p><?php _e( 'Check out the plugin documentation to see if your question is already answered.', 'wpify' ); ?></p>
+                            <p><a href="https://wpify.io/dokumentace/" target="_blank"
+                                  class="button button-primary"><?php _e( 'Documentation', 'wpify' ); ?></a></p>
+                        </div>
+                    </div>
+
+                    <div class="wpify__card">
+                        <div class="wpify__card-body">
+                            <h3><?php _e( 'If you haven’t found the answer, email us at:', 'wpify' ); ?></h3>
+                            <p><a href="mailto:support@wpify.io">support@wpify.io</a></p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="wpify-dashboard__sidebar">
 				<?php $this->get_wpify_posts(); ?>
@@ -988,7 +1025,6 @@ class Settings {
 
                 .wpify-dashboard__sidebar {
                     width: 300px;
-                    margin-top: 20px;
                 }
 
                 .wpify__card {
@@ -1082,7 +1118,7 @@ class Settings {
 					printf( '<a class="wpify__menu-bar-item" href="%s" target="_blank">%s<span>%s</span></a>', esc_url( $data['doc_link'] ), $doc_icon, __( 'Documentation', 'wpify' ) );
 				}
 				$support_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"><path d="M21 12a9 9 0 1 1-18 0a9 9 0 0 1 18 0"/><path d="M12 13.496c0-2.003 2-1.503 2-3.506c0-2.659-4-2.659-4 0m2 6.007v-.5"/></g></svg>';
-				printf( '<a class="wpify__menu-bar-item" href="%s">%s<span>%s</span></a>', esc_url( '#' ), $support_icon, __( 'Support', 'wpify' ) );
+				printf( '<a class="wpify__menu-bar-item%s" href="%s">%s<span>%s</span></a>', $current_page === $this::SUPPORT_MENU_SLUG ? ' current' : '', esc_url( $data['support_url'] ), $support_icon, __( 'Support', 'wpify' ) );
 				?>
             </div>
             <div class="wpify__menu-bar-column">
