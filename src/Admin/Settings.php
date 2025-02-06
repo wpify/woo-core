@@ -28,12 +28,6 @@ class Settings {
 	/** @var CustomFields */
 	private $custom_fields;
 
-	/** @var WooCommerceIntegration */
-	private $woocommerce_integration;
-
-	/** @var Premium */
-	private $premium;
-
 	/** @var ModulesManager */
 	private $modules_manager;
 
@@ -42,14 +36,16 @@ class Settings {
 
 	private $initialized;
 
-	public function __construct( CustomFields $custom_fields, WooCommerceIntegration $woocommerce_integration, Premium $premium, ModulesManager $modules_manager, AssetFactory $asset_factory ) {
-		$this->custom_fields           = $custom_fields;
-		$this->woocommerce_integration = $woocommerce_integration;
-		$this->premium                 = $premium;
-		$this->modules_manager         = $modules_manager;
-		$this->asset_factory           = $asset_factory;
-		$this->id                      = $this::OPTION_NAME;
-		$this->label                   = __( 'WPify Woo', 'wpify-woo' );
+	public function __construct(
+		CustomFields $custom_fields,
+		ModulesManager $modules_manager,
+		AssetFactory $asset_factory
+	) {
+		$this->custom_fields   = $custom_fields;
+		$this->modules_manager = $modules_manager;
+		$this->asset_factory   = $asset_factory;
+		$this->id              = $this::OPTION_NAME;
+		$this->label           = __( 'WPify Woo', 'wpify-woo' );
 
 		// Check if the WpifyWoo Core settings have been initialized already
 		$this->initialized = apply_filters( 'wpify_woo_core_settings_initialized', false );
@@ -62,7 +58,6 @@ class Settings {
 			add_action( 'wcf_before_fields', array( $this, 'render_before_settings' ) );
 			add_action( 'wcf_after_fields', array( $this, 'render_after_settings' ) );
 			add_action( 'admin_menu', [ $this, 'register_menu_page' ] );
-			//add_action( 'wpifycf_before_options', [ $this, 'render_menu_bar' ] );
 			add_action( 'in_admin_header', [ $this, 'render_menu_bar' ] );
 
 			/** Handle activation/deactivation messages */
@@ -82,7 +77,12 @@ class Settings {
 		return $args;
 	}
 
-	public function register_settings() {
+	/**
+	 * Register admin pages and settings for plugins and modules
+	 *
+	 * @return void
+	 */
+	public function register_settings(): void {
 		$plugins = $this->get_plugins();
 		if ( empty( $plugins ) ) {
 			return;
@@ -132,24 +132,6 @@ class Settings {
 		foreach ( $this->pages as $page ) {
 			$this->custom_fields->create_options_page( $page );
 		}
-
-//		} else {
-//			$this->pages[ $id ] = $this->custom_fields->create_woocommerce_settings( array(
-//				'tab'         => array(
-//					'id'    => $this->id,
-//					'label' => $this->label
-//				),
-//				'section'     => array(
-//					'id'    => $id,
-//					'label' => $label
-//				),
-//				'id'          => $id ?: 'general',
-//				'class'       => 'wpify-woo-settings',
-//				'option_name' => $this->get_settings_name( $id ?: 'general' ),
-//				'tabs'        => $this->is_current( $this->id, $id ) ? $this->get_settings_tabs() : array(),
-//				'items'       => $this->is_current( $this->id, $id ) ? $this->get_settings_items() : array()
-//			) );
-//		}
 	}
 
 	/**
@@ -164,9 +146,11 @@ class Settings {
 	/**
 	 * Get sections
 	 *
+	 * @param string|null $subpage subpage slug
+	 *
 	 * @return array
 	 */
-	public function get_sections( $subpage = null ): array {
+	public function get_sections( string $subpage = null ): array {
 		if ( ! $subpage ) {
 			$current_page = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
 			if ( ! str_contains( $current_page, 'wpify/' ) ) {
@@ -188,7 +172,14 @@ class Settings {
 		return $this->get_settings( 'general' )['enabled_modules'] ?? array();
 	}
 
-	public function enable_module( $module ) {
+	/**
+	 * Set module as active
+	 *
+	 * @param string $module Module slug
+	 *
+	 * @return void
+	 */
+	public function enable_module( string $module ): void {
 		$general_settings = $this->get_settings( 'general' );
 		$enabled_modules  = $general_settings['enabled_modules'] ?? array();
 		if ( ! \in_array( $module, $enabled_modules ) ) {
@@ -201,7 +192,7 @@ class Settings {
 	/**
 	 * Get settings for a specific module
 	 *
-	 * @param string $module Module name.
+	 * @param string $module Module slug.
 	 *
 	 * @return array
 	 */
@@ -209,6 +200,13 @@ class Settings {
 		return get_option( $this->get_settings_name( $module ), array() );
 	}
 
+	/**
+	 * Get settings name
+	 *
+	 * @param string $module Module slug
+	 *
+	 * @return string
+	 */
 	public function get_settings_name( string $module ): string {
 		$key = sprintf( '%s-%s', $this::OPTION_NAME, $module );
 		if ( 'general' !== $module ) {
@@ -223,6 +221,14 @@ class Settings {
 		return $key;
 	}
 
+	/**
+	 * Check if is a current settings page
+	 *
+	 * @param string $tab     tam id
+	 * @param string $section section id
+	 *
+	 * @return bool
+	 */
 	public function is_current( $tab = '', $section = '' ): bool {
 		$current_tab     = empty( $_REQUEST['tab'] ) ? '' : $_REQUEST['tab'];
 		$current_section = empty( $_REQUEST['section'] ) ? '' : $_REQUEST['section'];
@@ -259,6 +265,11 @@ class Settings {
 		return false;
 	}
 
+	/**
+	 * Get current module slug
+	 *
+	 * @return false|mixed|string
+	 */
 	public function get_current_module() {
 		foreach ( $this->modules_manager->get_modules() as $module ) {
 			$module_id   = $module->get_id();
@@ -281,142 +292,14 @@ class Settings {
 	}
 
 	/**
-	 * Get settings array
+	 * Register main settings pages
 	 *
-	 * @return array
+	 * @return void
 	 */
-	public function get_settings_items() {
-		global $current_section;
-
-		$settings = array();
-
-		if ( $current_section === null && isset( $_GET['section'] ) ) {
-			$current_section = sanitize_title( $_GET['section'] );
-		}
-
-		if ( $this->get_current_module() ) {
-			$current_section = $this->get_current_module();
-		}
-
-		if ( ! $current_section ) {
-			$current_section = 'general';
-		}
-
-		return apply_filters( 'wpify_woo_settings_' . $current_section, $settings );
-	}
-
-	/**
-	 * Get settings tabs array
-	 *
-	 * @return array
-	 */
-	public function get_settings_tabs() {
-		global $current_section;
-
-		$tabs = array();
-
-		if ( $current_section === null && isset( $_GET['section'] ) ) {
-			$current_section = sanitize_title( $_GET['section'] );
-		}
-
-		if ( $this->get_current_module() ) {
-			$current_section = $this->get_current_module();
-		}
-
-		if ( ! $current_section ) {
-			$current_section = 'general';
-		}
-
-		return apply_filters( 'wpify_woo_settings_tabs_' . $current_section, $tabs );
-	}
-
-	// UNUSED
-	public function settings_general() {
-		return array(
-			array(
-				'type'    => 'multi_toggle',
-				'id'      => 'enabled_modules',
-				'label'   => __( 'Enabled modules', 'wpify-woo' ),
-				'options' => $this->woocommerce_integration->get_modules(),
-				'desc'    => __( 'Select the modules you want to enable', 'wpify-woo' ),
-			),
-		);
-	}
-
-	// UNUSED
-	public function render_before_settings( $args ) {
-		if ( $args['object_type'] === 'woocommerce_settings' && $args['tab']['id'] === 'wpify-woo-settings' && empty( $args['section']['id'] ) ) {
-			?>
-            <div class="wpify-woo-settings__wrapper">
-			<?php
-		}
-	}
-
-	// UNUSED
-	public function render_after_settings( $args ) {
-		if ( $args['object_type'] === 'woocommerce_settings' && $args['tab']['id'] === 'wpify-woo-settings' && empty( $args['section']['id'] ) ) {
-			?>
-            <div class="wpify-woo-settings__upsells-wrapper">
-                <div class="wpify-woo-settings__upsells-inner">
-                    <h3>
-						<?php
-						_e( 'Do you enjoy this plugin?', 'wpify-woo' );
-						?>
-                        <a href="https://wordpress.org/support/plugin/wpify-woo/reviews/">
-							<?php
-							_e( 'Rate us on Wordpress.org', 'wpify-woo' );
-							?>
-                        </a>
-                    </h3>
-                    <h2><?php
-						_e( 'Get premium extensions!', 'wpify-woo' );
-						?></h2>
-                    <div class="wpify-woo-settings__upsells">
-						<?php
-						foreach ( $this->premium->get_extensions() as $extension ) {
-							?>
-                            <div class="wpify-woo-settings__upsell">
-                                <h3><?php
-									echo $extension['title'];
-									?></h3>
-                                <ul>
-									<?php
-									foreach ( $extension['html_description'] as $item ) {
-										?>
-                                        <li><?php
-											echo $item;
-											?></li>
-										<?php
-									}
-									?>
-                                </ul>
-                                <a href="<?php
-								echo esc_url( $extension['url'] );
-								?>"
-                                   target="_blank"><?php
-									_e( 'Get now!', 'wpify-woo' );
-									?></a>
-                            </div>
-							<?php
-						}
-						?>
-                    </div>
-                </div>
-            </div>
-            </div>
-
-			<?php
-			printf( '<a href="%s">%s</a>', add_query_arg( [
-				'wpify-action' => 'download-log',
-				'wpify-nonce'  => wp_create_nonce( 'download-log' ),
-			], admin_url() ), __( 'Download log', 'wpify-woo' ) );
-		}
-	}
-
 	public function register_menu_page() {
 		add_menu_page(
-			__( 'WPify Plugins', 'wpify' ),
-			__( 'WPify', 'wpify' ),
+			__( 'WPify Plugins', 'wpify-woo' ),
+			__( 'WPify', 'wpify-woo' ),
 			'manage_options',
 			$this::DASHBOARD_SLUG,
 			[ $this, 'render_dashboard' ],
@@ -427,8 +310,8 @@ class Settings {
 
 		add_submenu_page(
 			$this::DASHBOARD_SLUG,
-			__( 'WPify Plugins Dashboard', 'wpify' ),
-			__( 'Dashboard', 'wpify' ),
+			__( 'WPify Plugins Dashboard', 'wpify-woo' ),
+			__( 'Dashboard', 'wpify-woo' ),
 			'manage_options',
 			$this::DASHBOARD_SLUG,
 			[ $this, 'render_dashboard' ],
@@ -436,16 +319,23 @@ class Settings {
 
 		add_submenu_page(
 			$this::DASHBOARD_SLUG,
-			__( 'WPify Plugins Support', 'wpify' ),
-			__( 'Support', 'wpify' ),
+			__( 'WPify Plugins Support', 'wpify-woo' ),
+			__( 'Support', 'wpify-woo' ),
 			'manage_options',
 			$this::SUPPORT_MENU_SLUG,
 			[ $this, 'render_support' ],
-            99
+			99
 		);
 		do_action( 'wpify_woo_settings_menu_page_registered' );
 	}
 
+	/**
+	 * Add custom class to admin body on wpify pages
+	 *
+	 * @param $admin_body_class
+	 *
+	 * @return mixed|string
+	 */
 	public static function add_admin_body_class( $admin_body_class = '' ) {
 		$current_page = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
 
@@ -460,7 +350,12 @@ class Settings {
 		return " $admin_body_class ";
 	}
 
-	public function get_wpify_plugins_overwiev() {
+	/**
+	 * Get html of plugins overview for dashboard
+	 *
+	 * @return string
+	 */
+	public function get_wpify_plugins_overview(): string {
 		$installed_plugins = $this->get_plugins();
 		$extensions        = get_transient( 'wpify_woo_extensions' );
 
@@ -487,18 +382,26 @@ class Settings {
 			}
 		}
 
-		$html = sprintf( '<h2>%s</h2>', __( 'Installed plugins', 'wpify' ) );
+		$html = sprintf( '<h2>%s</h2>', __( 'Installed plugins', 'wpify-woo' ) );
 		$html .= $this->get_wpify_modules_blocks( $installed_plugins, true );
 
 		if ( $extensions_map ) {
-			$html .= sprintf( '<h2>%s</h2>', __( 'Our other plugins', 'wpify' ) );
+			$html .= sprintf( '<h2>%s</h2>', __( 'Our other plugins', 'wpify-woo' ) );
 			$html .= $this->get_wpify_modules_blocks( $extensions_map );
 		}
 
 		return $html;
 	}
 
-	public function get_wpify_modules_blocks( $plugins, $installed = false ) {
+	/**
+	 * Get modules blocks html for overview
+	 *
+	 * @param array $plugins   plugins data
+	 * @param bool  $installed is instaled
+	 *
+	 * @return bool|string
+	 */
+	public function get_wpify_modules_blocks( array $plugins, bool $installed = false ): bool|string {
 		ob_start();
 		?>
         <div class="wpify__cards">
@@ -554,7 +457,7 @@ class Settings {
 							echo esc_url( $plugin['doc_link'] );
 							?>"
                                target="_blank"><?php
-								_e( 'Documentation', 'wpify' );
+								_e( 'Documentation', 'wpify-woo' );
 								?></a>
 							<?php
 						}
@@ -567,7 +470,7 @@ class Settings {
 								echo esc_url( $plugin['settings_url'] );
 								?>"
                                      role="button"><?php
-									_e( 'Settings', 'wpify' );
+									_e( 'Settings', 'wpify-woo' );
 									?></a></span>
 							<?php
 						} else {
@@ -576,7 +479,7 @@ class Settings {
 								echo esc_url( $plugin['link'] );
 								?>"
                                      role="button"><?php
-									_e( 'Get plugin', 'wpify' );
+									_e( 'Get plugin', 'wpify-woo' );
 									?></a></span>
 							<?php
 						}
@@ -592,6 +495,11 @@ class Settings {
 		return ob_get_clean();
 	}
 
+	/**
+	 * Get html of WPify posts
+	 *
+	 * @return string|void
+	 */
 	public function get_wpify_posts() {
 		$response = wp_remote_get( 'https://wpify.io/wp-json/wp/v2/posts?per_page=4&_embed' );
 
@@ -606,7 +514,7 @@ class Settings {
 		}
 
 		?>
-        <h2><?php _e( 'Wpify News', 'wpify' ) ?></h2>
+        <h2><?php _e( 'Wpify News', 'wpify-woo' ) ?></h2>
         <div class="wpify__cards">
 
 			<?php foreach ( $posts as $post ) { ?>
@@ -635,12 +543,17 @@ class Settings {
 		<?php
 	}
 
-	public function render_dashboard() {
+	/**
+	 * Render Dashboard page html
+	 *
+	 * @return void
+	 */
+	public function render_dashboard(): void {
 		?>
         <div class="wpify-dashboard__wrap wrap">
             <div class="wpify-dashboard__content">
 				<?php
-				echo $this->get_wpify_plugins_overwiev();
+				echo $this->get_wpify_plugins_overview();
 				?>
             </div>
             <div class="wpify-dashboard__sidebar">
@@ -650,43 +563,48 @@ class Settings {
 		<?php
 	}
 
-	public function render_support() {
+	/**
+	 * Render Support page html
+	 *
+	 * @return void
+	 */
+	public function render_support(): void {
 		?>
         <div class="wpify-dashboard__wrap wrap">
             <div class="wpify-dashboard__content">
                 <div class="wpify__cards">
                     <div class="wpify__card" style="max-width:100%">
                         <div class="wpify__card-body">
-                            <h2><?php _e( 'Frequently Asked Questions', 'wpify' ); ?></h2>
+                            <h2><?php _e( 'Frequently Asked Questions', 'wpify-woo' ); ?></h2>
 
                             <div class="faq">
-                                <h3><?php _e( 'How do the pricing plans work?', 'wpify' ); ?></h3>
-                                <p><?php _e( 'When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew at a discounted price.', 'wpify' ); ?></p>
+                                <h3><?php _e( 'How do the pricing plans work?', 'wpify-woo' ); ?></h3>
+                                <p><?php _e( 'When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew at a discounted price.', 'wpify-woo' ); ?></p>
                             </div>
 
                             <div class="faq">
-                                <h3><?php _e( 'Will the plugin work if I do not renew my license?', 'wpify' ); ?></h3>
-                                <p><?php _e( 'Yes, the plugin will continue to work, but you will no longer have access to updates and support.', 'wpify' ); ?></p>
+                                <h3><?php _e( 'Will the plugin work if I do not renew my license?', 'wpify-woo' ); ?></h3>
+                                <p><?php _e( 'Yes, the plugin will continue to work, but you will no longer have access to updates and support.', 'wpify-woo' ); ?></p>
                             </div>
 
                             <div class="faq">
-                                <h3><?php _e( 'I need a feature that the plugin does not currently support.', 'wpify' ); ?></h3>
-                                <p><?php _e( 'Let us know, and we will consider adding the requested functionality.', 'wpify' ); ?></p>
+                                <h3><?php _e( 'I need a feature that the plugin does not currently support.', 'wpify-woo' ); ?></h3>
+                                <p><?php _e( 'Let us know, and we will consider adding the requested functionality.', 'wpify-woo' ); ?></p>
                             </div>
                         </div>
                     </div>
                     <div class="wpify__card">
                         <div class="wpify__card-body">
-                            <h3><?php _e( 'Do you have any other questions?', 'wpify' ); ?></h3>
-                            <p><?php _e( 'Check out the plugin documentation to see if your question is already answered.', 'wpify' ); ?></p>
+                            <h3><?php _e( 'Do you have any other questions?', 'wpify-woo' ); ?></h3>
+                            <p><?php _e( 'Check out the plugin documentation to see if your question is already answered.', 'wpify-woo' ); ?></p>
                             <p><a href="https://wpify.io/dokumentace/" target="_blank"
-                                  class="button button-primary"><?php _e( 'Documentation', 'wpify' ); ?></a></p>
+                                  class="button button-primary"><?php _e( 'Documentation', 'wpify-woo' ); ?></a></p>
                         </div>
                     </div>
 
                     <div class="wpify__card">
                         <div class="wpify__card-body">
-                            <h3><?php _e( 'If you haven’t found the answer, email us at:', 'wpify' ); ?></h3>
+                            <h3><?php _e( 'If you haven’t found the answer, email us at:', 'wpify-woo' ); ?></h3>
                             <p><a href="mailto:support@wpify.io">support@wpify.io</a></p>
                         </div>
                     </div>
@@ -699,7 +617,12 @@ class Settings {
 		<?php
 	}
 
-	public function render_menu_bar() {
+	/**
+	 * Render menubar
+	 *
+	 * @return void
+	 */
+	public function render_menu_bar(): void {
 		/** @var \WP_Screen $screen */
 		$screen       = get_current_screen();
 		$current_page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
@@ -718,7 +641,7 @@ class Settings {
 			'menu'        => array(
 				array(
 					'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 6.75c0-1.768 0-2.652.55-3.2C4.097 3 4.981 3 6.75 3s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55C3 9.403 3 8.519 3 6.75m0 10.507c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55C3 19.91 3 19.026 3 17.258M13.5 6.75c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55c-.55-.548-.55-1.432-.55-3.2m0 10.507c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55c-.55-.548-.55-1.432-.55-3.2"/></svg>',
-					'label' => __( 'Dashboard', 'wpify' ),
+					'label' => __( 'Dashboard', 'wpify-woo' ),
 					'link'  => add_query_arg( [ 'page' => $this::DASHBOARD_SLUG ], admin_url( 'admin.php' ) ),
 				),
 			),
@@ -1115,10 +1038,10 @@ class Settings {
 				}
 				if ( $data['doc_link'] ) {
 					$doc_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"><path d="M5 20.25c0 .414.336.75.75.75h10.652C17.565 21 18 20.635 18 19.4v-1.445M5 20.25A2.25 2.25 0 0 1 7.25 18h10.152q.339 0 .598-.045M5 20.25V6.2c0-1.136-.072-2.389 1.092-2.982C6.52 3 7.08 3 8.2 3h9.2c1.236 0 1.6.437 1.6 1.6v11.8c0 .995-.282 1.425-1 1.555"/><path d="m9.6 10.323l1.379 1.575a.3.3 0 0 0 .466-.022L14.245 8"/></g></svg>';
-					printf( '<a class="wpify__menu-bar-item" href="%s" target="_blank">%s<span>%s</span></a>', esc_url( $data['doc_link'] ), $doc_icon, __( 'Documentation', 'wpify' ) );
+					printf( '<a class="wpify__menu-bar-item" href="%s" target="_blank">%s<span>%s</span></a>', esc_url( $data['doc_link'] ), $doc_icon, __( 'Documentation', 'wpify-woo' ) );
 				}
 				$support_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"><path d="M21 12a9 9 0 1 1-18 0a9 9 0 0 1 18 0"/><path d="M12 13.496c0-2.003 2-1.503 2-3.506c0-2.659-4-2.659-4 0m2 6.007v-.5"/></g></svg>';
-				printf( '<a class="wpify__menu-bar-item%s" href="%s">%s<span>%s</span></a>', $current_page === $this::SUPPORT_MENU_SLUG ? ' current' : '', esc_url( $data['support_url'] ), $support_icon, __( 'Support', 'wpify' ) );
+				printf( '<a class="wpify__menu-bar-item%s" href="%s">%s<span>%s</span></a>', $current_page === $this::SUPPORT_MENU_SLUG ? ' current' : '', esc_url( $data['support_url'] ), $support_icon, __( 'Support', 'wpify-woo' ) );
 				?>
             </div>
             <div class="wpify__menu-bar-column">

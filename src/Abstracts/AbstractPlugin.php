@@ -3,8 +3,6 @@
 namespace Wpify\WooCore\Abstracts;
 
 use Wpify\PluginUtils\PluginUtils;
-use Wpify\WooCore\Admin\Settings;
-use Wpify\WooCore\WooCommerceIntegration;
 use Wpify\WooCore\WpifyWooCore;
 
 /**

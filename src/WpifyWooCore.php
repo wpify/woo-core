@@ -7,10 +7,7 @@ use Wpify\WooCore\Managers\ModulesManager;
 
 class WpifyWooCore {
 	const PATH = __DIR__;
-	/**
-	 * @var WooCommerceIntegration
-	 */
-	private $woocommerce_integration;
+
 	/**
 	 * @var Settings
 	 */
@@ -21,13 +18,11 @@ class WpifyWooCore {
 	private $modules_manager;
 
 	public function __construct(
-		WooCommerceIntegration $woocommerce_integration,
 		Settings $settings,
 		ModulesManager $modules_manager
 	) {
-		$this->woocommerce_integration = $woocommerce_integration;
-		$this->settings                = $settings;
-		$this->modules_manager         = $modules_manager;
+		$this->settings        = $settings;
+		$this->modules_manager = $modules_manager;
 	}
 
 	/**

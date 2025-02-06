@@ -12,13 +12,9 @@ use Wpify\WooCore\WooCommerceIntegration;
  */
 abstract class AbstractModule {
 	protected $requires_activation = false;
-	protected int $settings_version = 1;
 
 	/** @var string $id */
 	private $id = '';
-
-	/** @var WooCommerceIntegration */
-	private $woocommerce_integration;
 
 	private $license = null;
 
@@ -26,12 +22,11 @@ abstract class AbstractModule {
 	 * Setup
 	 * @return void
 	 */
-	public function __construct( WooCommerceIntegration $woocommerce_integration ) {
-		$this->woocommerce_integration = $woocommerce_integration;
-		$this->id                      = $this->id();
+	public function __construct() {
+		$this->id = $this->id();
 
-		//add_filter( 'woocommerce_get_sections_' . Settings::OPTION_NAME, array( $this, 'add_settings_section' ) );
 		add_filter( 'wpify_get_sections_' . $this->parent_settings_id(), array( $this, 'add_settings_section' ) );
+		add_filter( 'wpify_admin_menu_bar_data', array( $this, 'add_admin_menu_bar_data' ) );
 
 		if ( is_admin() && defined( 'ICL_LANGUAGE_CODE' ) && false === get_option( $this->get_option_key() ) ) {
 			$default_lang = apply_filters( 'wpml_default_language', null );
@@ -47,10 +42,6 @@ abstract class AbstractModule {
 			if ( ! $this->license->is_activated() ) {
 				add_action( 'admin_notices', array( $this, 'activation_notice' ) );
 			}
-		}
-		if ( $this->settings_version === 2 ) {
-			//add_action( 'admin_menu', [ $this, 'register_menu_page' ], 20 );
-			add_filter( 'wpify_admin_menu_bar_data', array( $this, 'add_admin_menu_bar_data' ) );
 		}
 	}
 
@@ -76,9 +67,9 @@ abstract class AbstractModule {
 	 * Check if the module is enabled.
 	 * @return bool
 	 */
-	public function is_module_enabled(): bool {
-		return in_array( $this->get_id(), $this->woocommerce_integration->get_modules(), true );
-	}
+//	public function is_module_enabled(): bool {
+//		return in_array( $this->get_id(), $this->woocommerce_integration->get_modules(), true );
+//	}
 
 	/**
 	 * Get module ID
@@ -109,11 +100,7 @@ abstract class AbstractModule {
 	 * @return string
 	 */
 	public function get_settings_url() {
-		if ( $this->settings_version === 2 ) {
-			return add_query_arg( array( 'page' => $this->get_menu_slug() ), admin_url( 'admin.php' ) );
-		}
-
-		return add_query_arg( array( 'section' => $this->id() ), admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings' ) );
+		return add_query_arg( array( 'page' => $this->get_menu_slug() ), admin_url( 'admin.php' ) );
 	}
 
 	/**
@@ -269,25 +256,6 @@ abstract class AbstractModule {
 		return $this->license;
 	}
 
-	// UNUSED
-	public function register_menu_page() {
-		if ( did_action( 'wpify_woo_settings_menu_page_registered' ) ) {
-			// Register the submenu page.
-			add_submenu_page(
-				'wpify',
-				$this->name(),
-				$this->name(),
-				'manage_options',
-				sprintf( 'wpify/%s', $this->id ),
-				array( $this, 'render_settings_page' ),
-			);
-		}
-	}
-
-	public function get_settings_version(): int {
-		return $this->settings_version;
-	}
-
 	public function add_admin_menu_bar_data( $data ) {
 		if ( ! $this->is_settings_page() ) {
 			return $data;
@@ -297,7 +265,7 @@ abstract class AbstractModule {
 		$data['plugin']   = $this->plugin_slug();
 		$data['menu'][]   = array(
 			'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 5h-3m-4.25-2v4M13 5H3m4 7H3m7.75-2v4M21 12H11m10 7h-3m-4.25-2v4M13 19H3"/></svg>',
-			'label' => __( 'Settings', 'wpify' ),
+			'label' => __( 'Settings', 'wpify-woo' ),
 			'link'  => $this->get_settings_url()
 		);
 		$data['doc_link'] = $this->get_documentation_url();
