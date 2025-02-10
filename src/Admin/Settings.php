@@ -1015,9 +1015,9 @@ class Settings {
 				<?php
 				if ( $data['icon'] ) {
 					?>
-                    <div class="wpify__plugin-icon"><?php
-						echo $data['icon'];
-						?></div>
+                    <div class="wpify__plugin-icon">
+                        <img src="<?php echo $data['icon']; ?>" alt="ICO" width="40" height="40">
+                    </div>
 					<?php
 				}
 				?>

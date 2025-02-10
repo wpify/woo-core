@@ -92,6 +92,19 @@ abstract class AbstractPlugin {
 	}
 
 	/**
+	 * Plugin icon url
+	 *
+	 * @return string
+	 */
+	public function icon_file(): string {
+		if ( file_exists( $this->plugin_utils->get_plugin_path( 'icon.svg' ) ) ) {
+			return $this->plugin_utils->get_plugin_url( 'icon.svg' );
+		}
+
+		return '';
+	}
+
+	/**
 	 * Plugin general Settings tabs
 	 * @return array Settings tabs.
 	 */
@@ -118,7 +131,7 @@ abstract class AbstractPlugin {
 		$plugins[ $this->id() ] = array(
 			'title'        => $this->plugin_utils->get_plugin_name(),
 			'desc'         => $this->plugin_utils->get_plugin_description(),
-			'icon'         => '',
+			'icon'         => $this->icon_file(),
 			'version'      => $this->plugin_utils->get_plugin_version(),
 			'doc_link'     => $this->documentation_url(),
 			'support_url'  => $this->support_url(),
