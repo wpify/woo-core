@@ -48,10 +48,10 @@ class Settings {
 		$this->label           = __( 'WPify Woo', 'wpify-woo' );
 
 		// Check if the WpifyWoo Core settings have been initialized already
-		$this->initialized = apply_filters( 'wpify_woo_core_settings_initialized', false );
+		$this->initialized = apply_filters( 'wpify_core_settings_initialized', false );
 
 		if ( ! $this->initialized ) {
-			add_filter( 'wpify_woo_core_settings_initialized', '__return_true' );
+			add_filter( 'wpify_core_settings_initialized', '__return_true' );
 			add_action( 'init', array( $this, 'register_settings' ) );
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ), 9999 );
 			add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
