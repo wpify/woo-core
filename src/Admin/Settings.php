@@ -55,8 +55,6 @@ class Settings {
 			add_action( 'init', array( $this, 'register_settings' ) );
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ), 9999 );
 			add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
-			add_action( 'wcf_before_fields', array( $this, 'render_before_settings' ) );
-			add_action( 'wcf_after_fields', array( $this, 'render_after_settings' ) );
 			add_action( 'admin_menu', [ $this, 'register_menu_page' ] );
 			add_action( 'in_admin_header', [ $this, 'render_menu_bar' ] );
 
