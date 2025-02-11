@@ -590,6 +590,11 @@ class Settings {
 	 * @return void
 	 */
 	public function render_support(): void {
+		$doc_link = add_query_arg( array(
+			'utm_source'   => 'plugin-support',
+			'utm_medium'   => 'plugin-link',
+			'utm_campaign' => 'documentation-link'
+		), 'https://wpify.io/dokumentace/' );
 		?>
         <div class="wpify-dashboard__wrap wrap">
             <div class="wpify-dashboard__content">
@@ -618,7 +623,7 @@ class Settings {
                         <div class="wpify__card-body">
                             <h3><?php _e( 'Do you have any other questions?', 'wpify-core' ); ?></h3>
                             <p><?php _e( 'Check out the plugin documentation to see if your question is already answered.', 'wpify-core' ); ?></p>
-                            <p><a href="https://wpify.io/dokumentace/" target="_blank"
+                            <p><a href="<?php echo $doc_link ?>" target="_blank"
                                   class="button button-primary"><?php _e( 'Documentation', 'wpify-core' ); ?></a></p>
                         </div>
                     </div>
