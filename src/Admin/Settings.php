@@ -683,9 +683,15 @@ class Settings {
 		if ( isset( $plugins[ $data['plugin'] ] ) ) {
 			$data['title']       = $plugins[ $data['plugin'] ]['title'];
 			$data['icon']        = $plugins[ $data['plugin'] ]['icon'];
-			$data['doc_link']    = $data['doc_link'] ?: $plugins[ $data['plugin'] ]['doc_link'];
 			$data['support_url'] = $plugins[ $data['plugin'] ]['support_url'] ?: $data['support_url'];
+			$data['doc_link']    = $data['doc_link'] ?: $plugins[ $data['plugin'] ]['doc_link'];
 		}
+
+		$data['doc_link'] = add_query_arg( array(
+			'utm_source'   => $data['plugin'] ?? 'plugin-dashboard',
+			'utm_medium'   => 'plugin-link',
+			'utm_campaign' => 'documentation-link'
+		), $data['doc_link'] );
 
 		?>
         <style type="text/css">
