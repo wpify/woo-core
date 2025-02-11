@@ -422,11 +422,13 @@ class Settings {
 					'utm_medium'   => 'plugin-link',
 					'utm_campaign' => 'upsell-link'
 				), $plugin['link'] );
-				$plugin['doc_link'] = add_query_arg( array(
-					'utm_source'   => 'plugin-dashboard',
-					'utm_medium'   => 'plugin-link',
-					'utm_campaign' => 'documentation-link'
-				), $plugin['doc_link'] );
+				if ( isset( $plugin['doc_link'] ) && $plugin['doc_link'] ) {
+					$plugin['doc_link'] = add_query_arg( array(
+						'utm_source'   => 'plugin-dashboard',
+						'utm_medium'   => 'plugin-link',
+						'utm_campaign' => 'documentation-link'
+					), $plugin['doc_link'] );
+				}
 				?>
                 <div class="wpify__card">
                     <div class="wpify__card-head">
@@ -543,7 +545,7 @@ class Settings {
 					'utm_medium'   => 'plugin-link',
 					'utm_campaign' => 'news-link'
 				), $post->link );
-                ?>
+				?>
                 <div class="wpify__card" style="max-width:100%">
 					<?php
 					$embedded  = (array) $post->_embedded;
@@ -1082,13 +1084,13 @@ class Settings {
 				?>
             </div>
             <div class="wpify__menu-bar-column">
-                <?php
-                $web_link = add_query_arg( array(
-	                'utm_source'   => 'plugin-dashboard',
-	                'utm_medium'   => 'plugin-link',
-	                'utm_campaign' => 'company-link'
-                ), 'https://wpify.io/' );
-                ?>
+				<?php
+				$web_link = add_query_arg( array(
+					'utm_source'   => 'plugin-dashboard',
+					'utm_medium'   => 'plugin-link',
+					'utm_campaign' => 'company-link'
+				), 'https://wpify.io/' );
+				?>
                 <a class="wpify__logo" href="<?php echo $web_link ?>" target="_blank" title="WPify Web">
                     <svg width="77" height="30" viewBox="0 0 1430 554" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect opacity="0.3" width="534.768" height="78.1585" rx="39.0792"
