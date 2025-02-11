@@ -81,10 +81,10 @@ class Settings {
 	 * @return void
 	 */
 	function load_textdomain() {
-		$core_base_path = dirname( __DIR__, 2 );
-		$languages_path = $core_base_path . '/languages/';
-
-		load_plugin_textdomain( 'wpify-core', false, $languages_path );
+		$mo_file = dirname( __DIR__, 2 ) . '/languages/wpify-core-' . get_locale() . '.mo';
+		if ( file_exists( $mo_file ) ) {
+			load_textdomain( 'wpify-core', $mo_file );
+		}
 	}
 
 	/**
@@ -417,6 +417,11 @@ class Settings {
         <div class="wpify__cards">
 
 			<?php foreach ( $plugins as $slug => $plugin ) {
+				$plugin['link'] = add_query_arg( array(
+					'utm_source'   => 'plugin-dashboard',
+					'utm_medium'   => 'plugin-link',
+					'utm_campaign' => 'upsell-link'
+				), $plugin['link'] );
 				?>
                 <div class="wpify__card">
                     <div class="wpify__card-head">
@@ -446,7 +451,7 @@ class Settings {
 								$metas[] = sprintf( '⭐ %s/5', $plugin['rating'] );
 							}
 							if ( ! $installed && isset( $plugin['doc_link'] ) && $plugin['doc_link'] ) {
-								$metas[] = '<a href="' . esc_url( $plugin['doc_link'] ) . '" target="_blank">' . _e( 'Documentation', 'wpify-core' ) . '</a>';
+								$metas[] = sprintf( '<a href="%s" target="_blank">%s</a>', esc_url( $plugin['doc_link'] ), __( 'Documentation', 'wpify-core' ) );
 							}
 							echo join( ' | ', $metas );
 							?>
@@ -484,10 +489,8 @@ class Settings {
 							<?php
 						} else {
 							?>
-                            <span><a class="install-now button" href="<?php
-								echo esc_url( $plugin['link'] );
-								?>"
-                                     role="button"><?php
+                            <span><a class="install-now button" href="<?php echo esc_url( $plugin['link'] ); ?>"
+                                     role="button" target="_blank"><?php
 									_e( 'Get plugin', 'wpify-core' );
 									?></a></span>
 							<?php
@@ -529,20 +532,26 @@ class Settings {
         <h2><?php _e( 'WPify News', 'wpify-core' ) ?></h2>
         <div class="wpify__cards">
 
-			<?php foreach ( $posts as $post ) { ?>
+			<?php foreach ( $posts as $post ) {
+				$link = add_query_arg( array(
+					'utm_source'   => 'plugin-dashboard',
+					'utm_medium'   => 'plugin-link',
+					'utm_campaign' => 'news-link'
+				), $post->link );
+                ?>
                 <div class="wpify__card" style="max-width:100%">
 					<?php
 					$embedded  = (array) $post->_embedded;
 					$thumbnail = $embedded['wp:featuredmedia'][0]->source_url;
 					if ( $thumbnail ) {
 						?>
-                        <a href="<?php echo esc_url( $post->link ); ?>" target="_blank">
+                        <a href="<?php echo esc_url( $link ); ?>" target="_blank">
                             <img src="<?php echo esc_url( $thumbnail ); ?>" loading="lazy"
                                  style="width: 100%; height: auto">
                         </a>
 					<?php } ?>
                     <div class="wpify__card-body">
-                        <h3><a href="<?php echo esc_url( $post->link ); ?>" target="_blank">
+                        <h3><a href="<?php echo esc_url( $link ); ?>" target="_blank">
 								<?php echo esc_html( $post->title->rendered ); ?>
                             </a></h3>
 						<?php echo $post->excerpt->rendered; ?>
@@ -1057,7 +1066,14 @@ class Settings {
 				?>
             </div>
             <div class="wpify__menu-bar-column">
-                <a class="wpify__logo" href="https://wpify.io/" target="_blank" title="WPify Web">
+                <?php
+                $web_link = add_query_arg( array(
+	                'utm_source'   => 'plugin-dashboard',
+	                'utm_medium'   => 'plugin-link',
+	                'utm_campaign' => 'company-link'
+                ), 'https://wpify.io/' );
+                ?>
+                <a class="wpify__logo" href="<?php echo $web_link ?>" target="_blank" title="WPify Web">
                     <svg width="77" height="30" viewBox="0 0 1430 554" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect opacity="0.3" width="534.768" height="78.1585" rx="39.0792"
                               transform="matrix(-4.37114e-08 1 1 4.37114e-08 336.915 10.0248)"

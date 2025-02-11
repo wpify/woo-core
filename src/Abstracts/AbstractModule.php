@@ -261,6 +261,12 @@ abstract class AbstractModule {
 			return $data;
 		}
 
+		$doc_link = add_query_arg( array(
+			'utm_source'   => $this->plugin_slug() ?: 'plugin-dashboard',
+			'utm_medium'   => 'plugin-link',
+			'utm_campaign' => 'documentation-link'
+		), $this->get_documentation_url() );
+
 		$data['parent']   = $this->parent_settings_id();
 		$data['plugin']   = $this->plugin_slug();
 		$data['menu'][]   = array(
@@ -268,7 +274,7 @@ abstract class AbstractModule {
 			'label' => __( 'Settings', 'wpify-core' ),
 			'link'  => $this->get_settings_url()
 		);
-		$data['doc_link'] = $this->get_documentation_url();
+		$data['doc_link'] = $doc_link;
 
 		return $data;
 	}

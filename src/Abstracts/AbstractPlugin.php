@@ -153,12 +153,18 @@ abstract class AbstractPlugin {
 	 * @return array
 	 */
 	public function add_action_links( $links ): array {
+		$web_link = add_query_arg( array(
+			'utm_source'   => $this->id() ?: 'plugin-dashboard',
+			'utm_medium'   => 'plugin-link',
+			'utm_campaign' => 'company-link'
+		), 'https://wpify.io/' );
+
 		$before = array(
 			'settings' => sprintf( '<a href="%s">%s</a>', $this->settings_url(), __( 'Settings', 'wpify-core' ) ),
 		);
 
 		$after = array(
-			'wpify' => sprintf( '<a href="%s" target="_blank">%s</a>', 'https://wpify.io', __( 'Get more plugins and support', 'wpify-core' ) ),
+			'wpify' => sprintf( '<a href="%s" target="_blank">%s</a>', $web_link, __( 'Get more plugins and support', 'wpify-core' ) ),
 		);
 
 		return array_merge( $before, $links, $after );
@@ -175,9 +181,15 @@ abstract class AbstractPlugin {
 	public function add_row_meta_links( $plugin_meta, $plugin_file ): array {
 		$new_links = array();
 
-		if ( strpos( $this->plugin_utils->get_plugin_file(), $plugin_file ) ) {
+		if ( $this->documentation_url() && strpos( $this->plugin_utils->get_plugin_file(), $plugin_file ) ) {
+			$doc_link = add_query_arg( array(
+				'utm_source'   => $this->id() ?: 'plugin-dashboard',
+				'utm_medium'   => 'plugin-link',
+				'utm_campaign' => 'documentation-link'
+			), $this->documentation_url() );
+
 			$new_links = array(
-				'wpify-doc' => sprintf( '<a href="%s" target="_blank">%s</a>', $this->documentation_url(), __( 'Documentation', 'wpify-core' ) ),
+				'wpify-doc' => sprintf( '<a href="%s" target="_blank">%s</a>', $doc_link, __( 'Documentation', 'wpify-core' ) ),
 			);
 		}
 
