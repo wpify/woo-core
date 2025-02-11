@@ -700,7 +700,7 @@ class Settings {
 		}
 
 		$data['doc_link'] = add_query_arg( array(
-			'utm_source'   => $data['plugin'] ?? 'plugin-dashboard',
+			'utm_source'   => $data['plugin'] ?: 'plugin-dashboard',
 			'utm_medium'   => 'plugin-link',
 			'utm_campaign' => 'documentation-link'
 		), $data['doc_link'] );
