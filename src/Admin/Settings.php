@@ -422,6 +422,11 @@ class Settings {
 					'utm_medium'   => 'plugin-link',
 					'utm_campaign' => 'upsell-link'
 				), $plugin['link'] );
+				$plugin['doc_link'] = add_query_arg( array(
+					'utm_source'   => 'plugin-dashboard',
+					'utm_medium'   => 'plugin-link',
+					'utm_campaign' => 'documentation-link'
+				), $plugin['doc_link'] );
 				?>
                 <div class="wpify__card">
                     <div class="wpify__card-head">
