@@ -1,0 +1,128 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-02-11T14:18:52+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.9.0\n"
+"X-Domain: wpify-core\n"
+
+#: src/Abstracts/AbstractModule.php:220
+msgid "Your %1$s plugin licence is not activated yet. Please <a href=\"%2$s\">activate the domain</a> by connecting it with your WPify account!"
+msgstr ""
+
+#: src/Abstracts/AbstractModule.php:268
+#: src/Abstracts/AbstractPlugin.php:157
+#: src/Admin/Settings.php:483
+msgid "Settings"
+msgstr ""
+
+#: src/Abstracts/AbstractPlugin.php:161
+msgid "Get more plugins and support"
+msgstr ""
+
+#: src/Abstracts/AbstractPlugin.php:180
+#: src/Admin/Settings.php:470
+#: src/Admin/Settings.php:611
+#: src/Admin/Settings.php:1051
+msgid "Documentation"
+msgstr ""
+
+#: src/Admin/Settings.php:48
+msgid "WPify Woo"
+msgstr ""
+
+#: src/Admin/Settings.php:64
+msgid "Your license has been activated."
+msgstr ""
+
+#: src/Admin/Settings.php:67
+msgid "Your license has been deactivated."
+msgstr ""
+
+#: src/Admin/Settings.php:311
+msgid "WPify Plugins"
+msgstr ""
+
+#: src/Admin/Settings.php:312
+msgid "WPify"
+msgstr ""
+
+#: src/Admin/Settings.php:323
+msgid "WPify Plugins Dashboard"
+msgstr ""
+
+#: src/Admin/Settings.php:324
+#: src/Admin/Settings.php:654
+msgid "Dashboard"
+msgstr ""
+
+#: src/Admin/Settings.php:332
+msgid "WPify Plugins Support"
+msgstr ""
+
+#: src/Admin/Settings.php:333
+#: src/Admin/Settings.php:1054
+msgid "Support"
+msgstr ""
+
+#: src/Admin/Settings.php:395
+msgid "Installed plugins"
+msgstr ""
+
+#: src/Admin/Settings.php:399
+msgid "Our other plugins"
+msgstr ""
+
+#: src/Admin/Settings.php:492
+msgid "Get plugin"
+msgstr ""
+
+#: src/Admin/Settings.php:527
+msgid "Wpify News"
+msgstr ""
+
+#: src/Admin/Settings.php:588
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: src/Admin/Settings.php:591
+msgid "How do the pricing plans work?"
+msgstr ""
+
+#: src/Admin/Settings.php:592
+msgid "When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew at a discounted price."
+msgstr ""
+
+#: src/Admin/Settings.php:596
+msgid "Will the plugin work if I do not renew my license?"
+msgstr ""
+
+#: src/Admin/Settings.php:597
+msgid "Yes, the plugin will continue to work, but you will no longer have access to updates and support."
+msgstr ""
+
+#: src/Admin/Settings.php:601
+msgid "I need a feature that the plugin does not currently support."
+msgstr ""
+
+#: src/Admin/Settings.php:602
+msgid "Let us know, and we will consider adding the requested functionality."
+msgstr ""
+
+#: src/Admin/Settings.php:608
+msgid "Do you have any other questions?"
+msgstr ""
+
+#: src/Admin/Settings.php:609
+msgid "Check out the plugin documentation to see if your question is already answered."
+msgstr ""
+
+#: src/Admin/Settings.php:617
+msgid "If you haven’t found the answer, email us at:"
+msgstr ""

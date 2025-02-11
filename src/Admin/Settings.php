@@ -45,13 +45,14 @@ class Settings {
 		$this->modules_manager = $modules_manager;
 		$this->asset_factory   = $asset_factory;
 		$this->id              = $this::OPTION_NAME;
-		$this->label           = __( 'WPify Woo', 'wpify-woo' );
+		$this->label           = __( 'WPify Woo', 'wpify-core' );
 
 		// Check if the WpifyWoo Core settings have been initialized already
 		$this->initialized = apply_filters( 'wpify_core_settings_initialized', false );
 
 		if ( ! $this->initialized ) {
 			add_filter( 'wpify_core_settings_initialized', '__return_true' );
+			add_action( 'init', array( $this, 'load_textdomain' ) );
 			add_action( 'init', array( $this, 'register_settings' ) );
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ), 9999 );
 			add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
@@ -60,10 +61,10 @@ class Settings {
 
 			/** Handle activation/deactivation messages */
 			if ( ! empty( $_REQUEST['wpify-woo-license-activated'] ) && $_REQUEST['wpify-woo-license-activated'] === '1' ) {
-				WC_Admin_Settings::add_message( __( 'Your license has been activated.', 'wpify-woo' ) );
+				WC_Admin_Settings::add_message( __( 'Your license has been activated.', 'wpify-core' ) );
 			}
 			if ( ! empty( $_REQUEST['wpify-woo-license-deactivated'] ) && $_REQUEST['wpify-woo-license-deactivated'] === '1' ) {
-				WC_Admin_Settings::add_message( __( 'Your license has been deactivated.', 'wpify-woo' ) );
+				WC_Admin_Settings::add_message( __( 'Your license has been deactivated.', 'wpify-core' ) );
 			}
 		}
 	}
@@ -73,6 +74,17 @@ class Settings {
 		$args[] = 'wpify-woo-license-deactivated';
 
 		return $args;
+	}
+
+	/**
+	 * Register core textdomain
+	 * @return void
+	 */
+	function load_textdomain() {
+		$core_base_path = dirname( __DIR__, 2 );
+		$languages_path = $core_base_path . '/languages/';
+
+		load_plugin_textdomain( 'wpify-core', false, $languages_path );
 	}
 
 	/**
@@ -296,8 +308,8 @@ class Settings {
 	 */
 	public function register_menu_page() {
 		add_menu_page(
-			__( 'WPify Plugins', 'wpify-woo' ),
-			__( 'WPify', 'wpify-woo' ),
+			__( 'WPify Plugins', 'wpify-core' ),
+			__( 'WPify', 'wpify-core' ),
 			'manage_options',
 			$this::DASHBOARD_SLUG,
 			[ $this, 'render_dashboard' ],
@@ -308,8 +320,8 @@ class Settings {
 
 		add_submenu_page(
 			$this::DASHBOARD_SLUG,
-			__( 'WPify Plugins Dashboard', 'wpify-woo' ),
-			__( 'Dashboard', 'wpify-woo' ),
+			__( 'WPify Plugins Dashboard', 'wpify-core' ),
+			__( 'Dashboard', 'wpify-core' ),
 			'manage_options',
 			$this::DASHBOARD_SLUG,
 			[ $this, 'render_dashboard' ],
@@ -317,8 +329,8 @@ class Settings {
 
 		add_submenu_page(
 			$this::DASHBOARD_SLUG,
-			__( 'WPify Plugins Support', 'wpify-woo' ),
-			__( 'Support', 'wpify-woo' ),
+			__( 'WPify Plugins Support', 'wpify-core' ),
+			__( 'Support', 'wpify-core' ),
 			'manage_options',
 			$this::SUPPORT_MENU_SLUG,
 			[ $this, 'render_support' ],
@@ -355,14 +367,14 @@ class Settings {
 	 */
 	public function get_wpify_plugins_overview(): string {
 		$installed_plugins = $this->get_plugins();
-		$extensions        = get_transient( 'wpify_woo_extensions' );
+		$extensions        = get_transient( 'wpify_core_all_plugins' );
 
 		if ( ! $extensions ) {
 			$response = wp_remote_get( 'https://wpify.io/wp-json/wpify/v1/plugins-list' );
 
 			if ( ! is_wp_error( $response ) ) {
 				$extensions = json_decode( $response['body'], true )['plugins'];
-				set_transient( 'wpify_woo_extensions', $extensions, DAY_IN_SECONDS );
+				set_transient( 'wpify_core_all_plugins', $extensions, DAY_IN_SECONDS );
 			}
 		}
 
@@ -380,11 +392,11 @@ class Settings {
 			}
 		}
 
-		$html = sprintf( '<h2>%s</h2>', __( 'Installed plugins', 'wpify-woo' ) );
+		$html = sprintf( '<h2>%s</h2>', __( 'Installed plugins', 'wpify-core' ) );
 		$html .= $this->get_wpify_modules_blocks( $installed_plugins, true );
 
 		if ( $extensions_map ) {
-			$html .= sprintf( '<h2>%s</h2>', __( 'Our other plugins', 'wpify-woo' ) );
+			$html .= sprintf( '<h2>%s</h2>', __( 'Our other plugins', 'wpify-core' ) );
 			$html .= $this->get_wpify_modules_blocks( $extensions_map );
 		}
 
@@ -430,11 +442,11 @@ class Settings {
 							if ( isset( $plugin['version'] ) ) {
 								$metas[] = $plugin['version'];
 							}
-							if ( ! $installed && isset( $plugin['price'] ) ) {
-								$metas[] = $plugin['price'];
-							}
-							if ( isset( $plugin['rating'] ) ) {
+							if ( isset( $plugin['rating'] ) && $plugin['rating'] ) {
 								$metas[] = sprintf( '⭐ %s/5', $plugin['rating'] );
+							}
+							if ( ! $installed && isset( $plugin['doc_link'] ) && $plugin['doc_link'] ) {
+								$metas[] = '<a href="' . esc_url( $plugin['doc_link'] ) . '" target="_blank">' . _e( 'Documentation', 'wpify-core' ) . '</a>';
 							}
 							echo join( ' | ', $metas );
 							?>
@@ -449,14 +461,13 @@ class Settings {
                     </div>
                     <div class="wpify__card-footer">
 						<?php
-						if ( isset( $plugin['doc_link'] ) && $plugin['doc_link'] ) {
+						if ( ! $installed && isset( $plugin['price'] ) ) {
+							echo '<strong>' . $plugin['price'] . '</strong>';
+						}
+						if ( $installed && isset( $plugin['doc_link'] ) && $plugin['doc_link'] ) {
 							?>
-                            <a href="<?php
-							echo esc_url( $plugin['doc_link'] );
-							?>"
-                               target="_blank"><?php
-								_e( 'Documentation', 'wpify-woo' );
-								?></a>
+                            <a href="<?php echo esc_url( $plugin['doc_link'] ); ?>"
+                               target="_blank"><?php _e( 'Documentation', 'wpify-core' ); ?></a>
 							<?php
 						}
 						?>
@@ -468,7 +479,7 @@ class Settings {
 								echo esc_url( $plugin['settings_url'] );
 								?>"
                                      role="button"><?php
-									_e( 'Settings', 'wpify-woo' );
+									_e( 'Settings', 'wpify-core' );
 									?></a></span>
 							<?php
 						} else {
@@ -477,7 +488,7 @@ class Settings {
 								echo esc_url( $plugin['link'] );
 								?>"
                                      role="button"><?php
-									_e( 'Get plugin', 'wpify-woo' );
+									_e( 'Get plugin', 'wpify-core' );
 									?></a></span>
 							<?php
 						}
@@ -499,20 +510,23 @@ class Settings {
 	 * @return string|void
 	 */
 	public function get_wpify_posts() {
-		$response = wp_remote_get( 'https://wpify.io/wp-json/wp/v2/posts?per_page=4&_embed' );
+		$posts = get_transient( 'wpify_core_news' );
 
-		if ( is_wp_error( $response ) ) {
-			return '';
+		if ( ! $posts ) {
+			$response = wp_remote_get( 'https://wpify.io/wp-json/wp/v2/posts?per_page=4&_embed' );
+
+			if ( ! is_wp_error( $response ) ) {
+				$posts = json_decode( wp_remote_retrieve_body( $response ) );
+				set_transient( 'wpify_core_news', $posts, DAY_IN_SECONDS );
+			}
 		}
-
-		$posts = json_decode( wp_remote_retrieve_body( $response ) );
 
 		if ( empty( $posts ) ) {
 			return '';
 		}
 
 		?>
-        <h2><?php _e( 'Wpify News', 'wpify-woo' ) ?></h2>
+        <h2><?php _e( 'WPify News', 'wpify-core' ) ?></h2>
         <div class="wpify__cards">
 
 			<?php foreach ( $posts as $post ) { ?>
@@ -573,36 +587,36 @@ class Settings {
                 <div class="wpify__cards">
                     <div class="wpify__card" style="max-width:100%">
                         <div class="wpify__card-body">
-                            <h2><?php _e( 'Frequently Asked Questions', 'wpify-woo' ); ?></h2>
+                            <h2><?php _e( 'Frequently Asked Questions', 'wpify-core' ); ?></h2>
 
                             <div class="faq">
-                                <h3><?php _e( 'How do the pricing plans work?', 'wpify-woo' ); ?></h3>
-                                <p><?php _e( 'When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew at a discounted price.', 'wpify-woo' ); ?></p>
+                                <h3><?php _e( 'How do the pricing plans work?', 'wpify-core' ); ?></h3>
+                                <p><?php _e( 'When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew at a discounted price.', 'wpify-core' ); ?></p>
                             </div>
 
                             <div class="faq">
-                                <h3><?php _e( 'Will the plugin work if I do not renew my license?', 'wpify-woo' ); ?></h3>
-                                <p><?php _e( 'Yes, the plugin will continue to work, but you will no longer have access to updates and support.', 'wpify-woo' ); ?></p>
+                                <h3><?php _e( 'Will the plugin work if I do not renew my license?', 'wpify-core' ); ?></h3>
+                                <p><?php _e( 'Yes, the plugin will continue to work, but you will no longer have access to updates and support.', 'wpify-core' ); ?></p>
                             </div>
 
                             <div class="faq">
-                                <h3><?php _e( 'I need a feature that the plugin does not currently support.', 'wpify-woo' ); ?></h3>
-                                <p><?php _e( 'Let us know, and we will consider adding the requested functionality.', 'wpify-woo' ); ?></p>
+                                <h3><?php _e( 'I need a feature that the plugin does not currently support.', 'wpify-core' ); ?></h3>
+                                <p><?php _e( 'Let us know, and we will consider adding the requested functionality.', 'wpify-core' ); ?></p>
                             </div>
                         </div>
                     </div>
                     <div class="wpify__card">
                         <div class="wpify__card-body">
-                            <h3><?php _e( 'Do you have any other questions?', 'wpify-woo' ); ?></h3>
-                            <p><?php _e( 'Check out the plugin documentation to see if your question is already answered.', 'wpify-woo' ); ?></p>
+                            <h3><?php _e( 'Do you have any other questions?', 'wpify-core' ); ?></h3>
+                            <p><?php _e( 'Check out the plugin documentation to see if your question is already answered.', 'wpify-core' ); ?></p>
                             <p><a href="https://wpify.io/dokumentace/" target="_blank"
-                                  class="button button-primary"><?php _e( 'Documentation', 'wpify-woo' ); ?></a></p>
+                                  class="button button-primary"><?php _e( 'Documentation', 'wpify-core' ); ?></a></p>
                         </div>
                     </div>
 
                     <div class="wpify__card">
                         <div class="wpify__card-body">
-                            <h3><?php _e( 'If you haven’t found the answer, email us at:', 'wpify-woo' ); ?></h3>
+                            <h3><?php _e( 'If you haven’t found the answer, email us at:', 'wpify-core' ); ?></h3>
                             <p><a href="mailto:support@wpify.io">support@wpify.io</a></p>
                         </div>
                     </div>
@@ -639,7 +653,7 @@ class Settings {
 			'menu'        => array(
 				array(
 					'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 6.75c0-1.768 0-2.652.55-3.2C4.097 3 4.981 3 6.75 3s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55C3 9.403 3 8.519 3 6.75m0 10.507c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55C3 19.91 3 19.026 3 17.258M13.5 6.75c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55c-.55-.548-.55-1.432-.55-3.2m0 10.507c0-1.768 0-2.652.55-3.2c.548-.55 1.432-.55 3.2-.55s2.652 0 3.2.55c.55.548.55 1.432.55 3.2s0 2.652-.55 3.2c-.548.55-1.432.55-3.2.55s-2.652 0-3.2-.55c-.55-.548-.55-1.432-.55-3.2"/></svg>',
-					'label' => __( 'Dashboard', 'wpify-woo' ),
+					'label' => __( 'Dashboard', 'wpify-core' ),
 					'link'  => add_query_arg( [ 'page' => $this::DASHBOARD_SLUG ], admin_url( 'admin.php' ) ),
 				),
 			),
@@ -1036,10 +1050,10 @@ class Settings {
 				}
 				if ( $data['doc_link'] ) {
 					$doc_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"><path d="M5 20.25c0 .414.336.75.75.75h10.652C17.565 21 18 20.635 18 19.4v-1.445M5 20.25A2.25 2.25 0 0 1 7.25 18h10.152q.339 0 .598-.045M5 20.25V6.2c0-1.136-.072-2.389 1.092-2.982C6.52 3 7.08 3 8.2 3h9.2c1.236 0 1.6.437 1.6 1.6v11.8c0 .995-.282 1.425-1 1.555"/><path d="m9.6 10.323l1.379 1.575a.3.3 0 0 0 .466-.022L14.245 8"/></g></svg>';
-					printf( '<a class="wpify__menu-bar-item" href="%s" target="_blank">%s<span>%s</span></a>', esc_url( $data['doc_link'] ), $doc_icon, __( 'Documentation', 'wpify-woo' ) );
+					printf( '<a class="wpify__menu-bar-item" href="%s" target="_blank">%s<span>%s</span></a>', esc_url( $data['doc_link'] ), $doc_icon, __( 'Documentation', 'wpify-core' ) );
 				}
 				$support_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"><path d="M21 12a9 9 0 1 1-18 0a9 9 0 0 1 18 0"/><path d="M12 13.496c0-2.003 2-1.503 2-3.506c0-2.659-4-2.659-4 0m2 6.007v-.5"/></g></svg>';
-				printf( '<a class="wpify__menu-bar-item%s" href="%s">%s<span>%s</span></a>', $current_page === $this::SUPPORT_MENU_SLUG ? ' current' : '', esc_url( $data['support_url'] ), $support_icon, __( 'Support', 'wpify-woo' ) );
+				printf( '<a class="wpify__menu-bar-item%s" href="%s">%s<span>%s</span></a>', $current_page === $this::SUPPORT_MENU_SLUG ? ' current' : '', esc_url( $data['support_url'] ), $support_icon, __( 'Support', 'wpify-core' ) );
 				?>
             </div>
             <div class="wpify__menu-bar-column">

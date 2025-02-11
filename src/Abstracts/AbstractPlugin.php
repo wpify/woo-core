@@ -154,11 +154,11 @@ abstract class AbstractPlugin {
 	 */
 	public function add_action_links( $links ): array {
 		$before = array(
-			'settings' => sprintf( '<a href="%s">%s</a>', $this->settings_url(), __( 'Settings', 'wpify-woo' ) ),
+			'settings' => sprintf( '<a href="%s">%s</a>', $this->settings_url(), __( 'Settings', 'wpify-core' ) ),
 		);
 
 		$after = array(
-			'wpify' => sprintf( '<a href="%s" target="_blank">%s</a>', 'https://wpify.io', __( 'Get more plugins and support', 'wpify-woo' ) ),
+			'wpify' => sprintf( '<a href="%s" target="_blank">%s</a>', 'https://wpify.io', __( 'Get more plugins and support', 'wpify-core' ) ),
 		);
 
 		return array_merge( $before, $links, $after );
@@ -177,7 +177,7 @@ abstract class AbstractPlugin {
 
 		if ( strpos( $this->plugin_utils->get_plugin_file(), $plugin_file ) ) {
 			$new_links = array(
-				'wpify-doc' => sprintf( '<a href="%s" target="_blank">%s</a>', $this->documentation_url(), __( 'Documentation', 'wpify-woo' ) ),
+				'wpify-doc' => sprintf( '<a href="%s" target="_blank">%s</a>', $this->documentation_url(), __( 'Documentation', 'wpify-core' ) ),
 			);
 		}
 

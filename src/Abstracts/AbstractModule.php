@@ -217,7 +217,7 @@ abstract class AbstractModule {
 		?>
         <div class="error notice">
             <p><?php
-				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">activate the domain</a> by connecting it with your WPify account!', 'wpify-woo' ), $this->name(), admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings&section=' . $this->get_id() ) );
+				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">activate the domain</a> by connecting it with your WPify account!', 'wpify-core' ), $this->name(), admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings&section=' . $this->get_id() ) );
 				?></p>
         </div>
 		<?php
@@ -265,7 +265,7 @@ abstract class AbstractModule {
 		$data['plugin']   = $this->plugin_slug();
 		$data['menu'][]   = array(
 			'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 5h-3m-4.25-2v4M13 5H3m4 7H3m7.75-2v4M21 12H11m10 7h-3m-4.25-2v4M13 19H3"/></svg>',
-			'label' => __( 'Settings', 'wpify-woo' ),
+			'label' => __( 'Settings', 'wpify-core' ),
 			'link'  => $this->get_settings_url()
 		);
 		$data['doc_link'] = $this->get_documentation_url();
