@@ -914,6 +914,28 @@ class Settings {
                 box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.42);
             }
 
+            form .components-base-control__field label {
+                font-size: 14px;
+            }
+
+            form .wpifycf-field__description {
+                color: #888;
+                font-size: 13px;
+            }
+
+            form .wpifycf-field-multi-group__item {
+                border-radius: 5px;
+            }
+
+            form .wpifycf-field-multi-group__item-header {
+                background: #e5e5e5
+            }
+
+            form .wpifycf-field-multi-group__content .wpifycf-field-group {
+                padding-right: 1px;
+                gap: 20px;
+            }
+
             .wpifycf-app {
                 border-bottom: 1px solid #e5e5e5;
 
