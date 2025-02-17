@@ -417,11 +417,13 @@ class Settings {
         <div class="wpify__cards">
 
 			<?php foreach ( $plugins as $slug => $plugin ) {
-				$plugin['link'] = add_query_arg( array(
-					'utm_source'   => 'plugin-dashboard',
-					'utm_medium'   => 'plugin-link',
-					'utm_campaign' => 'upsell-link'
-				), $plugin['link'] );
+				if ( isset( $plugin['link'] ) && $plugin['link'] ) {
+					$plugin['link'] = add_query_arg( array(
+						'utm_source'   => 'plugin-dashboard',
+						'utm_medium'   => 'plugin-link',
+						'utm_campaign' => 'upsell-link'
+					), $plugin['link'] );
+				}
 				if ( isset( $plugin['doc_link'] ) && $plugin['doc_link'] ) {
 					$plugin['doc_link'] = add_query_arg( array(
 						'utm_source'   => 'plugin-dashboard',
@@ -494,7 +496,7 @@ class Settings {
 									_e( 'Settings', 'wpify-core' );
 									?></a></span>
 							<?php
-						} else {
+						} elseif ( isset( $plugin['link'] ) && $plugin['link'] ) {
 							?>
                             <span><a class="install-now button" href="<?php echo esc_url( $plugin['link'] ); ?>"
                                      role="button" target="_blank"><?php
