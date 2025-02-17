@@ -453,8 +453,22 @@ class Settings {
                             </h3>
 							<?php
 							$metas = [];
-							if ( isset( $plugin['version'] ) ) {
-								$metas[] = $plugin['version'];
+							$notices = [];
+							if ( $installed && isset( $plugin['version'] ) ) {
+								$version = $plugin['version'];
+								if ( isset( $plugin['plugin_info'] ) ) {
+									$available_v = $plugin['plugin_info']['version'] ?? 0;
+
+									if ( $available_v && $available_v != $version ) {
+										$notices[] = array(
+											'type'    => 'warning',
+											'content' => '<p>⚠️ ' . sprintf( __( 'New version <a href="%s">%s</a> available.', 'wpify-core' ), admin_url( 'update-core.php' ), $available_v ) . '</p>'
+										);
+									}
+								}
+								$metas[] = $version;
+							} elseif ( isset( $plugin['plugin_info'] ) && isset( $plugin['plugin_info']['version'] ) ) {
+								$metas[] = $plugin['plugin_info']['version'];
 							}
 							if ( isset( $plugin['rating'] ) && $plugin['rating'] ) {
 								$metas[] = sprintf( '⭐ %s/5', $plugin['rating'] );
@@ -468,6 +482,11 @@ class Settings {
                     </div>
                     <div class="wpify__card-body">
 						<?php
+						if ( $notices ) {
+							foreach ( $notices as $notice ) {
+								echo sprintf( '<div class="%s wpify-notice">%s</div>', $notice['type'], $notice['content'] );
+							}
+						}
 						if ( ! $installed ) {
 							echo $plugin['desc'] ?? '';
 						}

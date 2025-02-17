@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-02-11T14:18:52+00:00\n"
+"POT-Creation-Date: 2025-02-17T19:55:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: wpify-core\n"
@@ -17,19 +17,20 @@ msgid "Your %1$s plugin licence is not activated yet. Please <a href=\"%2$s\">ac
 msgstr ""
 
 #: src/Abstracts/AbstractModule.php:268
-#: src/Abstracts/AbstractPlugin.php:157
-#: src/Admin/Settings.php:483
+#: src/Abstracts/AbstractPlugin.php:163
+#: src/Admin/Settings.php:515
 msgid "Settings"
 msgstr ""
 
-#: src/Abstracts/AbstractPlugin.php:161
+#: src/Abstracts/AbstractPlugin.php:167
 msgid "Get more plugins and support"
 msgstr ""
 
-#: src/Abstracts/AbstractPlugin.php:180
-#: src/Admin/Settings.php:470
-#: src/Admin/Settings.php:611
-#: src/Admin/Settings.php:1051
+#: src/Abstracts/AbstractPlugin.php:192
+#: src/Admin/Settings.php:477
+#: src/Admin/Settings.php:503
+#: src/Admin/Settings.php:655
+#: src/Admin/Settings.php:1123
 msgid "Documentation"
 msgstr ""
 
@@ -58,7 +59,7 @@ msgid "WPify Plugins Dashboard"
 msgstr ""
 
 #: src/Admin/Settings.php:324
-#: src/Admin/Settings.php:654
+#: src/Admin/Settings.php:698
 msgid "Dashboard"
 msgstr ""
 
@@ -67,7 +68,7 @@ msgid "WPify Plugins Support"
 msgstr ""
 
 #: src/Admin/Settings.php:333
-#: src/Admin/Settings.php:1054
+#: src/Admin/Settings.php:1126
 msgid "Support"
 msgstr ""
 
@@ -79,50 +80,54 @@ msgstr ""
 msgid "Our other plugins"
 msgstr ""
 
-#: src/Admin/Settings.php:492
+#: src/Admin/Settings.php:465
+msgid "New version <a href=\"%s\">%s</a> available."
+msgstr ""
+
+#: src/Admin/Settings.php:522
 msgid "Get plugin"
 msgstr ""
 
-#: src/Admin/Settings.php:527
-msgid "Wpify News"
+#: src/Admin/Settings.php:560
+msgid "WPify News"
 msgstr ""
 
-#: src/Admin/Settings.php:588
+#: src/Admin/Settings.php:632
 msgid "Frequently Asked Questions"
 msgstr ""
 
-#: src/Admin/Settings.php:591
+#: src/Admin/Settings.php:635
 msgid "How do the pricing plans work?"
 msgstr ""
 
-#: src/Admin/Settings.php:592
+#: src/Admin/Settings.php:636
 msgid "When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew at a discounted price."
 msgstr ""
 
-#: src/Admin/Settings.php:596
+#: src/Admin/Settings.php:640
 msgid "Will the plugin work if I do not renew my license?"
 msgstr ""
 
-#: src/Admin/Settings.php:597
+#: src/Admin/Settings.php:641
 msgid "Yes, the plugin will continue to work, but you will no longer have access to updates and support."
 msgstr ""
 
-#: src/Admin/Settings.php:601
+#: src/Admin/Settings.php:645
 msgid "I need a feature that the plugin does not currently support."
 msgstr ""
 
-#: src/Admin/Settings.php:602
+#: src/Admin/Settings.php:646
 msgid "Let us know, and we will consider adding the requested functionality."
 msgstr ""
 
-#: src/Admin/Settings.php:608
+#: src/Admin/Settings.php:652
 msgid "Do you have any other questions?"
 msgstr ""
 
-#: src/Admin/Settings.php:609
+#: src/Admin/Settings.php:653
 msgid "Check out the plugin documentation to see if your question is already answered."
 msgstr ""
 
-#: src/Admin/Settings.php:617
+#: src/Admin/Settings.php:661
 msgid "If you haven’t found the answer, email us at:"
 msgstr ""

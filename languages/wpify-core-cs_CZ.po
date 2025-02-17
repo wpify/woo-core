@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-11T14:18:52+00:00\n"
-"PO-Revision-Date: 2025-02-11 15:28+0100\n"
+"POT-Creation-Date: 2025-02-17T19:55:21+00:00\n"
+"PO-Revision-Date: 2025-02-17 21:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: cs\n"
@@ -22,17 +22,18 @@ msgstr ""
 "Vaše licence pluginu %1$s ještě není aktivována. Prosím, <a "
 "href=\"%2$s\">aktivujte doménu</a> propojením s vaším účtem WPify!"
 
-#: src/Abstracts/AbstractModule.php:268 src/Abstracts/AbstractPlugin.php:157
-#: src/Admin/Settings.php:483
+#: src/Abstracts/AbstractModule.php:268 src/Abstracts/AbstractPlugin.php:163
+#: src/Admin/Settings.php:515
 msgid "Settings"
 msgstr "Nastavení"
 
-#: src/Abstracts/AbstractPlugin.php:161
+#: src/Abstracts/AbstractPlugin.php:167
 msgid "Get more plugins and support"
 msgstr "Více pluginů a podpora"
 
-#: src/Abstracts/AbstractPlugin.php:180 src/Admin/Settings.php:470
-#: src/Admin/Settings.php:611 src/Admin/Settings.php:1051
+#: src/Abstracts/AbstractPlugin.php:192 src/Admin/Settings.php:477
+#: src/Admin/Settings.php:503 src/Admin/Settings.php:655
+#: src/Admin/Settings.php:1123
 msgid "Documentation"
 msgstr "Dokumentace"
 
@@ -60,7 +61,7 @@ msgstr "WPify"
 msgid "WPify Plugins Dashboard"
 msgstr "Nástěnka WPify pluginů"
 
-#: src/Admin/Settings.php:324 src/Admin/Settings.php:654
+#: src/Admin/Settings.php:324 src/Admin/Settings.php:698
 msgid "Dashboard"
 msgstr "Nástěnka"
 
@@ -68,7 +69,7 @@ msgstr "Nástěnka"
 msgid "WPify Plugins Support"
 msgstr "Podpora WPify pluginů"
 
-#: src/Admin/Settings.php:333 src/Admin/Settings.php:1054
+#: src/Admin/Settings.php:333 src/Admin/Settings.php:1126
 msgid "Support"
 msgstr "Podpora"
 
@@ -80,23 +81,27 @@ msgstr "Instalované pluginy"
 msgid "Our other plugins"
 msgstr "Naše další pluginy"
 
-#: src/Admin/Settings.php:492
+#: src/Admin/Settings.php:465
+msgid "New version <a href=\"%s\">%s</a> available."
+msgstr "Nová verze <a href=\"%s\">%s</a> je k dispozici."
+
+#: src/Admin/Settings.php:522
 msgid "Get plugin"
 msgstr "Získat plugin"
 
-#: src/Admin/Settings.php:527
-msgid "Wpify News"
+#: src/Admin/Settings.php:560
+msgid "WPify News"
 msgstr "Novinky WPify"
 
-#: src/Admin/Settings.php:588
+#: src/Admin/Settings.php:632
 msgid "Frequently Asked Questions"
 msgstr "Často kladené dotazy"
 
-#: src/Admin/Settings.php:591
+#: src/Admin/Settings.php:635
 msgid "How do the pricing plans work?"
 msgstr "Jak fungují ceny?"
 
-#: src/Admin/Settings.php:592
+#: src/Admin/Settings.php:636
 msgid ""
 "When you purchase the plugin, you receive support and updates for one year. "
 "After this period, the license will automatically renew at a discounted "
@@ -106,11 +111,11 @@ msgstr ""
 "uplynutí této doby dojde k automatické platbě a obnovení licence za "
 "zvýhodněnou cenu."
 
-#: src/Admin/Settings.php:596
+#: src/Admin/Settings.php:640
 msgid "Will the plugin work if I do not renew my license?"
 msgstr "Bude plugin fungovat, pokud neprodloužím licenci?"
 
-#: src/Admin/Settings.php:597
+#: src/Admin/Settings.php:641
 msgid ""
 "Yes, the plugin will continue to work, but you will no longer have access to "
 "updates and support."
@@ -118,26 +123,26 @@ msgstr ""
 "Ano, plugin bude fungovat i nadále, jen nebudete mít přístup k novým "
 "aktualizacím a podpoře pluginu."
 
-#: src/Admin/Settings.php:601
+#: src/Admin/Settings.php:645
 msgid "I need a feature that the plugin does not currently support."
 msgstr ""
 "Potřebuji přidat nějakou funkcionalitu, kterou plugin zatím nepodporuje."
 
-#: src/Admin/Settings.php:602
+#: src/Admin/Settings.php:646
 msgid "Let us know, and we will consider adding the requested functionality."
 msgstr ""
 "Dejte nám vědět a zvážíme rozšíření a přidání požadované funkcionality."
 
-#: src/Admin/Settings.php:608
+#: src/Admin/Settings.php:652
 msgid "Do you have any other questions?"
 msgstr "Máte ještě nějakou otázku?"
 
-#: src/Admin/Settings.php:609
+#: src/Admin/Settings.php:653
 msgid ""
 "Check out the plugin documentation to see if your question is already "
 "answered."
 msgstr "Zkuste se podívat do dokumentace pluginu, zda tam nenajdete odpověď."
 
-#: src/Admin/Settings.php:617
+#: src/Admin/Settings.php:661
 msgid "If you haven’t found the answer, email us at:"
 msgstr "Pokud jste odpověď nenašli, napište nám na adresu:"
