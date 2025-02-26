@@ -1037,8 +1037,13 @@ class Settings {
                 }
             }
 
-            input[type=color], input[type=date], input[type=datetime-local], input[type=datetime], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], select, textarea {
+            input[type=date], input[type=datetime-local], input[type=datetime], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], select, textarea {
                 padding: 5px 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            input[type=color] {
+                padding: 1px 3px;;
                 border: 1px solid #ccc;
                 border-radius: 5px;
             }
