@@ -386,7 +386,7 @@ class Settings {
 
 			foreach ( $installed_plugins as $slug => $plugin ) {
 				if ( isset( $extensions_map[ $slug ] ) ) {
-					$installed_plugins[ $slug ] = array_merge( $plugin, $extensions_map[ $slug ] );
+					$installed_plugins[ $slug ] = array_merge( $extensions_map[ $slug ], $plugin );
 					unset( $extensions_map[ $slug ] );
 				}
 			}
@@ -490,7 +490,7 @@ class Settings {
 						<?php
 						if ( $notices ) {
 							foreach ( $notices as $notice ) {
-								echo sprintf( '<div class="%s wpify-notice">%s</div>', $notice['type'], $notice['content'] );
+								echo sprintf( '<div class="wpify-notice-%s wpify-notice">%s</div>', $notice['type'], $notice['content'] );
 							}
 						}
 						if ( ! $installed ) {
@@ -635,28 +635,39 @@ class Settings {
 			'utm_medium'   => 'plugin-link',
 			'utm_campaign' => 'documentation-link'
 		), 'https://wpify.io/dokumentace/' );
+
+		$faqs = apply_filters( 'wpify_dashboard_support_faqs', array(
+			array(
+				'title'   => __( 'How do the pricing plans work?', 'wpify-core' ),
+				'content' => __( 'When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew at a discounted price.', 'wpify-core' ),
+			),
+			array(
+				'title'   => __( 'Will the plugin work if I do not renew my license?', 'wpify-core' ),
+				'content' => __( 'Yes, the plugin will continue to work, but you will no longer have access to updates and support.', 'wpify-core' ),
+			),
+			array(
+				'title'   => __( 'I need a feature that the plugin does not currently support.', 'wpify-core' ),
+				'content' => __( 'Let us know, and we will consider adding the requested functionality.', 'wpify-core' ),
+			)
+		) );
 		?>
         <div class="wpify-dashboard__wrap wrap">
             <div class="wpify-dashboard__content">
+                <h1><?php _e( 'Support page', 'wpify-core' ); ?></h1>
+
+				<?php do_action( 'wpify_dashboard_before_support_content' ); ?>
+
                 <div class="wpify__cards">
                     <div class="wpify__card" style="max-width:100%">
                         <div class="wpify__card-body">
                             <h2><?php _e( 'Frequently Asked Questions', 'wpify-core' ); ?></h2>
 
-                            <div class="faq">
-                                <h3><?php _e( 'How do the pricing plans work?', 'wpify-core' ); ?></h3>
-                                <p><?php _e( 'When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew at a discounted price.', 'wpify-core' ); ?></p>
-                            </div>
-
-                            <div class="faq">
-                                <h3><?php _e( 'Will the plugin work if I do not renew my license?', 'wpify-core' ); ?></h3>
-                                <p><?php _e( 'Yes, the plugin will continue to work, but you will no longer have access to updates and support.', 'wpify-core' ); ?></p>
-                            </div>
-
-                            <div class="faq">
-                                <h3><?php _e( 'I need a feature that the plugin does not currently support.', 'wpify-core' ); ?></h3>
-                                <p><?php _e( 'Let us know, and we will consider adding the requested functionality.', 'wpify-core' ); ?></p>
-                            </div>
+							<?php foreach ( $faqs as $faq ) { ?>
+                                <div class="faq">
+                                    <h3><?php echo $faq['title'] ?? '' ?></h3>
+                                    <p><?php echo $faq['content'] ?? '' ?></p>
+                                </div>
+							<?php } ?>
                         </div>
                     </div>
                     <div class="wpify__card">
@@ -674,10 +685,21 @@ class Settings {
                             <p><a href="mailto:support@wpify.io">support@wpify.io</a></p>
                         </div>
                     </div>
+	                <?php do_action( 'wpify_dashboard_support_cards' ); ?>
+
                 </div>
+
+				<?php do_action( 'wpify_dashboard_after_support_content' ); ?>
+
             </div>
             <div class="wpify-dashboard__sidebar">
-				<?php $this->get_wpify_posts(); ?>
+				<?php
+				do_action( 'wpify_dashboard_before_news_posts' );
+
+				$this->get_wpify_posts();
+
+				do_action( 'wpify_dashboard_after_news_posts' );
+				?>
             </div>
         </div>
 		<?php
@@ -933,7 +955,7 @@ class Settings {
                 margin: 20px 10px 20px 0;
             }
 
-            #wpbody form {
+            #wpbody .wrap > form {
                 display: flex;
                 background: white;
                 column-gap: 40px;
@@ -1108,6 +1130,33 @@ class Settings {
             .wpify-admin-page form p .button-primary:hover, .wpify-admin-page form p .button-primary:active {
                 background: #826eb4;
                 border-color: #826eb4;
+            }
+
+            .wpify-notice {
+                border: 1px solid rgba(6, 44, 241, 0.46);
+                background-color: rgba(7, 73, 149, 0.12);
+                padding: 5px 10px;
+                margin-bottom: 10px;
+                border-radius: 3px;
+            }
+
+            .wpify-notice > *:last-child {
+                margin-bottom: 0;
+            }
+
+            .wpify-notice.wpify-notice-success {
+                border-color: rgba(36, 241, 6, 0.46);
+                background-color: rgba(7, 149, 66, 0.12);
+            }
+
+            .wpify-notice.wpify-notice-warning {
+                border-color: rgba(241, 142, 6, 0.81);
+                background-color: rgba(220, 128, 1, 0.16);
+            }
+
+            .wpify-notice.wpify-notice-error {
+                border-color: rgba(241, 6, 6, 0.81);
+                background-color: rgba(220, 17, 1, 0.16);
             }
         </style>
         <div class="wpify__menu-bar">
