@@ -392,13 +392,19 @@ class Settings {
 			}
 		}
 
+		do_action( 'wpify_dashboard_before_installed_plugins' );
+
 		$html = sprintf( '<h2>%s</h2>', __( 'Installed plugins', 'wpify-core' ) );
 		$html .= $this->get_wpify_modules_blocks( $installed_plugins, true );
+
+		do_action( 'wpify_dashboard_after_installed_plugins' );
 
 		if ( $extensions_map ) {
 			$html .= sprintf( '<h2>%s</h2>', __( 'Our other plugins', 'wpify-core' ) );
 			$html .= $this->get_wpify_modules_blocks( $extensions_map );
 		}
+
+		do_action( 'wpify_dashboard_after_other_plugins' );
 
 		return $html;
 	}
@@ -452,7 +458,7 @@ class Settings {
 								?>
                             </h3>
 							<?php
-							$metas = [];
+							$metas   = [];
 							$notices = [];
 							if ( $installed && isset( $plugin['version'] ) ) {
 								$version = $plugin['version'];
@@ -606,7 +612,13 @@ class Settings {
 				?>
             </div>
             <div class="wpify-dashboard__sidebar">
-				<?php $this->get_wpify_posts(); ?>
+				<?php
+				do_action( 'wpify_dashboard_before_news_posts' );
+
+				$this->get_wpify_posts();
+
+				do_action( 'wpify_dashboard_after_news_posts' );
+				?>
             </div>
         </div>
 		<?php
@@ -921,7 +933,7 @@ class Settings {
                 margin: 20px 10px 20px 0;
             }
 
-            form {
+            #wpbody form {
                 display: flex;
                 background: white;
                 column-gap: 40px;
@@ -1042,6 +1054,7 @@ class Settings {
                 border: 1px solid #ccc;
                 border-radius: 5px;
             }
+
             input[type=color] {
                 padding: 1px 3px;;
                 border: 1px solid #ccc;
