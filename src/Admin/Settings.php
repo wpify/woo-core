@@ -54,6 +54,7 @@ class Settings {
 			add_filter( 'wpify_core_settings_initialized', '__return_true' );
 			add_action( 'init', array( $this, 'load_textdomain' ) );
 			add_action( 'init', array( $this, 'register_settings' ) );
+			add_action( 'admin_init', [ $this, 'hide_admin_notices' ] );
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ), 9999 );
 			add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
 			add_action( 'admin_menu', [ $this, 'register_menu_page' ] );
@@ -84,6 +85,40 @@ class Settings {
 		$mo_file = dirname( __DIR__, 2 ) . '/languages/wpify-core-' . get_locale() . '.mo';
 		if ( file_exists( $mo_file ) ) {
 			load_textdomain( 'wpify-core', $mo_file );
+		}
+	}
+
+	/**
+	 * Hide all admin notices on dashboard or hide non wpify notices on wpify settings pages
+	 * @return void
+	 */
+	public function hide_admin_notices(): void {
+		global $wp_filter;
+
+		if ( isset( $wp_filter['admin_notices'] ) ) {
+			$current_page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+
+			if ( $current_page === $this::DASHBOARD_SLUG ) {
+				unset( $wp_filter['admin_notices'] );
+			} elseif ( str_contains( $current_page, 'wpify/' ) ) {
+				foreach ( $wp_filter['admin_notices']->callbacks as $priority => $callbacks ) {
+					foreach ( $callbacks as $key => $callback ) {
+						$function = $callback['function'];
+
+						if ( is_array( $function ) && isset( $function[0] ) ) {
+							if ( is_object( $function[0] ) ) {
+								$class_name = get_class( $function[0] );
+							} else {
+								$class_name = $function[0];
+							}
+
+							if ( strpos( $class_name, 'Wpify' ) === false ) {
+								unset( $wp_filter['admin_notices']->callbacks[ $priority ][ $key ] );
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -685,7 +720,7 @@ class Settings {
                             <p><a href="mailto:support@wpify.io">support@wpify.io</a></p>
                         </div>
                     </div>
-	                <?php do_action( 'wpify_dashboard_support_cards' ); ?>
+					<?php do_action( 'wpify_dashboard_support_cards' ); ?>
 
                 </div>
 
