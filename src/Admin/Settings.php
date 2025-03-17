@@ -500,7 +500,7 @@ class Settings {
 								if ( isset( $plugin['plugin_info'] ) ) {
 									$available_v = $plugin['plugin_info']['version'] ?? 0;
 
-									if ( $available_v && $available_v != $version ) {
+									if ( $available_v && version_compare( $available_v, $version, '>' ) ) {
 										$notices[] = array(
 											'type'    => 'warning',
 											'content' => '<p>⚠️ ' . sprintf( __( 'New version <a href="%s">%s</a> available.', 'wpify-core' ), admin_url( 'update-core.php' ), $available_v ) . '</p>'
