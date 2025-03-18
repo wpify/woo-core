@@ -175,6 +175,7 @@ class Settings {
 		}
 
 		foreach ( $this->pages as $page ) {
+			$page['position'] = 1;
 			$this->custom_fields->create_options_page( $page );
 		}
 	}
@@ -409,7 +410,7 @@ class Settings {
 
 			if ( ! is_wp_error( $response ) ) {
 				$extensions = json_decode( $response['body'], true )['plugins'];
-				set_transient( 'wpify_core_all_plugins', $extensions, 6*HOUR_IN_SECONDS );
+				set_transient( 'wpify_core_all_plugins', $extensions, 6 * HOUR_IN_SECONDS );
 			}
 		}
 
