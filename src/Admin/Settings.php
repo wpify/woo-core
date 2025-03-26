@@ -145,7 +145,7 @@ class Settings {
 				'tabs'        => $this->is_current( '', $plugin_id ) ? $plugin['tabs'] : array(),
 				'items'       => $this->is_current( '', $plugin_id ) ? $plugin['settings'] : array(),
 			);
-			$sections                  = $this->get_sections( $plugin['option_id'] );
+			$sections                  = $this->get_sections( $plugin_id );
 			foreach ( $sections as $section_id => $section ) {
 				if ( empty( $section_id ) ) {
 					continue;
@@ -773,7 +773,7 @@ class Settings {
 			'doc_link'    => 'https://wpify.io/dokumentace/',
 		);
 		$data     = apply_filters( 'wpify_admin_menu_bar_data', $data );
-		$sections = $this->get_sections( $data['parent'] );
+		$sections = $this->get_sections( $data['plugin'] );
 
 		foreach ( $sections as $section_id => $section ) {
 			if ( isset( $section['in_menubar'] ) && ! $section['in_menubar'] ) {
