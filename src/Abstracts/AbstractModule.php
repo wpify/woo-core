@@ -217,7 +217,7 @@ abstract class AbstractModule {
 		?>
         <div class="error notice">
             <p><?php
-				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">activate the domain</a> by connecting it with your WPify account!', 'wpify-core' ), $this->name(), admin_url( 'admin.php?page=wc-settings&tab=wpify-woo-settings&section=' . $this->get_id() ) );
+				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">activate the domain</a> by connecting it with your WPify account!', 'wpify-core' ), $this->name(), $this->get_settings_url() );
 				?></p>
         </div>
 		<?php
