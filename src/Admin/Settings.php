@@ -790,11 +790,13 @@ class Settings {
 			$data['doc_link']    = $data['doc_link'] ?: $plugins[ $data['plugin'] ]['doc_link'];
 		}
 
-		$data['doc_link'] = add_query_arg( array(
-			'utm_source'   => $data['plugin'] ?: 'plugin-dashboard',
-			'utm_medium'   => 'plugin-link',
-			'utm_campaign' => 'documentation-link'
-		), $data['doc_link'] );
+		if ( isset( $data['doc_link'] ) && $data['doc_link'] ) {
+			$data['doc_link'] = add_query_arg( array(
+				'utm_source'   => $data['plugin'] ?: 'plugin-dashboard',
+				'utm_medium'   => 'plugin-link',
+				'utm_campaign' => 'documentation-link'
+			), $data['doc_link'] );
+		}
 
 		?>
         <style type="text/css">
