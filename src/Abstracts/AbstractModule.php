@@ -162,11 +162,15 @@ abstract class AbstractModule {
 			$default_lang = apply_filters( 'wpml_default_language', null );
 			if ( $default_lang !== ICL_LANGUAGE_CODE && get_option( $this->get_option_key() ) === false ) {
 				// Fallback to default language settings if the translated option does not exist at all.
-				return get_option( $this->get_option_key( true ), array() );
+				$default = get_option( $this->get_option_key( true ) );
+
+				return is_array( $default ) ? $default : array();
 			}
 		}
 
-		return get_option( $this->get_option_key(), array() );
+		$settings = get_option( $this->get_option_key() );
+
+		return is_array( $settings ) ? $settings : array();
 	}
 
 	public function get_option_key( $raw = false ) {
