@@ -675,7 +675,7 @@ class Settings {
 		$faqs = apply_filters( 'wpify_dashboard_support_faqs', array(
 			array(
 				'title'   => __( 'How do the pricing plans work?', 'wpify-core' ),
-				'content' => __( 'When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew at a discounted price.', 'wpify-core' ),
+				'content' => __( 'When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew.', 'wpify-core' ),
 			),
 			array(
 				'title'   => __( 'Will the plugin work if I do not renew my license?', 'wpify-core' ),
