@@ -30,6 +30,15 @@ abstract class AbstractPlugin {
 	}
 
 	/**
+	 * Plugin data
+	 *
+	 * @return array
+	 */
+	public function plugin_data(): array {
+		return get_plugin_data( $this->plugin_utils->get_plugin_file() );
+	}
+
+	/**
 	 * Plugin id
 	 *
 	 * @return string
@@ -44,7 +53,7 @@ abstract class AbstractPlugin {
 	 * @return string|null
 	 */
 	public function name(): ?string {
-		return $this->plugin_utils->get_plugin_name();
+		return $this->plugin_data()['Name'] ?? $this->plugin_utils->get_plugin_name();
 	}
 
 	/**
@@ -129,8 +138,8 @@ abstract class AbstractPlugin {
 	 */
 	public function add_plugin( $plugins ) {
 		$plugins[ $this->id() ] = array(
-			'title'        => $this->plugin_utils->get_plugin_name(),
-			'desc'         => $this->plugin_utils->get_plugin_description(),
+			'title'        => $this->name(),
+			'desc'         => $this->plugin_data()['Description'],
 			'icon'         => $this->icon_file(),
 			'version'      => $this->plugin_utils->get_plugin_version(),
 			'doc_link'     => $this->documentation_url(),
