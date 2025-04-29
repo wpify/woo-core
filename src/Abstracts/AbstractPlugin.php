@@ -61,7 +61,7 @@ abstract class AbstractPlugin {
 	 * @return string
 	 */
 	public function get_menu_slug(): string {
-		return sprintf( 'wpify/%s', $this->id() );
+		return sprintf( 'wpify/%s', $this->base_option_id() );
 	}
 
 	/**
