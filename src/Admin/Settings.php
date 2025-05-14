@@ -406,7 +406,7 @@ class Settings {
 		$extensions        = get_transient( 'wpify_core_all_plugins' );
 
 		if ( ! $extensions ) {
-			$response = wp_remote_get( 'https://wpify.io/wp-json/wpify/v1/plugins-list' );
+			$response = wp_remote_get( 'https://wpify.cz/wp-json/wpify/v1/plugins-list' );
 
 			if ( ! is_wp_error( $response ) ) {
 				$extensions = json_decode( $response['body'], true )['plugins'];
@@ -586,7 +586,7 @@ class Settings {
 		$posts = get_transient( 'wpify_core_news' );
 
 		if ( ! $posts ) {
-			$response = wp_remote_get( 'https://wpify.io/wp-json/wp/v2/posts?per_page=4&_embed' );
+			$response = wp_remote_get( 'https://wpify.cz/wp-json/wp/v2/posts?per_page=4&_embed' );
 
 			if ( ! is_wp_error( $response ) ) {
 				$posts = json_decode( wp_remote_retrieve_body( $response ) );
@@ -670,7 +670,7 @@ class Settings {
 			'utm_source'   => 'plugin-support',
 			'utm_medium'   => 'plugin-link',
 			'utm_campaign' => 'documentation-link'
-		), 'https://wpify.io/dokumentace/' );
+		), 'https://wpify.cz/dokumentace/' );
 
 		$faqs = apply_filters( 'wpify_dashboard_support_faqs', array(
 			array(
@@ -770,7 +770,7 @@ class Settings {
 				),
 			),
 			'support_url' => add_query_arg( [ 'page' => $this::SUPPORT_MENU_SLUG ], admin_url( 'admin.php' ) ),
-			'doc_link'    => 'https://wpify.io/dokumentace/',
+			'doc_link'    => 'https://wpify.cz/dokumentace/',
 		);
 		$data     = apply_filters( 'wpify_admin_menu_bar_data', $data );
 		$sections = $this->get_sections( $data['plugin'] );
