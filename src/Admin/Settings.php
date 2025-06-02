@@ -134,6 +134,11 @@ class Settings {
 		}
 		$this->pages = array();
 		foreach ( $plugins as $plugin_id => $plugin ) {
+
+			if ( empty( $plugin['menu_slug'] ) ) {
+				continue;
+			}
+
 			$this->pages[ $plugin_id ] = array(
 				'page_title'  => $plugin['title'],
 				'menu_title'  => $plugin['title'],
@@ -186,7 +191,44 @@ class Settings {
 	 * @return array
 	 */
 	public function get_plugins(): array {
-		return apply_filters( 'wpify_installed_plugins', [] );
+		$all_plugins = get_plugins();
+		$active      = apply_filters( 'wpify_installed_plugins', [] );
+
+		$wpify_plugins = [];
+		foreach ( $all_plugins as $plugin_file => $plugin_data ) {
+			$slug = $this->get_plugin_slug( $plugin_file );
+			if ( isset( $active[ $slug ] ) ) {
+				$wpify_plugins[ $slug ] = $active[ $slug ];
+				continue;
+			}
+
+			if ( isset( $plugin_data['Author'] ) && str_contains( strtolower( $plugin_data['Author'] ), 'wpify' ) ) {
+				$wpify_plugins[ $slug ] = array(
+					'title'        => $plugin_data['Name'],
+					'desc'         => $plugin_data['Description'],
+					'icon'         => '',
+					'version'      => $plugin_data['Version'],
+					'doc_link'     => '',
+					'support_url'  => '',
+					'menu_slug'    => '',
+					'option_id'    => '',
+					'settings_url' => '',
+					'tabs'         => [],
+					'settings'     => []
+				);
+			}
+		}
+
+		return $wpify_plugins;
+	}
+
+	function get_plugin_slug( $plugin_file ) {
+		$parts = explode( '/', $plugin_file );
+		if ( count( $parts ) > 1 ) {
+			return $parts[0];
+		}
+
+		return basename( $plugin_file, '.php' );
 	}
 
 	/**
@@ -422,12 +464,18 @@ class Settings {
 
 			foreach ( $installed_plugins as $slug => $plugin ) {
 				if ( isset( $extensions_map[ $slug ] ) ) {
-					$installed_plugins[ $slug ] = array_merge( $extensions_map[ $slug ], $plugin );
+					$installed_plugins[ $slug ] = $extensions_map[ $slug ];
+					foreach ( $plugin as $key => $value ) {
+						if ( ! isset( $installed_plugins[ $slug ][ $key ] ) || ! empty( $value ) ) {
+							$installed_plugins[ $slug ][ $key ] = $value;
+						}
+					}
 					unset( $extensions_map[ $slug ] );
 				}
 			}
 		}
 
+		dump( $installed_plugins );
 		do_action( 'wpify_dashboard_before_installed_plugins' );
 
 		$html = sprintf( '<h2>%s</h2>', __( 'Installed plugins', 'wpify-core' ) );
@@ -473,6 +521,7 @@ class Settings {
 						'utm_campaign' => 'documentation-link'
 					), $plugin['doc_link'] );
 				}
+				$is_active = $installed && ! empty( $plugin['settings_url'] );
 				?>
                 <div class="wpify__card">
                     <div class="wpify__card-head">
@@ -555,6 +604,19 @@ class Settings {
 								?>"
                                      role="button"><?php
 									_e( 'Settings', 'wpify-core' );
+									?></a></span>
+							<?php
+						} elseif ( $installed && !$is_active ) {
+							$activate_url = wp_nonce_url(
+								admin_url( 'plugins.php?action=activate&plugin=' . urlencode( $plugin['plugin_file'] ) ),
+								'activate-plugin_' . $plugin['plugin_file']
+							);
+							?>
+                            <span><a class="button" href="<?php
+								echo esc_url( $activate_url );
+								?>"
+                                     role="button button-primary"><?php
+									_e( 'Activate', 'wpify-core' );
 									?></a></span>
 							<?php
 						} elseif ( isset( $plugin['link'] ) && $plugin['link'] ) {
@@ -967,9 +1029,14 @@ class Settings {
                 gap: 20px;
             }
 
-            .wpify__modules-toggle .components-base-control {
+            th:has(label[for=enabled_modules]) {
+                display: none;
+            }
+
+            .wpify__modules-toggle > div {
                 flex: 1;
-                width: 300px;
+                min-width: 235px;
+                max-width: 327px;
                 padding: 10px 20px;
                 border-radius: 7px;
                 -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.42);
