@@ -213,6 +213,7 @@ class Settings {
 					'menu_slug'    => '',
 					'option_id'    => '',
 					'settings_url' => '',
+					'plugin_file'  => $plugin_file,
 					'tabs'         => [],
 					'settings'     => []
 				);
@@ -475,7 +476,6 @@ class Settings {
 			}
 		}
 
-		dump( $installed_plugins );
 		do_action( 'wpify_dashboard_before_installed_plugins' );
 
 		$html = sprintf( '<h2>%s</h2>', __( 'Installed plugins', 'wpify-core' ) );
@@ -523,7 +523,7 @@ class Settings {
 				}
 				$is_active = $installed && ! empty( $plugin['settings_url'] );
 				?>
-                <div class="wpify__card">
+                <div class="wpify__card <?= $installed ? ( $is_active ? 'active' : 'inactive' ) : 'buy' ?>">
                     <div class="wpify__card-head">
 						<?php
 						if ( isset( $plugin['icon'] ) && $plugin['icon'] ) {
@@ -597,7 +597,7 @@ class Settings {
 						?>
                         <div style="flex: 1"></div>
 						<?php
-						if ( $installed && isset( $plugin['settings_url'] ) ) {
+						if ( $installed && $is_active ) {
 							?>
                             <span><a class="button" href="<?php
 								echo esc_url( $plugin['settings_url'] );
@@ -606,16 +606,16 @@ class Settings {
 									_e( 'Settings', 'wpify-core' );
 									?></a></span>
 							<?php
-						} elseif ( $installed && !$is_active ) {
+						} elseif ( $installed && $plugin['plugin_file'] ) {
 							$activate_url = wp_nonce_url(
 								admin_url( 'plugins.php?action=activate&plugin=' . urlencode( $plugin['plugin_file'] ) ),
 								'activate-plugin_' . $plugin['plugin_file']
 							);
 							?>
-                            <span><a class="button" href="<?php
+                            <span><a class="button button-primary" href="<?php
 								echo esc_url( $activate_url );
 								?>"
-                                     role="button button-primary"><?php
+                                     role="button"><?php
 									_e( 'Activate', 'wpify-core' );
 									?></a></span>
 							<?php
@@ -986,6 +986,19 @@ class Settings {
                 -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.42);
                 -moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.42);
                 box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.42);
+            }
+
+            .wpify__card.active {
+                border-top: 3px solid green;
+            }
+
+            .wpify__card.inactive {
+                border-top: 3px solid red;
+            }
+
+            .wpify__card.inactive .wpify__card-head {
+                opacity: 0.8;
+                filter: grayscale(90%);
             }
 
             .wpify__card-head {
