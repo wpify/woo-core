@@ -56,25 +56,16 @@ class Settings {
 			add_action( 'init', array( $this, 'register_settings' ) );
 			add_action( 'admin_init', [ $this, 'hide_admin_notices' ] );
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ), 9999 );
-			add_filter( 'removable_query_args', array( $this, 'removable_query_args' ) );
 			add_action( 'admin_menu', [ $this, 'register_menu_page' ] );
 			add_action( 'in_admin_header', [ $this, 'render_menu_bar' ] );
 
-			/** Handle activation/deactivation messages */
-			if ( ! empty( $_REQUEST['wpify-woo-license-activated'] ) && $_REQUEST['wpify-woo-license-activated'] === '1' ) {
-				WC_Admin_Settings::add_message( __( 'Your license has been activated.', 'wpify-core' ) );
-			}
-			if ( ! empty( $_REQUEST['wpify-woo-license-deactivated'] ) && $_REQUEST['wpify-woo-license-deactivated'] === '1' ) {
-				WC_Admin_Settings::add_message( __( 'Your license has been deactivated.', 'wpify-core' ) );
-			}
+			add_action( 'activated_plugin', function ( $plugin ) {
+				if ( ! empty( $_GET['wpify_redirect'] ) ) {
+					wp_safe_redirect( esc_url_raw( $_GET['wpify_redirect'] ) );
+					exit;
+				}
+			} );
 		}
-	}
-
-	public function removable_query_args( array $args ) {
-		$args[] = 'wpify-woo-license-activated';
-		$args[] = 'wpify-woo-license-deactivated';
-
-		return $args;
 	}
 
 	/**
@@ -607,8 +598,9 @@ class Settings {
 									?></a></span>
 							<?php
 						} elseif ( $installed && $plugin['plugin_file'] ) {
+							$redirect_url = admin_url( 'admin.php?page=wpify' );
 							$activate_url = wp_nonce_url(
-								admin_url( 'plugins.php?action=activate&plugin=' . urlencode( $plugin['plugin_file'] ) ),
+								admin_url( 'plugins.php?action=activate&plugin=' . urlencode( $plugin['plugin_file'] ) . '&wpify_redirect=' . urlencode( $redirect_url ) ),
 								'activate-plugin_' . $plugin['plugin_file']
 							);
 							?>
