@@ -10,6 +10,7 @@ use Wpify\WooCore\WpifyWooCore;
  * @package WpifyWoo\Abstracts
  */
 abstract class AbstractPlugin {
+	protected bool $requires_activation = true;
 	private WpifyWooCore $wpify_woo_core;
 	private PluginUtils $plugin_utils;
 
@@ -148,7 +149,8 @@ abstract class AbstractPlugin {
 			'option_id'    => $this->base_option_id(),
 			'settings_url' => $this->settings_url(),
 			'tabs'         => $this->settings_tabs(),
-			'settings'     => $this->settings()
+			'settings'     => $this->settings(),
+			'license'      => $this->requires_activation ? get_option( sprintf( '%s_license', $this->id() ) ) : true,
 		);
 
 		return $plugins;

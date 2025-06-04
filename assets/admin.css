@@ -136,8 +136,12 @@
     border-top: 3px solid var(--wpify-core-success);
 }
 
-.wpify__card.inactive {
+.wpify__card.active.no-licence {
     border-top: 3px solid var(--wpify-core-error);
+}
+
+.wpify__card.inactive {
+    border-top: 3px solid var(--wpify-core-gray);
 }
 
 .wpify__card.inactive .wpify__card-head {

@@ -526,8 +526,12 @@ class Settings {
 					), $plugin['doc_link'] );
 				}
 				$is_active = $installed && ! empty( $plugin['settings_url'] );
+				$license   = $plugin['license'] ?? true;
 				?>
-                <div class="wpify__card <?= $installed ? ( $is_active ? 'active' : 'inactive' ) : 'buy' ?>">
+                <div class="wpify__card <?php
+				echo $installed ? $is_active ? 'active' : 'inactive' : 'buy';
+				echo $installed && ! $license ? ' no-licence' : '';
+				?>">
                     <div class="wpify__card-head">
 						<?php
 						if ( isset( $plugin['icon'] ) && $plugin['icon'] ) {
@@ -840,7 +844,7 @@ class Settings {
 			return;
 		}
 
-		$this->enqueue_asset_style('wpify-core-admin', 'admin.css');
+		$this->enqueue_asset_style( 'wpify-core-admin', 'admin.css' );
 
 		global $title;
 
@@ -993,13 +997,13 @@ class Settings {
 		}
 	}
 
-	public static function enqueue_asset_style($handle, $file, $deps = []) {
-		$base_dir     = dirname(__DIR__, 2);
-		$asset_path   = $base_dir . '/assets/' . ltrim($file, '/');
-		$relative_path = str_replace(ABSPATH, '', $asset_path);
-		$url = site_url($relative_path);
-		$ver = file_exists($asset_path) ? filemtime($asset_path) : null;
+	public static function enqueue_asset_style( $handle, $file, $deps = [] ) {
+		$base_dir      = dirname( __DIR__, 2 );
+		$asset_path    = $base_dir . '/assets/' . ltrim( $file, '/' );
+		$relative_path = str_replace( ABSPATH, '', $asset_path );
+		$url           = site_url( $relative_path );
+		$ver           = file_exists( $asset_path ) ? filemtime( $asset_path ) : null;
 
-		wp_enqueue_style($handle, $url, $deps, $ver);
+		wp_enqueue_style( $handle, $url, $deps, $ver );
 	}
 }
