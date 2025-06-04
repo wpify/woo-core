@@ -67,7 +67,7 @@ class Settings {
 
 	public function maybe_set_redirect() {
 		if ( ! empty( $_GET['wpify_redirect'] ) ) {
-			set_transient( 'wpify_redirect', esc_url_raw( $_GET['wpify_redirect'] ), 60 );
+			set_transient( 'wpify_redirect', esc_url_raw( $_GET['wpify_redirect'] ), 3 );
 		}
 	}
 
