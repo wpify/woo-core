@@ -59,14 +59,23 @@ class Settings {
 			add_action( 'admin_menu', [ $this, 'register_menu_page' ] );
 			add_action( 'in_admin_header', [ $this, 'render_menu_bar' ] );
 
-			add_action('admin_init', [$this, 'maybe_redirect']);
+			add_action( 'activated_plugin', [ $this, 'maybe_set_redirect' ] );
+			add_action( 'deactivated_plugin', [ $this, 'maybe_set_redirect' ] );
+			add_action( 'admin_init', [ $this, 'maybe_redirect' ] );
+		}
+	}
 
+	public function maybe_set_redirect() {
+		if ( ! empty( $_GET['wpify_redirect'] ) ) {
+			set_transient( 'wpify_redirect', esc_url_raw( $_GET['wpify_redirect'] ), 60 );
 		}
 	}
 
 	public function maybe_redirect() {
-		if ( ! empty( $_GET['wpify_redirect'] ) ) {
-			wp_safe_redirect( esc_url_raw( $_GET['wpify_redirect'] ) );
+		$redirect = get_transient( 'wpify_redirect' );
+		if ( $redirect ) {
+			delete_transient( 'wpify_redirect' );
+			wp_safe_redirect( $redirect );
 			exit;
 		}
 	}
