@@ -59,12 +59,15 @@ class Settings {
 			add_action( 'admin_menu', [ $this, 'register_menu_page' ] );
 			add_action( 'in_admin_header', [ $this, 'render_menu_bar' ] );
 
-			add_action( 'activated_plugin', function ( $plugin ) {
-				if ( ! empty( $_GET['wpify_redirect'] ) ) {
-					wp_safe_redirect( esc_url_raw( $_GET['wpify_redirect'] ) );
-					exit;
-				}
-			} );
+			add_action( 'activated_plugin', [ $this, 'maybe_redirect' ] );
+			add_action( 'deactivated_plugin', [ $this, 'maybe_redirect' ] );
+		}
+	}
+
+	public function maybe_redirect() {
+		if ( ! empty( $_GET['wpify_redirect'] ) ) {
+			wp_safe_redirect( esc_url_raw( $_GET['wpify_redirect'] ) );
+			exit;
 		}
 	}
 
@@ -608,20 +611,20 @@ class Settings {
                                 </a>
 							<?php } ?>
                             <a class="button button-primary" href="<?php
-								echo esc_url( $plugin['settings_url'] );
-								?>"
-                                     role="button"><?php
-									_e( 'Settings', 'wpify-core' );
-									?></a>
+							echo esc_url( $plugin['settings_url'] );
+							?>"
+                               role="button"><?php
+								_e( 'Settings', 'wpify-core' );
+								?></a>
 							<?php
 						} elseif ( $installed && $plugin['plugin_file'] ) {
 							$redirect_url = admin_url( 'admin.php?page=wpify' );
 							$activate_url = wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=' . urlencode( $plugin['plugin_file'] ) . '&wpify_redirect=' . urlencode( $redirect_url ) ), 'activate-plugin_' . $plugin['plugin_file'] );
 							?>
                             <a class="toggle-button inactive" href="<?php
-								echo esc_url( $activate_url );
-								?>"
-                                     role="button"><span class="toggle-button__label"><?php
+							echo esc_url( $activate_url );
+							?>"
+                               role="button"><span class="toggle-button__label"><?php
 									_e( 'Activate', 'wpify-core' );
 									?>
                                     </span>
@@ -1256,8 +1259,7 @@ class Settings {
             }
 
             .wpify-admin-page form p .button-primary:hover, .wpify-admin-page form p .button-primary:active,
-            .wpify__card .button-primary:hover, .wpify__card .button-primary:active
-            {
+            .wpify__card .button-primary:hover, .wpify__card .button-primary:active {
                 background: #826eb4;
                 border-color: #826eb4;
             }
