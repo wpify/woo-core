@@ -189,7 +189,8 @@ class Settings {
 		foreach ( $all_plugins as $plugin_file => $plugin_data ) {
 			$slug = $this->get_plugin_slug( $plugin_file );
 			if ( isset( $active[ $slug ] ) ) {
-				$wpify_plugins[ $slug ] = $active[ $slug ];
+				$wpify_plugins[ $slug ]                = $active[ $slug ];
+				$wpify_plugins[ $slug ]['plugin_file'] = $plugin_file;
 				continue;
 			}
 
@@ -589,31 +590,49 @@ class Settings {
                         <div style="flex: 1"></div>
 						<?php
 						if ( $installed && $is_active ) {
-							?>
-                            <span><a class="button" href="<?php
+							if ( ! empty( $plugin['plugin_file'] ) ) {
+								$redirect_url   = admin_url( 'admin.php?page=wpify' );
+								$deactivate_url = wp_nonce_url(
+									admin_url( 'plugins.php?action=deactivate&plugin=' . urlencode( $plugin['plugin_file'] ) . '&wpify_redirect=' . urlencode( $redirect_url ) ),
+									'deactivate-plugin_' . $plugin['plugin_file']
+								);
+								?>
+                                <a class="toggle-button active" href="<?php
+								echo esc_url( $deactivate_url );
+								?>"
+                                   role="button"><span class="toggle-button__label"><?php
+										_e( 'Deactivate', 'wpify-core' );
+										?>
+                                    </span>
+                                    <span class="toggle-button__thumb"></span>
+                                </a>
+							<?php } ?>
+                            <a class="button button-primary" href="<?php
 								echo esc_url( $plugin['settings_url'] );
 								?>"
                                      role="button"><?php
 									_e( 'Settings', 'wpify-core' );
-									?></a></span>
+									?></a>
 							<?php
 						} elseif ( $installed && $plugin['plugin_file'] ) {
 							$redirect_url = admin_url( 'admin.php?page=wpify' );
-							$activate_url = wp_nonce_url(
-								admin_url( 'plugins.php?action=activate&plugin=' . urlencode( $plugin['plugin_file'] ) . '&wpify_redirect=' . urlencode( $redirect_url ) ),
-								'activate-plugin_' . $plugin['plugin_file']
-							);
+							$activate_url = wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=' . urlencode( $plugin['plugin_file'] ) . '&wpify_redirect=' . urlencode( $redirect_url ) ), 'activate-plugin_' . $plugin['plugin_file'] );
 							?>
-                            <span><a class="button button-primary" href="<?php
+                            <a class="toggle-button inactive" href="<?php
 								echo esc_url( $activate_url );
 								?>"
-                                     role="button"><?php
+                                     role="button"><span class="toggle-button__label"><?php
 									_e( 'Activate', 'wpify-core' );
-									?></a></span>
+									?>
+                                    </span>
+                                <span class="toggle-button__thumb"></span>
+                            </a>
 							<?php
 						} elseif ( isset( $plugin['link'] ) && $plugin['link'] ) {
 							?>
-                            <span><a class="install-now button" href="<?php echo esc_url( $plugin['link'] ); ?>"
+                            <span><a class="install-now button button-primary" href="<?php
+								echo esc_url( $plugin['link'] );
+								?>"
                                      role="button" target="_blank"><?php
 									_e( 'Get plugin', 'wpify-core' );
 									?></a></span>
@@ -1229,17 +1248,52 @@ class Settings {
                 transform: translateX(22px);
             }
 
-            .wpify-admin-page form p .button-primary {
+            .wpify-admin-page form p .button-primary, .wpify__card .button-primary {
                 background: #00A0D2;
                 border-color: #00A0D2;
                 color: white;
-                padding: 7px 25px;
                 text-transform: uppercase;
             }
 
-            .wpify-admin-page form p .button-primary:hover, .wpify-admin-page form p .button-primary:active {
+            .wpify-admin-page form p .button-primary:hover, .wpify-admin-page form p .button-primary:active,
+            .wpify__card .button-primary:hover, .wpify__card .button-primary:active
+            {
                 background: #826eb4;
                 border-color: #826eb4;
+            }
+
+            .wpify__card .toggle-button {
+                position: relative;
+                width: 40px;
+                height: 24PX;
+                border-radius: 15px;
+                background: #999;
+            }
+
+            .wpify__card .toggle-button.active {
+                background: #00A0D2;
+            }
+
+            .wpify__card .toggle-button__thumb {
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                width: 20px;
+                height: 20px;
+                background-color: white;
+                border-radius: 10px;
+            }
+
+            .wpify__card .toggle-button.active .toggle-button__thumb {
+                left: auto;
+                right: 2px;
+            }
+
+            .wpify__card .toggle-button__label {
+                width: 1px;
+                height: 1px;
+                overflow: hidden;
+                opacity: 0;
             }
 
             .wpify-notice {
