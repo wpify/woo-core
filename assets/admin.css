@@ -381,7 +381,7 @@ input[type=color] {
     transform: translateX(22px);
 }
 
-.wpify-admin-page form p .button-primary, .wpify__card .button-primary {
+.wpify-admin-page form p .button-primary, .wpify__card .button-primary, .license-field .components-button.is-primary {
     background: var(--wpify-core-primary);
     border-color: var(--wpify-core-primary);
     color: white;
@@ -393,7 +393,8 @@ input[type=color] {
 }
 
 .wpify-admin-page form p .button-primary:hover, .wpify-admin-page form p .button-primary:active,
-.wpify__card .button-primary:hover, .wpify__card .button-primary:active {
+.wpify__card .button-primary:hover, .wpify__card .button-primary:active,
+.license-field .components-button.is-primary:hover {
     background: var(--wpify-core-secondary);
     border-color: var(--wpify-core-secondary);
 }
@@ -432,7 +433,7 @@ input[type=color] {
     opacity: 0;
 }
 
-.wpify-notice {
+.wpify-notice, .license-field {
     border: 1px solid rgba(6, 44, 241, 0.46);
     background-color: rgba(7, 73, 149, 0.12);
     padding: 5px 10px;
@@ -440,11 +441,25 @@ input[type=color] {
     border-radius: 3px;
 }
 
+.license-field {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.license-field__text {
+    flex: 1;
+}
+
+.license-field h3 {
+    margin: 0;
+}
+
 .wpify-notice > *:last-child {
     margin-bottom: 0;
 }
 
-.wpify-notice.wpify-notice-success {
+.wpify-notice.wpify-notice-success, .license-field.active {
     border-color: rgba(36, 241, 6, 0.46);
     background-color: rgba(7, 149, 66, 0.12);
 }
@@ -454,7 +469,7 @@ input[type=color] {
     background-color: rgba(220, 128, 1, 0.16);
 }
 
-.wpify-notice.wpify-notice-error {
+.wpify-notice.wpify-notice-error, .license-field.not-active {
     border-color: rgba(241, 6, 6, 0.81);
     background-color: rgba(220, 17, 1, 0.16);
 }
