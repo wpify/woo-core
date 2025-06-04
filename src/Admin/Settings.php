@@ -59,8 +59,8 @@ class Settings {
 			add_action( 'admin_menu', [ $this, 'register_menu_page' ] );
 			add_action( 'in_admin_header', [ $this, 'render_menu_bar' ] );
 
-			add_action( 'activated_plugin', [ $this, 'maybe_redirect' ] );
-			add_action( 'deactivated_plugin', [ $this, 'maybe_redirect' ] );
+			add_action('admin_init', [$this, 'maybe_redirect']);
+
 		}
 	}
 
