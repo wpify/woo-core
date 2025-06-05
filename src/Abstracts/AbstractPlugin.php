@@ -15,6 +15,7 @@ abstract class AbstractPlugin {
 	private WpifyWooCore $wpify_woo_core;
 	private PluginUtils $plugin_utils;
 
+	private License $license;
 
 	public function __construct(
 		WpifyWooCore $wpify_woo_core,
