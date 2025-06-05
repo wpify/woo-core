@@ -525,7 +525,7 @@ class Settings {
 						'utm_campaign' => 'documentation-link'
 					), $plugin['doc_link'] );
 				}
-				$is_active = $installed && ! empty( $plugin['settings_url'] );
+				$is_active = $installed && ( ( ! empty( $plugin['plugin_file'] ) ? is_plugin_active( $plugin['plugin_file'] ) : ! empty( $plugin['settings_url'] ) ) );
 				$license   = $plugin['license'] ?? true;
 				?>
                 <div class="wpify__card <?php
@@ -628,14 +628,18 @@ class Settings {
                                     </span>
                                     <span class="toggle-button__thumb"></span>
                                 </a>
-							<?php } ?>
-                            <a class="button button-primary" href="<?php
-							echo esc_url( $plugin['settings_url'] );
-							?>"
-                               role="button"><?php
-								_e( 'Settings', 'wpify-core' );
-								?></a>
-							<?php
+								<?php
+							}
+							if ( ! empty( $plugin['settings_url'] ) ) {
+								?>
+                                <a class="button button-primary" href="<?php
+								echo esc_url( $plugin['settings_url'] );
+								?>"
+                                   role="button"><?php
+									_e( 'Settings', 'wpify-core' );
+									?></a>
+								<?php
+							}
 						} elseif ( $installed && $plugin['plugin_file'] ) {
 							$redirect_url = admin_url( 'admin.php?page=wpify' );
 							$activate_url = wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=' . urlencode( $plugin['plugin_file'] ) . '&wpify_redirect=' . urlencode( $redirect_url ) ), 'activate-plugin_' . $plugin['plugin_file'] );
