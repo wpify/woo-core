@@ -2,6 +2,7 @@
 
 namespace Wpify\WooCore\Abstracts;
 
+use Wpify\License\License;
 use Wpify\PluginUtils\PluginUtils;
 use Wpify\WooCore\WpifyWooCore;
 
@@ -28,6 +29,13 @@ abstract class AbstractPlugin {
 			'add_action_links'
 		) );
 		add_filter( 'plugin_row_meta', array( $this, 'add_row_meta_links' ), 10, 2 );
+
+		if ( $this->requires_activation ) {
+			$this->license = new License( $this->id(), false, is_multisite() ? get_current_network_id() : 0 );
+			if ( ! $this->license->is_activated() ) {
+				add_action( 'admin_notices', array( $this, 'activation_notice' ) );
+			}
+		}
 	}
 
 	/**
@@ -150,7 +158,7 @@ abstract class AbstractPlugin {
 			'settings_url' => $this->settings_url(),
 			'tabs'         => $this->settings_tabs(),
 			'settings'     => $this->settings(),
-			'license'      => $this->requires_activation ? get_option( sprintf( '%s_license', $this->id() ) ) : true,
+			'license'      => $this->requires_activation ? $this->license->is_activated() : true
 		);
 
 		return $plugins;
@@ -205,5 +213,18 @@ abstract class AbstractPlugin {
 		}
 
 		return array_merge( $plugin_meta, $new_links );
+	}
+
+	/**
+	 * Add activation notice if the license s not active yet.
+	 */
+	public function activation_notice() {
+		?>
+        <div class="error notice">
+            <p><?php
+				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">activate the domain</a> by connecting it with your WPify account!', 'wpify-core' ), $this->name(), $this->settings_url() );
+				?></p>
+        </div>
+		<?php
 	}
 }

@@ -7,127 +7,135 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-06-03T11:02:34+02:00\n"
+"POT-Creation-Date: 2025-06-05T12:53:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: wpify-core\n"
 
-#: src/Abstracts/AbstractModule.php:224
-msgid "Your %1$s plugin licence is not activated yet. Please <a href=\"%2$s\">activate the domain</a> by connecting it with your WPify account!"
-msgstr ""
-
-#: src/Abstracts/AbstractModule.php:272
-#: src/Abstracts/AbstractPlugin.php:172
-#: src/Admin/Settings.php:597
+#: src/Abstracts/AbstractModule.php:242
+#: src/Abstracts/AbstractPlugin.php:182
+#: src/Admin/Settings.php:636
 msgid "Settings"
 msgstr ""
 
-#: src/Abstracts/AbstractPlugin.php:176
+#: src/Abstracts/AbstractPlugin.php:186
 msgid "Get more plugins and support"
 msgstr ""
 
-#: src/Abstracts/AbstractPlugin.php:201
-#: src/Admin/Settings.php:559
-#: src/Admin/Settings.php:585
-#: src/Admin/Settings.php:768
-#: src/Admin/Settings.php:1300
+#: src/Abstracts/AbstractPlugin.php:211
+#: src/Admin/Settings.php:582
+#: src/Admin/Settings.php:608
+#: src/Admin/Settings.php:809
+#: src/Admin/Settings.php:927
 msgid "Documentation"
+msgstr ""
+
+#: src/Abstracts/AbstractPlugin.php:225
+msgid "Your %1$s plugin licence is not activated yet. Please <a href=\"%2$s\">activate the domain</a> by connecting it with your WPify account!"
 msgstr ""
 
 #: src/Admin/Settings.php:48
 msgid "WPify Woo"
 msgstr ""
 
-#: src/Admin/Settings.php:381
+#: src/Admin/Settings.php:394
 msgid "WPify Plugins"
 msgstr ""
 
-#: src/Admin/Settings.php:382
+#: src/Admin/Settings.php:395
 msgid "WPify"
 msgstr ""
 
-#: src/Admin/Settings.php:393
+#: src/Admin/Settings.php:406
 msgid "WPify Plugins Dashboard"
 msgstr ""
 
-#: src/Admin/Settings.php:394
-#: src/Admin/Settings.php:822
+#: src/Admin/Settings.php:407
+#: src/Admin/Settings.php:865
 msgid "Dashboard"
 msgstr ""
 
-#: src/Admin/Settings.php:402
+#: src/Admin/Settings.php:415
 msgid "WPify Plugins Support"
 msgstr ""
 
-#: src/Admin/Settings.php:403
-#: src/Admin/Settings.php:1303
+#: src/Admin/Settings.php:416
+#: src/Admin/Settings.php:930
 msgid "Support"
 msgstr ""
 
-#: src/Admin/Settings.php:472
+#: src/Admin/Settings.php:485
 msgid "Installed plugins"
 msgstr ""
 
-#: src/Admin/Settings.php:478
+#: src/Admin/Settings.php:491
 msgid "Our other plugins"
 msgstr ""
 
-#: src/Admin/Settings.php:547
+#: src/Admin/Settings.php:559
+msgid "Please, activate the license."
+msgstr ""
+
+#: src/Admin/Settings.php:570
 msgid "New version <a href=\"%s\">%s</a> available."
 msgstr ""
 
-#: src/Admin/Settings.php:611
+#: src/Admin/Settings.php:626
+msgid "Deactivate"
+msgstr ""
+
+#: src/Admin/Settings.php:647
 msgid "Activate"
 msgstr ""
 
-#: src/Admin/Settings.php:618
+#: src/Admin/Settings.php:659
 msgid "Get plugin"
 msgstr ""
 
-#: src/Admin/Settings.php:656
+#: src/Admin/Settings.php:697
 msgid "WPify News"
 msgstr ""
 
-#: src/Admin/Settings.php:731
+#: src/Admin/Settings.php:772
 msgid "How do the pricing plans work?"
 msgstr ""
 
-#: src/Admin/Settings.php:732
+#: src/Admin/Settings.php:773
 msgid "When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew."
 msgstr ""
 
-#: src/Admin/Settings.php:735
+#: src/Admin/Settings.php:776
 msgid "Will the plugin work if I do not renew my license?"
 msgstr ""
 
-#: src/Admin/Settings.php:736
+#: src/Admin/Settings.php:777
 msgid "Yes, the plugin will continue to work, but you will no longer have access to updates and support."
 msgstr ""
 
-#: src/Admin/Settings.php:739
+#: src/Admin/Settings.php:780
 msgid "I need a feature that the plugin does not currently support."
 msgstr ""
 
-#: src/Admin/Settings.php:740
+#: src/Admin/Settings.php:781
 msgid "Let us know, and we will consider adding the requested functionality."
 msgstr ""
 
-#: src/Admin/Settings.php:746
+#: src/Admin/Settings.php:787
 msgid "Support page"
 msgstr ""
 
-#: src/Admin/Settings.php:753
+#: src/Admin/Settings.php:794
 msgid "Frequently Asked Questions"
 msgstr ""
 
-#: src/Admin/Settings.php:765
+#: src/Admin/Settings.php:806
 msgid "Do you have any other questions?"
 msgstr ""
 
-#: src/Admin/Settings.php:766
+#: src/Admin/Settings.php:807
 msgid "Check out the plugin documentation to see if your question is already answered."
 msgstr ""
 
-#: src/Admin/Settings.php:774
+#: src/Admin/Settings.php:815
 msgid "If you haven’t found the answer, email us at:"
 msgstr ""

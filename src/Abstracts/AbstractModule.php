@@ -4,15 +4,12 @@ namespace Wpify\WooCore\Abstracts;
 
 use Wpify\License\License;
 use Wpify\WooCore\Admin\Settings;
-use Wpify\WooCore\WooCommerceIntegration;
 
 /**
  * Class AbstractModule
  * @package WpifyWoo\Abstracts
  */
 abstract class AbstractModule {
-	protected $requires_activation = false;
-
 	/** @var string $id */
 	private $id = '';
 
@@ -36,13 +33,11 @@ abstract class AbstractModule {
 				} );
 			}
 		}
-		if ( $this->requires_activation ) {
-			$enqueue       = $this->is_settings_page();
-			$this->license = new License( $this->plugin_slug(), $enqueue, is_multisite() ? get_current_network_id() : 0 );
-			if ( ! $this->license->is_activated() ) {
-				add_action( 'admin_notices', array( $this, 'activation_notice' ) );
+		add_action( 'admin_init', function () {
+			if ( $this->requires_activation() && $this->is_settings_page() ) {
+				$this->license = new License( $this->plugin_slug(), true, is_multisite() ? get_current_network_id() : 0 );
 			}
-		}
+		} );
 	}
 
 	/**
@@ -62,14 +57,6 @@ abstract class AbstractModule {
 	 * @return mixed
 	 */
 	abstract public function name();
-
-	/**
-	 * Check if the module is enabled.
-	 * @return bool
-	 */
-//	public function is_module_enabled(): bool {
-//		return in_array( $this->get_id(), $this->woocommerce_integration->get_modules(), true );
-//	}
 
 	/**
 	 * Get module ID
@@ -204,7 +191,7 @@ abstract class AbstractModule {
 		return array();
 	}
 
-	public function needs_activation() {
+	public function requires_activation() {
 		foreach ( $this->settings() as $setting ) {
 			if ( ! empty( $setting['type'] ) && 'license' === $setting['type'] ) {
 				return true;
@@ -212,19 +199,6 @@ abstract class AbstractModule {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Add activation notice if the license s not active yet.
-	 */
-	public function activation_notice() {
-		?>
-        <div class="error notice">
-            <p><?php
-				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">activate the domain</a> by connecting it with your WPify account!', 'wpify-core' ), $this->name(), $this->get_settings_url() );
-				?></p>
-        </div>
-		<?php
 	}
 
 	public function is_settings_page() {
@@ -246,10 +220,6 @@ abstract class AbstractModule {
 	}
 
 	public function is_enabled() {
-	}
-
-	public function requires_activation() {
-		return $this->requires_activation;
 	}
 
 	public function is_activated() {

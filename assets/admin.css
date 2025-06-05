@@ -411,6 +411,10 @@ input[type=color] {
     background: var(--wpify-core-primary);
 }
 
+.wpify__card .toggle-button:hover, .wpify__card .toggle-button.active:hover {
+    background: var(--wpify-core-secondary);
+}
+
 .wpify__card .toggle-button__thumb {
     position: absolute;
     top: 2px;

@@ -553,6 +553,12 @@ class Settings {
 							<?php
 							$metas   = [];
 							$notices = [];
+							if ( $installed && isset( $plugin['license'] ) && ! $plugin['license'] ) {
+								$notices[] = array(
+									'type'    => 'error',
+									'content' => '<p>❗ ' . __( 'Please, activate the license.', 'wpify-core' ) . '</p>'
+								);
+							}
 							if ( $installed && isset( $plugin['version'] ) ) {
 								$version = $plugin['version'];
 								if ( isset( $plugin['plugin_info'] ) ) {
