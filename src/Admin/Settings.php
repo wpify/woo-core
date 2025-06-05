@@ -466,7 +466,6 @@ class Settings {
 			foreach ( $extensions as $extension ) {
 				$extensions_map[ $extension['slug'] ] = $extension;
 			}
-
 			foreach ( $installed_plugins as $slug => $plugin ) {
 				if ( isset( $extensions_map[ $slug ] ) ) {
 					$installed_plugins[ $slug ] = $extensions_map[ $slug ];
@@ -476,6 +475,34 @@ class Settings {
 						}
 					}
 					unset( $extensions_map[ $slug ] );
+				} else {
+					$update_data = get_transient( 'wpify_core_plugin_update_data_' . $slug );
+					if ( ! $update_data ) {
+						$check_url = add_query_arg( [
+							'update_action'        => 'get_metadata',
+							'update_slug'          => $slug,
+							'installed_version'    => $plugin['version'],
+							'locale'               => get_locale(),
+							'checking_for_updates' => '1',
+						], 'https://wpify.cz' );
+
+						$response = wp_remote_get( $check_url );
+						$data     = [];
+						if ( ! is_wp_error( $response ) && ! empty( $response['body'] ) ) {
+							$data = json_decode( $response['body'], true );
+						}
+						$update_data = [
+							'name'         => $data['name'] ?? '',
+							'version'      => $data['version'] ?? '',
+							'requires_php' => $data['requires_php'] ?? '',
+							'requires_wp'  => $data['requires'] ?? '',
+							'changelog'    => $data['sections']['changelog'] ?? '',
+						];
+						set_transient( 'wpify_core_plugin_update_data_' . $slug, $update_data, 6 * HOUR_IN_SECONDS );
+					}
+					if ( $update_data ) {
+						$installed_plugins[ $slug ]['plugin_info'] = $update_data;
+					}
 				}
 			}
 		}
