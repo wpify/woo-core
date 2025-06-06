@@ -246,7 +246,7 @@ abstract class AbstractPlugin {
 	 */
 	public function activation_update_notice( $plugin_file, $plugin_data, $status ) {
 		?>
-        <tr class="plugin-update-tr">
+        <tr class="plugin-update-tr active">
             <td colspan="4" class="plugin-update colspanchange">
 				<?php $this->activation_notice( true ) ?>
             </td>
