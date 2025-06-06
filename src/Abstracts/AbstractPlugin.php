@@ -34,7 +34,11 @@ abstract class AbstractPlugin {
 		if ( $this->requires_activation ) {
 			$this->license = new License( $this->id(), false, is_multisite() ? get_current_network_id() : 0 );
 			if ( ! $this->license->is_activated() ) {
-				add_action( 'admin_notices', array( $this, 'activation_notice' ) );
+//				add_action( 'admin_notices', array( $this, 'activation_notice' ) );
+				add_action( 'after_plugin_row_' . $this->plugin_utils->get_plugin_basename(), array(
+					$this,
+					'activation_update_notice'
+				), 10, 3 );
 			}
 		}
 	}
@@ -226,13 +230,27 @@ abstract class AbstractPlugin {
 	/**
 	 * Add activation notice if the license s not active yet.
 	 */
-	public function activation_notice() {
+	public function activation_notice( $notice = false ) {
+		$class = ! $notice ? 'error notice' : 'update-message notice inline notice-error notice-alt'
 		?>
-        <div class="error notice">
+        <div class="<?= $class ?>">
             <p><?php
 				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">activate the domain</a> by connecting it with your WPify account!', 'wpify-core' ), $this->name(), $this->settings_url() );
 				?></p>
         </div>
+		<?php
+	}
+
+	/**
+	 * Add activation notice if the license s not active yet.
+	 */
+	public function activation_update_notice( $plugin_file, $plugin_data, $status ) {
+		?>
+        <tr class="plugin-update-tr">
+            <td colspan="4" class="plugin-update colspanchange">
+				<?php $this->activation_notice( true ) ?>
+            </td>
+        </tr>
 		<?php
 	}
 }
