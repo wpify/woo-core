@@ -228,10 +228,10 @@ class Settings {
 	}
 
 	function get_plugin_slug( $plugin_file ) {
-		$parts = explode( '/', $plugin_file );
-		if ( count( $parts ) > 1 ) {
-			return $parts[0];
-		}
+//		$parts = explode( '/', $plugin_file );
+//		if ( count( $parts ) > 1 ) {
+//			return $parts[0];
+//		}
 
 		return basename( $plugin_file, '.php' );
 	}
