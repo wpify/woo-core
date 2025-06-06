@@ -216,6 +216,13 @@ abstract class AbstractPlugin {
 		return array_merge( $plugin_meta, $new_links );
 	}
 
+	public function requires_activation() {
+		return $this->requires_activation;
+	}
+	public function get_license() {
+		return $this->license;
+	}
+
 	/**
 	 * Add activation notice if the license s not active yet.
 	 */
