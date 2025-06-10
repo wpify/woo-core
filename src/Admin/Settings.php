@@ -457,7 +457,7 @@ class Settings {
 
 			if ( ! is_wp_error( $response ) ) {
 				$extensions = json_decode( $response['body'], true )['plugins'];
-				set_transient( 'wpify_core_all_plugins', $extensions, 6 * HOUR_IN_SECONDS );
+				set_transient( 'wpify_core_all_plugins', $extensions, 2 * HOUR_IN_SECONDS );
 			}
 		}
 
@@ -889,7 +889,7 @@ class Settings {
 
         wp_enqueue_script( 'thickbox' );
 		wp_enqueue_style( 'thickbox' );
-        
+
 		global $title;
 
 		$data     = array(

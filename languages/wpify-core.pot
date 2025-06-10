@@ -7,30 +7,30 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-06-05T12:53:24+00:00\n"
+"POT-Creation-Date: 2025-06-10T17:16:57+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: wpify-core\n"
 
 #: src/Abstracts/AbstractModule.php:242
-#: src/Abstracts/AbstractPlugin.php:182
-#: src/Admin/Settings.php:636
+#: src/Abstracts/AbstractPlugin.php:187
+#: src/Admin/Settings.php:670
 msgid "Settings"
 msgstr ""
 
-#: src/Abstracts/AbstractPlugin.php:186
+#: src/Abstracts/AbstractPlugin.php:191
 msgid "Get more plugins and support"
 msgstr ""
 
-#: src/Abstracts/AbstractPlugin.php:211
-#: src/Admin/Settings.php:582
-#: src/Admin/Settings.php:608
-#: src/Admin/Settings.php:809
-#: src/Admin/Settings.php:927
+#: src/Abstracts/AbstractPlugin.php:216
+#: src/Admin/Settings.php:613
+#: src/Admin/Settings.php:639
+#: src/Admin/Settings.php:844
+#: src/Admin/Settings.php:965
 msgid "Documentation"
 msgstr ""
 
-#: src/Abstracts/AbstractPlugin.php:225
+#: src/Abstracts/AbstractPlugin.php:238
 msgid "Your %1$s plugin licence is not activated yet. Please <a href=\"%2$s\">activate the domain</a> by connecting it with your WPify account!"
 msgstr ""
 
@@ -51,7 +51,7 @@ msgid "WPify Plugins Dashboard"
 msgstr ""
 
 #: src/Admin/Settings.php:407
-#: src/Admin/Settings.php:865
+#: src/Admin/Settings.php:903
 msgid "Dashboard"
 msgstr ""
 
@@ -60,82 +60,82 @@ msgid "WPify Plugins Support"
 msgstr ""
 
 #: src/Admin/Settings.php:416
-#: src/Admin/Settings.php:930
+#: src/Admin/Settings.php:968
 msgid "Support"
 msgstr ""
 
-#: src/Admin/Settings.php:485
+#: src/Admin/Settings.php:512
 msgid "Installed plugins"
 msgstr ""
 
-#: src/Admin/Settings.php:491
+#: src/Admin/Settings.php:518
 msgid "Our other plugins"
 msgstr ""
 
-#: src/Admin/Settings.php:559
+#: src/Admin/Settings.php:586
 msgid "Please, activate the license."
 msgstr ""
 
-#: src/Admin/Settings.php:570
-msgid "New version <a href=\"%s\">%s</a> available."
+#: src/Admin/Settings.php:596
+msgid "New version %s available."
 msgstr ""
 
-#: src/Admin/Settings.php:626
+#: src/Admin/Settings.php:657
 msgid "Deactivate"
 msgstr ""
 
-#: src/Admin/Settings.php:647
+#: src/Admin/Settings.php:682
 msgid "Activate"
 msgstr ""
 
-#: src/Admin/Settings.php:659
+#: src/Admin/Settings.php:694
 msgid "Get plugin"
 msgstr ""
 
-#: src/Admin/Settings.php:697
+#: src/Admin/Settings.php:732
 msgid "WPify News"
 msgstr ""
 
-#: src/Admin/Settings.php:772
+#: src/Admin/Settings.php:807
 msgid "How do the pricing plans work?"
 msgstr ""
 
-#: src/Admin/Settings.php:773
+#: src/Admin/Settings.php:808
 msgid "When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew."
 msgstr ""
 
-#: src/Admin/Settings.php:776
+#: src/Admin/Settings.php:811
 msgid "Will the plugin work if I do not renew my license?"
 msgstr ""
 
-#: src/Admin/Settings.php:777
+#: src/Admin/Settings.php:812
 msgid "Yes, the plugin will continue to work, but you will no longer have access to updates and support."
 msgstr ""
 
-#: src/Admin/Settings.php:780
+#: src/Admin/Settings.php:815
 msgid "I need a feature that the plugin does not currently support."
 msgstr ""
 
-#: src/Admin/Settings.php:781
+#: src/Admin/Settings.php:816
 msgid "Let us know, and we will consider adding the requested functionality."
 msgstr ""
 
-#: src/Admin/Settings.php:787
+#: src/Admin/Settings.php:822
 msgid "Support page"
 msgstr ""
 
-#: src/Admin/Settings.php:794
+#: src/Admin/Settings.php:829
 msgid "Frequently Asked Questions"
 msgstr ""
 
-#: src/Admin/Settings.php:806
+#: src/Admin/Settings.php:841
 msgid "Do you have any other questions?"
 msgstr ""
 
-#: src/Admin/Settings.php:807
+#: src/Admin/Settings.php:842
 msgid "Check out the plugin documentation to see if your question is already answered."
 msgstr ""
 
-#: src/Admin/Settings.php:815
+#: src/Admin/Settings.php:850
 msgid "If you haven’t found the answer, email us at:"
 msgstr ""
