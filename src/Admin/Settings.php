@@ -583,7 +583,7 @@ class Settings {
 							if ( $installed && isset( $plugin['license'] ) && ! $plugin['license'] ) {
 								$notices[] = array(
 									'type'    => 'error',
-									'content' => '<p>❗ ' . __( 'Please, activate the license.', 'wpify-core' ) . '</p>'
+									'content' => sprintf( '<a href="%s">❗ %s</a>', $plugin['settings_url'] ?? '#', __( 'Please, activate the license.', 'wpify-core' ) ),
 								);
 							}
 							if ( $installed && isset( $plugin['version'] ) ) {
@@ -592,10 +592,14 @@ class Settings {
 									$available_v = $plugin['plugin_info']['version'] ?? 0;
 
 									if ( $available_v && version_compare( $available_v, $version, '>' ) ) {
-										$notices[] = array(
-											'type'    => 'warning',
-											'content' => '<p>⚠️ ' . sprintf( __( 'New version <a href="%s">%s</a> available.', 'wpify-core' ), admin_url( 'update-core.php' ), $available_v ) . '</p>'
-										);
+										$details_url   = admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . urlencode( $slug ) . '&section=changelog&TB_iframe=true&width=760&height=800' );
+										$update_notice = '⚠️ ' . sprintf( __( 'New version %s available.', 'wpify-core' ), $available_v );
+
+										if ( $is_active && ! empty( $plugin['license'] ) ) {
+											$update_notice = sprintf( '<a href="%s" class="thickbox open-plugin-details-modal" title="Plugin Details">%s</a>', esc_url( $details_url ), $update_notice );
+										}
+
+										$notices[] = array( 'type' => 'warning', 'content' => $update_notice );
 									}
 								}
 								$metas[] = $version;
@@ -883,6 +887,9 @@ class Settings {
 
 		$this->enqueue_asset_style( 'wpify-core-admin', 'admin.css' );
 
+        wp_enqueue_script( 'thickbox' );
+		wp_enqueue_style( 'thickbox' );
+        
 		global $title;
 
 		$data     = array(
