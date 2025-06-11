@@ -533,6 +533,23 @@ class Settings {
 	 * @return bool|string
 	 */
 	public function get_wpify_modules_blocks( array $plugins, bool $installed = false ): bool|string {
+
+		if ( $installed ) {
+			wp_add_inline_script( 'thickbox', '
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".open-plugin-details-modal").forEach(function(link) {
+                link.addEventListener("click", function() {
+                    const width = Math.min(window.innerWidth - 100, 800);
+                    const height = Math.min(window.innerHeight - 100, 600);
+                    
+                    let href = this.href.replace(/&width=\d+/, "").replace(/&height=\d+/, "");
+                    this.href = href + "&width=" + width + "&height=" + height;
+                });
+            });
+        });
+    ' );
+		}
+
 		ob_start();
 		?>
         <div class="wpify__cards">
@@ -592,11 +609,20 @@ class Settings {
 									$available_v = $plugin['plugin_info']['version'] ?? 0;
 
 									if ( $available_v && version_compare( $available_v, $version, '>' ) ) {
-										$details_url   = admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . urlencode( $slug ) . '&section=changelog&TB_iframe=true&width=760&height=800' );
 										$update_notice = '⚠️ ' . sprintf( __( 'New version %s available.', 'wpify-core' ), $available_v );
 
 										if ( $is_active && ! empty( $plugin['license'] ) ) {
-											$update_notice = sprintf( '<a href="%s" class="thickbox open-plugin-details-modal" title="Plugin Details">%s</a>', esc_url( $details_url ), $update_notice );
+											$can_update = current_user_can( 'update_plugins' );
+											if ( is_multisite() ) {
+												$can_update = $can_update && current_user_can( 'manage_network_plugins' );
+											}
+
+											if ( $can_update ) {
+												$path        = 'plugin-install.php?tab=plugin-information&plugin=' . urlencode( $slug ) . '&section=changelog&TB_iframe=true&width=772&height=800';
+												$details_url = is_multisite() ? network_admin_url( $path ) : admin_url( $path );
+
+												$update_notice = sprintf( '<a href="%s" class="thickbox open-plugin-details-modal" title="Plugin Details">%s</a>', esc_url( $details_url ), $update_notice );
+											}
 										}
 
 										$notices[] = array( 'type' => 'warning', 'content' => $update_notice );
@@ -887,7 +913,7 @@ class Settings {
 
 		$this->enqueue_asset_style( 'wpify-core-admin', 'admin.css' );
 
-        wp_enqueue_script( 'thickbox' );
+		wp_enqueue_script( 'thickbox' );
 		wp_enqueue_style( 'thickbox' );
 
 		global $title;
