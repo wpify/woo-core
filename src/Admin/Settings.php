@@ -1068,11 +1068,17 @@ class Settings {
 	}
 
 	public static function enqueue_asset_style( $handle, $file, $deps = [] ) {
-		$base_dir      = dirname( __DIR__, 2 );
-		$asset_path    = $base_dir . '/assets/' . ltrim( $file, '/' );
-		$relative_path = str_replace( ABSPATH, '', $asset_path );
-		$url           = site_url( $relative_path );
-		$ver           = file_exists( $asset_path ) ? filemtime( $asset_path ) : null;
+		$base_dir   = dirname( __DIR__, 2 );
+		$asset_path = $base_dir . '/assets/' . ltrim( $file, '/' );
+
+		$reflection = new \ReflectionClass( static::class );
+		$package_root = dirname( $reflection->getFileName(), 3 );
+
+		$relative_path = str_replace( $package_root, '', $asset_path );
+		$package_url = str_replace( wp_normalize_path( WP_CONTENT_DIR ), content_url(), wp_normalize_path( $package_root ) );
+		$url = $package_url . $relative_path;
+
+		$ver = file_exists( $asset_path ) ? filemtime( $asset_path ) : null;
 
 		wp_enqueue_style( $handle, $url, $deps, $ver );
 	}
