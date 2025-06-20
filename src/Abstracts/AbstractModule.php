@@ -115,14 +115,15 @@ abstract class AbstractModule {
 	 */
 	public function add_settings_section( $sections ) {
 		$sections[ $this->id() ] = array(
-			'title'      => $this->name(),
-			'parent'     => $this->parent_settings_id(),
-			'menu_slug'  => $this->get_menu_slug(),
-			'url'        => $this->get_settings_url(),
-			'option_id'  => $this->id(),
-			'tabs'       => $this->settings_tabs(),
-			'settings'   => $this->settings(),
-			'in_menubar' => $this->display_in_menubar(),
+			'title'       => $this->name(),
+			'parent'      => $this->parent_settings_id(),
+			'menu_slug'   => $this->get_menu_slug(),
+			'url'         => $this->get_settings_url(),
+			'option_id'   => $this->id(),
+			'option_name' => $this->get_option_key(),
+			'tabs'        => $this->settings_tabs(),
+			'settings'    => $this->settings(),
+			'in_menubar'  => $this->display_in_menubar(),
 		);
 
 		return $sections;
