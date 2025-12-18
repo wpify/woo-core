@@ -95,7 +95,7 @@ class SupportPage {
 
 					<div class="wpify__card">
 						<div class="wpify__card-body">
-							<h3><?php _e( 'If you haven't found the answer, email us at:', 'wpify-core' ); ?></h3>
+							<h3><?php _e( 'If you haven\'t found the answer, email us at:', 'wpify-core' ); ?></h3>
 							<p><a href="mailto:support@wpify.io">support@wpify.io</a></p>
 						</div>
 					</div>
