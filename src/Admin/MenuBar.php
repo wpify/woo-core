@@ -15,6 +15,8 @@ class MenuBar {
 
 	public function __construct( Settings $settings ) {
 		$this->settings = $settings;
+
+		add_action( 'in_admin_header', [ $this, 'render' ] );
 	}
 
 	/**
