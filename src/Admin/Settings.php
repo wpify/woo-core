@@ -67,7 +67,7 @@ class Settings {
 
 	public function maybe_set_redirect() {
 		if ( ! empty( $_GET['wpify_redirect'] ) ) {
-			set_transient( 'wpify_redirect', esc_url_raw( $_GET['wpify_redirect'] ), 3 );
+			set_transient( 'wpify_redirect', esc_url_raw( wp_unslash( $_GET['wpify_redirect'] ) ), 3 );
 		}
 	}
 
@@ -99,7 +99,7 @@ class Settings {
 		global $wp_filter;
 
 		if ( isset( $wp_filter['admin_notices'] ) ) {
-			$current_page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+			$current_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 
 			if ( $current_page === $this::DASHBOARD_SLUG ) {
 				unset( $wp_filter['admin_notices'] );
@@ -131,6 +131,11 @@ class Settings {
 	 * @return void
 	 */
 	public function register_settings(): void {
+
+		if ( ! is_admin() ) {
+			return;
+		}
+
 		$plugins = $this->get_plugins();
 		if ( empty( $plugins ) ) {
 			return;
@@ -245,7 +250,8 @@ class Settings {
 	 */
 	public function get_sections( string $subpage = null ): array {
 		if ( ! $subpage ) {
-			$current_page = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a read-only page detection
+			$current_page = isset( $_REQUEST['page'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['page'] ) ) : '';
 			if ( ! str_contains( $current_page, 'wpify/' ) ) {
 				return [];
 			}
@@ -253,7 +259,7 @@ class Settings {
 			$subpage = explode( '/', $current_page )[1] ?? '';
 		}
 
-		return apply_filters( 'wpify_get_sections_' . $subpage, [] );
+		return apply_filters( 'wpify_get_sections_' . sanitize_key( $subpage ), [] );
 	}
 
 	/**
@@ -323,8 +329,10 @@ class Settings {
 	 * @return bool
 	 */
 	public function is_current( $tab = '', $section = '' ): bool {
-		$current_tab     = empty( $_REQUEST['tab'] ) ? '' : $_REQUEST['tab'];
-		$current_section = empty( $_REQUEST['section'] ) ? '' : $_REQUEST['section'];
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a read-only page detection
+		$current_tab     = isset( $_REQUEST['tab'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['tab'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a read-only page detection
+		$current_section = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : '';
 
 		if ( $tab === $current_tab && $section === $current_section ) {
 			return true;
@@ -338,20 +346,24 @@ class Settings {
 
 		foreach ( $this->modules_manager->get_modules() as $module ) {
 			$option_name = $this->get_settings_name( $module->get_id() );
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a simple presence check
 			if ( isset( $_REQUEST[ $option_name ] ) ) {
 				return true;
 			}
 		}
 
-		if ( wp_is_json_request() && isset( $_GET['module_id'] ) && $_GET['module_id'] === $section ) {
+		$module_id = isset( $_GET['module_id'] ) ? sanitize_text_field( wp_unslash( $_GET['module_id'] ) ) : '';
+		if ( wp_is_json_request() && $module_id === $section ) {
 			return true;
 		}
 
-		if ( isset( $_POST['option_page'] ) && $_POST['option_page'] === $this->get_settings_name( $section ) ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- This is a read-only page detection
+		$option_page = isset( $_POST['option_page'] ) ? sanitize_text_field( wp_unslash( $_POST['option_page'] ) ) : '';
+		if ( $option_page === $this->get_settings_name( $section ) ) {
 			return true;
 		}
 
-		if ( isset( $_POST['option_page'] ) && str_contains( $_POST['option_page'], $section ) ) {
+		if ( $option_page && str_contains( $option_page, $section ) ) {
 			return true;
 		}
 
@@ -368,12 +380,14 @@ class Settings {
 			$module_id   = $module->get_id();
 			$option_name = $this->get_settings_name( $module_id );
 
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a simple presence check
 			if ( isset( $_REQUEST[ $option_name ] ) ) {
 				return $module_id;
 			}
 		}
 
-		$current_page = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a read-only page detection
+		$current_page = isset( $_REQUEST['page'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['page'] ) ) : '';
 
 		if ( ! str_contains( $current_page, 'wpify/' ) ) {
 			return false;
@@ -430,7 +444,8 @@ class Settings {
 	 * @return mixed|string
 	 */
 	public static function add_admin_body_class( $admin_body_class = '' ) {
-		$current_page = empty( $_REQUEST['page'] ) ? '' : $_REQUEST['page'];
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a read-only page detection
+		$current_page = isset( $_REQUEST['page'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['page'] ) ) : '';
 
 		if ( ! str_contains( $current_page, 'wpify' ) ) {
 			return $admin_body_class;
@@ -455,9 +470,12 @@ class Settings {
 		if ( ! $extensions ) {
 			$response = wp_remote_get( 'https://wpify.cz/wp-json/wpify/v1/plugins-list' );
 
-			if ( ! is_wp_error( $response ) ) {
-				$extensions = json_decode( $response['body'], true )['plugins'];
-				set_transient( 'wpify_core_all_plugins', $extensions, 2 * HOUR_IN_SECONDS );
+			if ( ! is_wp_error( $response ) && ! empty( $response['body'] ) ) {
+				$decoded    = json_decode( $response['body'], true );
+				$extensions = is_array( $decoded ) && isset( $decoded['plugins'] ) ? $decoded['plugins'] : null;
+				if ( $extensions ) {
+					set_transient( 'wpify_core_all_plugins', $extensions, 2 * HOUR_IN_SECONDS );
+				}
 			}
 		}
 
@@ -745,8 +763,14 @@ class Settings {
 			$response = wp_remote_get( 'https://wpify.cz/wp-json/wp/v2/posts?per_page=4&_embed' );
 
 			if ( ! is_wp_error( $response ) ) {
-				$posts = json_decode( wp_remote_retrieve_body( $response ) );
-				set_transient( 'wpify_core_news', $posts, DAY_IN_SECONDS );
+				$body = wp_remote_retrieve_body( $response );
+				if ( ! empty( $body ) ) {
+					$decoded = json_decode( $body );
+					if ( is_array( $decoded ) && ! empty( $decoded ) ) {
+						$posts = $decoded;
+						set_transient( 'wpify_core_news', $posts, DAY_IN_SECONDS );
+					}
+				}
 			}
 		}
 
@@ -905,7 +929,7 @@ class Settings {
 	public function render_menu_bar(): void {
 		/** @var \WP_Screen $screen */
 		$screen       = get_current_screen();
-		$current_page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+		$current_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 
 		if ( ! $screen || ! str_contains( $current_page, 'wpify' ) ) {
 			return;
@@ -1071,12 +1095,12 @@ class Settings {
 		$base_dir   = dirname( __DIR__, 2 );
 		$asset_path = $base_dir . '/assets/' . ltrim( $file, '/' );
 
-		$reflection = new \ReflectionClass( static::class );
+		$reflection   = new \ReflectionClass( static::class );
 		$package_root = dirname( $reflection->getFileName(), 3 );
 
 		$relative_path = str_replace( $package_root, '', $asset_path );
-		$package_url = str_replace( wp_normalize_path( WP_CONTENT_DIR ), content_url(), wp_normalize_path( $package_root ) );
-		$url = $package_url . $relative_path;
+		$package_url   = str_replace( wp_normalize_path( WP_CONTENT_DIR ), content_url(), wp_normalize_path( $package_root ) );
+		$url           = $package_url . $relative_path;
 
 		$ver = file_exists( $asset_path ) ? filemtime( $asset_path ) : null;
 

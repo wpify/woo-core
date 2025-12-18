@@ -203,7 +203,7 @@ abstract class AbstractModule {
 	}
 
 	public function is_settings_page() {
-		$page = $_GET['page'] ?? '';
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 		if ( str_contains( $page, 'wpify/' ) ) {
 			$section = explode( '/', $page )[1] ?? '';
 			if ( $section === $this->id() ) {
@@ -212,16 +212,18 @@ abstract class AbstractModule {
 		}
 
 		$option_name = sprintf( '%s-%s', Settings::OPTION_NAME, $this->id() );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- This is a simple presence check, not processing data
 		if ( isset( $_POST[ $option_name ] ) ) {
 			return true;
 		}
 
 		// Load items only in admin (for settings pages) or rest (for async lists)
-		if (( wp_is_json_request() || is_admin() ) && ! empty( $_GET['section'] ) && $_GET['section'] === $this->id()) {
+		$section_param = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : '';
+		if ( ( wp_is_json_request() || is_admin() ) && ! empty( $section_param ) && $section_param === $this->id() ) {
 			return true;
 		}
 
-		return apply_filters('wpify_woo_is_settings_page', false, $this->id());
+		return apply_filters( 'wpify_woo_is_settings_page', false, $this->id() );
 	}
 
 	public function is_enabled() {
