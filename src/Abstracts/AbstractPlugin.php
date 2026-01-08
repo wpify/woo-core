@@ -31,6 +31,9 @@ abstract class AbstractPlugin {
 		) );
 		add_filter( 'plugin_row_meta', array( $this, 'add_row_meta_links' ), 10, 2 );
 
+		// Registrace filteru pro moduly - fallback na plugin dokumentaci
+		add_filter( 'wpify_woo_plugin_documentation_url_' . $this->id(), array( $this, 'documentation_url' ) );
+
 		if ( $this->requires_activation ) {
 			$this->license = new License( $this->id(), false, is_multisite() ? get_current_network_id() : 0 );
 			if ( ! $this->license->is_activated() ) {
@@ -97,12 +100,28 @@ abstract class AbstractPlugin {
 	}
 
 	/**
+	 * Plugin documentation path
+	 *
+	 * @return string
+	 */
+	public function get_documentation_path(): string {
+		return '';
+	}
+
+	/**
 	 * Plugin documentation url
 	 *
 	 * @return string
 	 */
 	public function documentation_url(): string {
-		return '';
+		$domain = 'https://docs.wpify.cz/';
+		if ( in_array( get_locale(), array( 'cs_CZ', 'sk_SK' ), true ) ) {
+			$domain = 'https://docs.wpify.cz/cs/';
+		}
+
+		$path = $this->get_documentation_path();
+
+		return esc_url( $domain . $path );
 	}
 
 	/**

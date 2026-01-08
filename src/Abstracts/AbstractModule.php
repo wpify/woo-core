@@ -91,11 +91,31 @@ abstract class AbstractModule {
 	}
 
 	/**
+	 * Module documentation path
+	 * @return string
+	 */
+	public function get_documentation_path(): string {
+		return '';
+	}
+
+	/**
 	 * Module documentation url
 	 * @return string
 	 */
-	public function get_documentation_url() {
-		return '';
+	public function get_documentation_url(): string {
+		$path = $this->get_documentation_path();
+
+		// Pokud modul nemá vlastní path, fallback na plugin URL
+		if ( $path === '' ) {
+			return apply_filters( 'wpify_woo_plugin_documentation_url_' . $this->plugin_slug(), '' );
+		}
+
+		$domain = 'https://docs.wpify.cz/';
+		if ( in_array( get_locale(), array( 'cs_CZ', 'sk_SK' ), true ) ) {
+			$domain = 'https://docs.wpify.cz/cs/';
+		}
+
+		return esc_url( $domain . $path );
 	}
 
 	/**
