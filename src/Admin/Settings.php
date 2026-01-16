@@ -175,12 +175,24 @@ class Settings {
 	}
 
 	/**
+	 * Check if current request is a wpifycf REST API request
+	 *
+	 * @return bool
+	 */
+	private function is_wpifycf_rest_request(): bool {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Only used for string matching
+		$request_uri = $_SERVER['REQUEST_URI'] ?? '';
+
+		return str_contains( $request_uri, '/wpifycf/' );
+	}
+
+	/**
 	 * Register admin pages and settings for plugins and modules
 	 *
 	 * @return void
 	 */
 	public function register_settings(): void {
-		if ( ! is_admin() ) {
+		if ( ! is_admin() && ! $this->is_wpifycf_rest_request() ) {
 			return;
 		}
 
