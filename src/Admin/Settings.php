@@ -13,6 +13,10 @@ use Wpify\WooCore\Managers\ModulesManager;
  *
  * @package WpifyWooCore\Admin
  */
+if ( class_exists( __NAMESPACE__ . '\\Settings', false ) ) {
+	return;
+}
+
 class Settings {
 
 	const OPTION_NAME = 'wpify-woo-settings';

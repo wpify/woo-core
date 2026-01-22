@@ -53,7 +53,7 @@ class MenuBar {
 				),
 			),
 			'support_url' => add_query_arg( [ 'page' => SupportPage::SLUG ], admin_url( 'admin.php' ) ),
-			'doc_link'    => 'https://wpify.cz/dokumentace/',
+			'doc_link'    => $this->get_docs_base_url(),
 		);
 		$data     = apply_filters( 'wpify_admin_menu_bar_data', $data );
 		$sections = $this->settings->get_sections( $data['plugin'] );
@@ -258,6 +258,15 @@ class MenuBar {
 		$ver = file_exists( $asset_path ) ? filemtime( $asset_path ) : null;
 
 		wp_enqueue_style( 'wpify-core-admin', $url, [], $ver );
+	}
+
+	private function get_docs_base_url(): string {
+		$domain = 'https://docs.wpify.cz/';
+		if ( in_array( get_locale(), array( 'cs_CZ', 'sk_SK' ), true ) ) {
+			$domain = 'https://docs.wpify.cz/cs/';
+		}
+
+		return $domain;
 	}
 
 	/**
