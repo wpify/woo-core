@@ -73,6 +73,7 @@ class SupportPage {
 		) );
 		$active_plugins = $this->get_active_wpify_plugins();
 		$log_files      = $this->get_log_files();
+		$logs_url       = $this->get_logs_page_url();
 		?>
 		<div class="wpify-dashboard__wrap wrap">
 			<div class="wpify-dashboard__content">
@@ -93,6 +94,17 @@ class SupportPage {
 					</div>
 				<?php } ?>
 
+				<div class="wpify__card" style="max-width:100%">
+					<div class="wpify__card-body" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+						<strong><?php _e( 'Flow:', 'wpify-core' ); ?></strong>
+						<span>1. <?php _e( 'Debug', 'wpify-core' ); ?></span>
+						<span>→</span>
+						<span>2. <?php _e( 'Docs', 'wpify-core' ); ?></span>
+						<span>→</span>
+						<span>3. <?php _e( 'Ticket', 'wpify-core' ); ?></span>
+					</div>
+				</div>
+
 				<?php do_action( 'wpify_dashboard_before_support_content' ); ?>
 
 				<div class="wpify__cards">
@@ -100,10 +112,22 @@ class SupportPage {
 						<div class="wpify__card-body">
 							<h2><?php _e( 'Quick debugging checklist', 'wpify-core' ); ?></h2>
 							<ol>
-								<li><?php _e( 'Check order notes: in the WooCommerce order detail you can find notes added by plugins; look for errors or failed operations.', 'wpify-core' ); ?></li>
-								<li><?php _e( 'Review logs: most plugins log communication in WPify → WPify Logs. Select the relevant plugin and date, then look for records marked as ERROR.', 'wpify-core' ); ?></li>
-								<li><?php _e( 'Check plugin documentation: each plugin has its own troubleshooting section with descriptions of common errors and their solutions.', 'wpify-core' ); ?></li>
-								<li><?php _e( 'Contact support: if the problem persists, email us at support@wpify.io with a description of the problem, steps to reproduce, and relevant log content.', 'wpify-core' ); ?></li>
+								<li>
+									<strong><?php _e( 'Check order notes', 'wpify-core' ); ?></strong><br>
+									<?php _e( 'In the WooCommerce order detail, you’ll find notes that plugins automatically add. Look for messages about errors or failed operations.', 'wpify-core' ); ?>
+								</li>
+								<li>
+									<strong><?php _e( 'Review logs', 'wpify-core' ); ?></strong><br>
+									<?php _e( 'Most plugins log communication in WPify → WPify Logs. Select the relevant plugin and date, look for records marked as ERROR.', 'wpify-core' ); ?>
+								</li>
+								<li>
+									<strong><?php _e( 'Check plugin documentation', 'wpify-core' ); ?></strong><br>
+									<?php _e( 'Each plugin has its own troubleshooting section with descriptions of common errors and their solutions.', 'wpify-core' ); ?>
+								</li>
+								<li>
+									<strong><?php _e( 'Contact support', 'wpify-core' ); ?></strong><br>
+									<?php _e( 'If the problem persists, email us at support@wpify.io with a description of the problem, steps to reproduce, and relevant log content.', 'wpify-core' ); ?>
+								</li>
 							</ol>
 							<p>
 								<a href="<?php echo esc_url( $debug_link ); ?>" target="_blank">
@@ -191,17 +215,24 @@ class SupportPage {
 								<?php if ( ! empty( $log_files ) ) { ?>
 									<p>
 										<label for="wpify-support-log"><strong><?php _e( 'Attach log (optional)', 'wpify-core' ); ?></strong></label><br>
-										<select id="wpify-support-log" name="log_file" class="regular-text">
-											<option value=""><?php _e( 'No log selected', 'wpify-core' ); ?></option>
-											<?php foreach ( $log_files as $log ) { ?>
-												<option
-													value="<?php echo esc_attr( $log['file'] ); ?>"
-													data-channel="<?php echo esc_attr( $log['channel'] ); ?>"
-												>
-													<?php echo esc_html( $log['label'] ); ?>
-												</option>
+										<span style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+											<select id="wpify-support-log" name="log_file" class="regular-text">
+												<option value=""><?php _e( 'No log selected', 'wpify-core' ); ?></option>
+												<?php foreach ( $log_files as $log ) { ?>
+													<option
+														value="<?php echo esc_attr( $log['file'] ); ?>"
+														data-channel="<?php echo esc_attr( $log['channel'] ); ?>"
+													>
+														<?php echo esc_html( $log['label'] ); ?>
+													</option>
+												<?php } ?>
+											</select>
+											<?php if ( $logs_url ) { ?>
+												<a class="button" href="<?php echo esc_url( $logs_url ); ?>">
+													<?php _e( 'Open WPify Logs', 'wpify-core' ); ?>
+												</a>
 											<?php } ?>
-										</select>
+										</span>
 									</p>
 								<?php } ?>
 								<p>
@@ -319,7 +350,24 @@ class SupportPage {
 		$subject    = $subject_input ? $subject_input : $plugin_title;
 		$subject    = sprintf( 'WPify Support | %s | %s', $subject, $site_host ?: home_url() );
 
-		$woo_version = class_exists( 'WooCommerce' ) && defined( 'WC_VERSION' ) ? WC_VERSION : 'not active';
+		$woo_version = '';
+		if ( defined( 'WC_VERSION' ) ) {
+			$woo_version = WC_VERSION;
+		} else {
+			if ( ! function_exists( 'is_plugin_active' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+			$woo_active = function_exists( 'is_plugin_active' ) && is_plugin_active( 'woocommerce/woocommerce.php' );
+			if ( $woo_active ) {
+				$woo_version = (string) get_option( 'woocommerce_version', '' );
+				if ( $woo_version === '' ) {
+					$woo_version = 'active';
+				}
+			}
+		}
+		if ( $woo_version === '' ) {
+			$woo_version = 'not active';
+		}
 		$theme       = wp_get_theme();
 		$theme_name  = $theme ? $theme->get( 'Name' ) . ' ' . $theme->get( 'Version' ) : '';
 
@@ -456,5 +504,27 @@ class SupportPage {
 		}
 
 		return $path;
+	}
+
+	private function get_logs_page_url(): ?string {
+		global $submenu;
+
+		if ( ! is_array( $submenu ) ) {
+			return null;
+		}
+
+		$parents = array( 'wpify', 'tools.php' );
+		foreach ( $parents as $parent ) {
+			if ( empty( $submenu[ $parent ] ) || ! is_array( $submenu[ $parent ] ) ) {
+				continue;
+			}
+			foreach ( $submenu[ $parent ] as $item ) {
+				if ( isset( $item[2] ) && $item[2] === 'wpify-logs' ) {
+					return admin_url( 'admin.php?page=wpify-logs' );
+				}
+			}
+		}
+
+		return null;
 	}
 }
