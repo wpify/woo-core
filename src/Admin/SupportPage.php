@@ -94,17 +94,6 @@ class SupportPage {
 					</div>
 				<?php } ?>
 
-				<div class="wpify__card" style="max-width:100%">
-					<div class="wpify__card-body" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-						<strong><?php _e( 'Flow:', 'wpify-core' ); ?></strong>
-						<span>1. <?php _e( 'Debug', 'wpify-core' ); ?></span>
-						<span>→</span>
-						<span>2. <?php _e( 'Docs', 'wpify-core' ); ?></span>
-						<span>→</span>
-						<span>3. <?php _e( 'Ticket', 'wpify-core' ); ?></span>
-					</div>
-				</div>
-
 				<?php do_action( 'wpify_dashboard_before_support_content' ); ?>
 
 				<div class="wpify__cards">
@@ -113,20 +102,42 @@ class SupportPage {
 							<h2><?php _e( 'Quick debugging checklist', 'wpify-core' ); ?></h2>
 							<ol>
 								<li>
-									<strong><?php _e( 'Check order notes', 'wpify-core' ); ?></strong><br>
-									<?php _e( 'In the WooCommerce order detail, you’ll find notes that plugins automatically add. Look for messages about errors or failed operations.', 'wpify-core' ); ?>
+									<h3><?php _e( 'Check order notes', 'wpify-core' ); ?></h3>
+                                    <p><?php _e( 'In the WooCommerce order detail, you’ll find notes that plugins automatically add. Look for messages about errors or failed operations.', 'wpify-core' ); ?></p>
 								</li>
 								<li>
-									<strong><?php _e( 'Review logs', 'wpify-core' ); ?></strong><br>
-									<?php _e( 'Most plugins log communication in WPify → WPify Logs. Select the relevant plugin and date, look for records marked as ERROR.', 'wpify-core' ); ?>
-								</li>
+									<h3><?php _e( 'Review logs', 'wpify-core' ); ?></h3>
+									<p><?php _e( 'Most plugins log communication in WPify → WPify Logs. Select the relevant plugin and date, look for records marked as ERROR.', 'wpify-core' ); ?></p>
+									<?php if ( ! empty( $log_files ) ) { ?>
+                                        <p>
+											<?php if ( $logs_url ) { ?>
+                                                <a class="button" href="<?php echo esc_url( $logs_url ); ?>">
+													<?php _e( 'Open WPify Logs', 'wpify-core' ); ?>
+												</a>
+											<?php } ?>
+                                        </p>
+									<?php } ?>
+                                </li>
 								<li>
-									<strong><?php _e( 'Check plugin documentation', 'wpify-core' ); ?></strong><br>
-									<?php _e( 'Each plugin has its own troubleshooting section with descriptions of common errors and their solutions.', 'wpify-core' ); ?>
-								</li>
+									<h3><?php _e( 'Check plugin documentation', 'wpify-core' ); ?></h3>
+                                    <p><?php _e( 'Each plugin has its own troubleshooting section with descriptions of common errors and their solutions.', 'wpify-core' ); ?></p>
+                                    <ul>
+										<?php foreach ( $active_plugins as $slug => $plugin ) {
+											if ( empty( $plugin['doc_link'] ) ) {
+												continue;
+											}
+											?>
+                                            <li>
+                                                <a href="<?php echo esc_url( $plugin['doc_link'] ); ?>" target="_blank">
+													<?php echo esc_html( $plugin['title'] ?? $slug ); ?>
+                                                </a>
+                                            </li>
+										<?php } ?>
+                                    </ul>
+                                </li>
 								<li>
-									<strong><?php _e( 'Contact support', 'wpify-core' ); ?></strong><br>
-									<?php _e( 'If the problem persists, email us at support@wpify.io with a description of the problem, steps to reproduce, and relevant log content.', 'wpify-core' ); ?>
+									<h3><?php _e( 'Contact support', 'wpify-core' ); ?></h3>
+                                    <p><?php _e( 'If the problem persists, email us at support@wpify.io with a description of the problem, steps to reproduce, and relevant log content.', 'wpify-core' ); ?></p>
 								</li>
 							</ol>
 							<p>
@@ -146,43 +157,14 @@ class SupportPage {
 									<p><?php echo wp_kses_post( $faq['content'] ?? '' ); ?></p>
 								</div>
 							<?php } ?>
-						</div>
-					</div>
-					<div class="wpify__card">
-						<div class="wpify__card-body">
-							<h3><?php _e( 'Do you have any other questions?', 'wpify-core' ); ?></h3>
-							<p><?php _e( 'Check out the plugin documentation to see if your question is already answered.', 'wpify-core' ); ?></p>
-							<p><a href="<?php echo esc_url( $doc_link ); ?>" target="_blank"
-							      class="button button-primary"><?php _e( 'Documentation', 'wpify-core' ); ?></a></p>
-						</div>
-					</div>
-					<?php if ( ! empty( $active_plugins ) ) { ?>
-						<div class="wpify__card">
-							<div class="wpify__card-body">
-								<h3><?php _e( 'Documentation for active plugins', 'wpify-core' ); ?></h3>
-								<ul>
-									<?php foreach ( $active_plugins as $slug => $plugin ) {
-										if ( empty( $plugin['doc_link'] ) ) {
-											continue;
-										}
-										?>
-										<li>
-											<a href="<?php echo esc_url( $plugin['doc_link'] ); ?>" target="_blank">
-												<?php echo esc_html( $plugin['title'] ?? $slug ); ?>
-											</a>
-										</li>
-									<?php } ?>
-								</ul>
-							</div>
-						</div>
-					<?php } ?>
 
-                    <div class="wpify__card">
-                        <div class="wpify__card-body">
-                            <h3><?php _e( 'If you haven\'t found the answer, email us at:', 'wpify-core' ); ?></h3>
-                            <p><a href="mailto:support@wpify.io">support@wpify.io</a></p>
-                        </div>
-                    </div>
+                            <h3><?php _e( 'Do you have any other questions?', 'wpify-core' ); ?></h3>
+                            <p><?php _e( 'Check out the plugin documentation to see if your question is already answered.', 'wpify-core' ); ?></p>
+                            <p><a href="<?php echo esc_url( $doc_link ); ?>" target="_blank"
+                                  class="button button-primary"><?php _e( 'Documentation', 'wpify-core' ); ?></a></p>
+
+						</div>
+					</div>
 
 					<div class="wpify__card" style="max-width:100%">
 						<div class="wpify__card-body">
