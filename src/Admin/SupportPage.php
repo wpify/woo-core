@@ -345,6 +345,7 @@ class SupportPage {
 
 		$active_plugins = $this->get_active_wpify_plugins();
 		$plugin_title   = $active_plugins[ $plugin_slug ]['title'] ?? __( 'General', 'wpify-core' );
+		$license_data   = $this->get_license_details( $plugin_slug );
 
 		$site_host  = wp_parse_url( home_url(), PHP_URL_HOST );
 		$subject    = $subject_input ? $subject_input : $plugin_title;
@@ -380,6 +381,8 @@ class SupportPage {
 			'WooCommerce'          => $woo_version,
 			'Active Theme'          => $theme_name,
 			'WPify Plugins (active)' => $this->format_plugin_list( $active_plugins ),
+			'License status'       => $license_data['status'],
+			'License key'          => $license_data['key'],
 		);
 
 		$body_lines = array(
@@ -526,5 +529,39 @@ class SupportPage {
 		}
 
 		return null;
+	}
+
+	private function get_license_details( string $plugin_slug ): array {
+		if ( empty( $plugin_slug ) || $plugin_slug === 'general' ) {
+			return array(
+				'status' => 'n/a',
+				'key'    => '-',
+			);
+		}
+
+		$option_key = $plugin_slug . '_license';
+		if ( is_multisite() ) {
+			$data = get_network_option( get_current_network_id(), $option_key );
+		} else {
+			$data = get_option( $option_key );
+		}
+
+		if ( ! is_array( $data ) || empty( $data['license'] ) ) {
+			return array(
+				'status' => 'inactive',
+				'key'    => '-',
+			);
+		}
+
+		if ( array_key_exists( 'valid', $data ) ) {
+			$status = $data['valid'] ? 'valid' : 'invalid';
+		} else {
+			$status = 'active';
+		}
+
+		return array(
+			'status' => $status,
+			'key'    => $data['license'],
+		);
 	}
 }
