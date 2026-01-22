@@ -169,7 +169,7 @@ class SupportPage {
 					<div class="wpify__card" style="max-width:100%">
 						<div class="wpify__card-body">
 							<h2><?php _e( 'Send a support request', 'wpify-core' ); ?></h2>
-							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data">
 								<?php wp_nonce_field( 'wpify_support_request' ); ?>
 								<input type="hidden" name="action" value="wpify_support_request">
 
@@ -198,8 +198,7 @@ class SupportPage {
 									<p>
 										<label for="wpify-support-log"><strong><?php _e( 'Attach log (optional)', 'wpify-core' ); ?></strong></label><br>
 										<span style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-											<select id="wpify-support-log" name="log_file" class="regular-text">
-												<option value=""><?php _e( 'No log selected', 'wpify-core' ); ?></option>
+											<select id="wpify-support-log" name="log_files[]" class="regular-text" multiple size="4">
 												<?php foreach ( $log_files as $log ) { ?>
 													<option
 														value="<?php echo esc_attr( $log['file'] ); ?>"
@@ -215,8 +214,14 @@ class SupportPage {
 												</a>
 											<?php } ?>
 										</span>
+										<span class="description"><?php _e( 'Hold Ctrl (Windows) or Cmd (Mac) to select multiple logs.', 'wpify-core' ); ?></span>
 									</p>
 								<?php } ?>
+								<p>
+									<label for="wpify-support-files"><strong><?php _e( 'Attach files (optional)', 'wpify-core' ); ?></strong></label><br>
+									<input id="wpify-support-files" type="file" name="support_files[]" multiple>
+									<span class="description"><?php _e( 'Screenshots or documents that help explain the issue.', 'wpify-core' ); ?></span>
+								</p>
 								<p>
 									<?php submit_button( __( 'Send request', 'wpify-core' ), 'primary', 'submit', false ); ?>
 								</p>
@@ -257,17 +262,12 @@ class SupportPage {
 						const channel = plugin === 'general' ? '' : plugin.replace(/-/g, '_');
 
 						options.forEach(option => {
-							if (!option.value) {
-								option.hidden = false;
-								return;
-							}
 							const optionChannel = option.getAttribute('data-channel') || '';
 							option.hidden = channel && optionChannel !== channel;
+							if (option.hidden) {
+								option.selected = false;
+							}
 						});
-
-						if (logSelect.selectedOptions.length && logSelect.selectedOptions[0].hidden) {
-							logSelect.value = '';
-						}
 					};
 
 					pluginSelect.addEventListener('change', syncOptions);
@@ -314,11 +314,12 @@ class SupportPage {
 
 		check_admin_referer( 'wpify_support_request' );
 
-		$plugin_slug   = isset( $_POST['plugin'] ) ? sanitize_key( wp_unslash( $_POST['plugin'] ) ) : 'general';
+		$plugin_slug  = isset( $_POST['plugin'] ) ? sanitize_key( wp_unslash( $_POST['plugin'] ) ) : 'general';
 		$subject_input = isset( $_POST['subject'] ) ? sanitize_text_field( wp_unslash( $_POST['subject'] ) ) : '';
 		$message_input = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
 		$email_input   = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
-		$log_file      = isset( $_POST['log_file'] ) ? wp_unslash( $_POST['log_file'] ) : '';
+		$log_files     = isset( $_POST['log_files'] ) ? (array) wp_unslash( $_POST['log_files'] ) : [];
+		$upload_files  = isset( $_FILES['support_files'] ) ? $_FILES['support_files'] : null;
 
 		if ( empty( $message_input ) || empty( $email_input ) ) {
 			wp_safe_redirect( add_query_arg( array( 'page' => self::SLUG, 'wpify_support_sent' => '0' ), admin_url( 'admin.php' ) ) );
@@ -354,7 +355,7 @@ class SupportPage {
 		$theme       = wp_get_theme();
 		$theme_name  = $theme ? $theme->get( 'Name' ) . ' ' . $theme->get( 'Version' ) : '';
 
-		$diagnostics = array(
+		$diagnostics = apply_filters( 'wpify_dashboard_support_email_diagnostics', array(
 			'Site URL'             => site_url(),
 			'Home URL'             => home_url(),
 			'WP Version'           => get_bloginfo( 'version' ),
@@ -365,7 +366,7 @@ class SupportPage {
 			'WPify Plugins (active)' => $this->format_plugin_list( $active_plugins ),
 			'License status'       => $license_data['status'],
 			'License key'          => $license_data['key'],
-		);
+		), $plugin_slug );
 
 		$body_lines = array(
 			'Plugin: ' . $plugin_title,
@@ -383,15 +384,45 @@ class SupportPage {
 		}
 
 		$attachments = [];
-		$log_path    = $this->get_log_attachment_path( $log_file );
-		if ( $log_path ) {
-			$attachments[] = $log_path;
+		$temp_paths  = [];
+
+		$log_paths = $this->get_log_attachment_paths( $log_files );
+		if ( $log_paths ) {
+			$attachments   = array_merge( $attachments, $log_paths );
 			$body_lines[]  = '';
-			$body_lines[]  = 'Log attachment: ' . basename( $log_path );
+			$body_lines[]  = 'Log attachments: ' . implode( ', ', array_map( 'basename', $log_paths ) );
 		}
+
+		$upload_result = $this->handle_support_uploads( $upload_files );
+		if ( ! empty( $upload_result['paths'] ) ) {
+			$attachments   = array_merge( $attachments, $upload_result['paths'] );
+			$body_lines[]  = '';
+			$body_lines[]  = 'File attachments: ' . implode( ', ', array_map( 'basename', $upload_result['paths'] ) );
+		}
+
+		$generated = apply_filters( 'wpify_dashboard_support_email_generated_attachments', [], $plugin_slug );
+		if ( is_array( $generated ) && $generated ) {
+			$generated_paths = $this->create_generated_attachments( $generated );
+			if ( ! empty( $generated_paths['paths'] ) ) {
+				$attachments  = array_merge( $attachments, $generated_paths['paths'] );
+				$temp_paths   = array_merge( $temp_paths, $generated_paths['paths'] );
+				$body_lines[] = '';
+				$body_lines[] = 'Generated attachments: ' . implode( ', ', array_map( 'basename', $generated_paths['paths'] ) );
+			}
+		}
+
+		$attachments = apply_filters( 'wpify_dashboard_support_email_attachments', $attachments, $plugin_slug );
 
 		$headers = array( 'Reply-To: ' . $email_input );
 		$sent    = wp_mail( 'support@wpify.io', $subject, implode( "\n", $body_lines ), $headers, $attachments );
+
+		if ( $temp_paths ) {
+			foreach ( $temp_paths as $path ) {
+				if ( is_string( $path ) && $path !== '' ) {
+					@unlink( $path );
+				}
+			}
+		}
 
 		wp_safe_redirect( add_query_arg( array( 'page' => self::SLUG, 'wpify_support_sent' => $sent ? '1' : '0' ), admin_url( 'admin.php' ) ) );
 		exit;
@@ -466,29 +497,106 @@ class SupportPage {
 		return trim( $label . ' –' . $date );
 	}
 
-	private function get_log_attachment_path( string $selected_file ): ?string {
-		if ( empty( $selected_file ) ) {
-			return null;
+	private function get_log_attachment_paths( array $selected_files ): array {
+		$selected_files = array_filter( array_map( 'strval', $selected_files ) );
+		if ( empty( $selected_files ) ) {
+			return [];
 		}
 
-		$log_files = $this->get_log_files();
-		$entry     = null;
-		foreach ( $log_files as $log ) {
-			if ( $log['file'] === $selected_file ) {
-				$entry = $log;
-				break;
+		$available = [];
+		foreach ( $this->get_log_files() as $log ) {
+			$available[ $log['file'] ] = true;
+		}
+
+		$paths = [];
+		foreach ( $selected_files as $file ) {
+			if ( empty( $available[ $file ] ) ) {
+				continue;
+			}
+			if ( is_readable( $file ) ) {
+				$paths[] = $file;
 			}
 		}
-		if ( ! $entry ) {
-			return null;
+
+		return $paths;
+	}
+
+	private function create_generated_attachments( array $generated ): array {
+		if ( ! function_exists( 'wp_tempnam' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 
-		$path = $entry['file'];
-		if ( ! is_readable( $path ) ) {
-			return null;
+		$paths = [];
+		foreach ( $generated as $item ) {
+			if ( ! is_array( $item ) || empty( $item['content'] ) ) {
+				continue;
+			}
+			$name    = isset( $item['name'] ) ? sanitize_file_name( (string) $item['name'] ) : 'attachment.txt';
+			$content = (string) $item['content'];
+			$tmp     = wp_tempnam( $name );
+			if ( ! $tmp ) {
+				continue;
+			}
+			$written = file_put_contents( $tmp, $content );
+			if ( $written === false ) {
+				@unlink( $tmp );
+				continue;
+			}
+			$paths[] = $tmp;
 		}
 
-		return $path;
+		return array( 'paths' => $paths );
+	}
+
+	private function handle_support_uploads( ?array $files ): array {
+		if ( empty( $files ) || empty( $files['name'] ) || ! is_array( $files['name'] ) ) {
+			return array( 'paths' => [], 'errors' => [] );
+		}
+
+		$max_size = (int) apply_filters( 'wpify_dashboard_support_upload_max_size', 10 * 1024 * 1024 );
+		$mimes    = apply_filters( 'wpify_dashboard_support_upload_mimes', array(
+			'jpg|jpeg' => 'image/jpeg',
+			'png'      => 'image/png',
+			'gif'      => 'image/gif',
+			'pdf'      => 'application/pdf',
+			'txt'      => 'text/plain',
+			'log'      => 'text/plain',
+			'json'     => 'application/json',
+			'csv'      => 'text/csv',
+		) );
+
+		$paths  = [];
+		$errors = [];
+
+		foreach ( $files['name'] as $index => $name ) {
+			if ( empty( $name ) ) {
+				continue;
+			}
+			if ( ! empty( $files['error'][ $index ] ) ) {
+				$errors[] = $name;
+				continue;
+			}
+			if ( isset( $files['size'][ $index ] ) && $files['size'][ $index ] > $max_size ) {
+				$errors[] = $name;
+				continue;
+			}
+
+			$tmp_name = $files['tmp_name'][ $index ] ?? '';
+			if ( empty( $tmp_name ) || ! is_uploaded_file( $tmp_name ) ) {
+				$errors[] = $name;
+				continue;
+			}
+
+			$check = wp_check_filetype_and_ext( $tmp_name, $name, $mimes );
+			if ( empty( $check['type'] ) ) {
+				$errors[] = $name;
+				continue;
+			}
+
+			$paths[] = $tmp_name;
+		}
+
+		return array( 'paths' => $paths, 'errors' => $errors );
 	}
 
 	private function get_logs_page_url(): ?string {
