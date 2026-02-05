@@ -97,7 +97,7 @@ class SupportPage {
 				<?php do_action( 'wpify_dashboard_before_support_content' ); ?>
 
 				<div class="wpify__cards">
-					<div class="wpify__card" style="max-width:100%">
+					<div class="wpify__card wpify__card--50">
 						<div class="wpify__card-body">
 							<h2><?php _e( 'Quick debugging checklist', 'wpify-core' ); ?></h2>
 							<ol>
@@ -147,7 +147,7 @@ class SupportPage {
 							</p>
 						</div>
 					</div>
-					<div class="wpify__card" style="max-width:100%">
+					<div class="wpify__card wpify__card--50">
 						<div class="wpify__card-body">
 							<h2><?php _e( 'Frequently Asked Questions', 'wpify-core' ); ?></h2>
 
@@ -166,7 +166,7 @@ class SupportPage {
 						</div>
 					</div>
 
-					<div class="wpify__card" style="max-width:100%">
+					<div class="wpify__card wpify__card--100">
 						<div class="wpify__card-body">
 							<h2><?php _e( 'Send a support request', 'wpify-core' ); ?></h2>
 							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data">
@@ -411,6 +411,14 @@ class SupportPage {
 
 		$headers = array( 'Reply-To: ' . $email_input );
 		$sent    = wp_mail( 'support@wpify.io', $subject, implode( "\n", $body_lines ), $headers, $attachments );
+
+		if ( ! empty( $upload_result['paths'] ) ) {
+			foreach ( $upload_result['paths'] as $path ) {
+				if ( is_string( $path ) && $path !== '' ) {
+					@unlink( $path );
+				}
+			}
+		}
 
 		if ( $temp_paths ) {
 			foreach ( $temp_paths as $path ) {

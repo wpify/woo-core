@@ -4,8 +4,9 @@
     --wpify-core-success: green;
     --wpify-core-error: red;
     --wpify-core-gray: #e5e5e5;
-    --wpify-core-radius: 7px;
-    --wpify-core-card-shadow: 0 0 5px 0 rgba(0,0,0,0.42);
+    --wpify-core-light: #f1f7fb;
+    --wpify-core-radius: 10px;
+    --wpify-core-card-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .wpify-admin-page #wpcontent {
@@ -130,6 +131,17 @@
     border-radius: var(--wpify-core-radius);
     overflow: hidden;
     box-shadow: var(--wpify-core-card-shadow);
+    border: 1px solid var(--wpify-core-gray);
+}
+
+.wpify__card.wpify__card--50, .wpify__card.wpify__card--100 {
+    max-width: 100%;
+}
+
+.wpify__card.wpify__card--50 {
+    @media screen and (min-width: 1200px) {
+        max-width: calc(50% - 12px);
+    }
 }
 
 .wpify__card.active {
@@ -189,9 +201,15 @@
     flex-wrap: wrap;
     gap: 20px;
 }
+.wpify__modules-toggle.wpify__modules-toggle--full {
+    flex-flow: column;
+}
 
 th:has(label[for=enabled_modules]) {
     display: none;
+}
+th:has(label[for=enabled_modules]) + td {
+    padding-left: 40px;
 }
 
 .wpify__modules-toggle > div {
@@ -200,7 +218,23 @@ th:has(label[for=enabled_modules]) {
     max-width: 327px;
     padding: 10px 20px;
     border-radius: var(--wpify-core-radius);
-    box-shadow: var(--wpify-core-card-shadow);
+    border: var(--wpify-core-gray) 1px solid;
+}
+.wpify__modules-toggle > div:hover {
+    border-color: var(--wpify-core-primary);
+}
+
+.wpify__modules-toggle.wpify__modules-toggle--full > div {
+    max-width: 100%;
+}
+.wpify__modules-toggle.wpify__modules-toggle--full .components-toggle-control__label {
+    padding-left: 20px;
+}
+.wpify__modules-toggle.wpify__modules-toggle--full .components-toggle-control__label div {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: end;
 }
 
 .wpify__modules-toggle .components-base-control .components-toggle-control__label > span {
@@ -221,14 +255,10 @@ th:has(label[for=enabled_modules]) {
 
 #wpbody .wrap > form {
     display: flex;
-    background: white;
-    column-gap: 40px;
-    padding: 20px;
-    border-radius: var(--wpify-core-radius);
+    column-gap: 0;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: start;
     max-width: 1200px;
-    box-shadow: var(--wpify-core-card-shadow);
 }
 
 form .components-base-control__field label {
@@ -268,9 +298,50 @@ form .wpifycf-field-multi-group__content .wpifycf-field-group {
 }
 
 .form-table {
+    border-radius: var(--wpify-core-radius);
+    flex-wrap: wrap;
+    justify-content: space-between;
+    box-shadow: var(--wpify-core-card-shadow);
+    background: white;
+    margin-top: 0;
+
     @media screen and (min-width: 783px) {
         flex: 1;
     }
+}
+
+.form-table th {
+    padding-left: 40px;
+}
+.form-table td {
+    padding: 20px 40px 20px 10px;
+}
+.form-table td[colspan="2"] {
+    padding-left: 40px;
+}
+.form-table tr:first-child th, .form-table tr:first-child td {
+    padding-top: 40px;
+}
+.form-table tr:last-child th, .form-table tr:last-child td {
+    padding-bottom: 40px;
+}
+
+.form-table .full-width {
+    margin-left: -220px;
+    width: calc(100% + 220px);
+}
+
+.form-table .full-width .wpifycf-field__label {
+    width: 200px;
+}
+.form-table .full-width .wpifycf-field__wrapper {
+    gap: 20px;
+}
+
+.form-table td .wpifycf-field-group {
+    border: none;
+    padding: 0;
+    gap: 30px
 }
 
 p.submit {
@@ -281,12 +352,20 @@ p.submit {
 .nav-tab-wrapper {
     flex-direction: row;
     flex-wrap: wrap;
+    border-radius: var(--wpify-core-radius);
+    box-shadow: var(--wpify-core-card-shadow);
+    background: white;
+    padding: 20px;
+    gap: 5px;
+    margin-bottom: 20px;
+
 
     @media screen and (min-width: 783px) {
         border-bottom: none;
-        margin-left: -20px;
         display: flex;
         flex-direction: column;
+        margin-bottom: 0;
+        margin-right: 40px;
     }
 }
 
@@ -295,18 +374,21 @@ p.submit {
     text-align: left;
     margin-left: 0;
     padding: 10px 20px;
-    border: none;
-    border-bottom: 4px solid white;
+    border: 1px solid white;
+    border-radius: 5px;
 
     @media screen and (min-width: 783px) {
-        border-bottom: none;
-        border-left: 4px solid white;
     }
+}
+
+.nav-tab-wrapper .nav-tab:hover {
+    color: var(--wpify-core-primary);
 }
 
 .nav-tab-wrapper .nav-tab.nav-tab-active {
     border-color: var(--wpify-core-primary);
     color: var(--wpify-core-primary);
+    background-color: var(--wpify-core-light);
 }
 
 @media screen and (max-width: 783px) {

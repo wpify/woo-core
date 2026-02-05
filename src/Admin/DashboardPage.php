@@ -245,6 +245,7 @@ class DashboardPage {
 									$available_v = $plugin['plugin_info']['version'] ?? 0;
 
 									if ( $available_v && version_compare( $available_v, $version, '>' ) ) {
+										/* translators: %s: Available version number. */
 										$update_notice = '⚠️ ' . sprintf( __( 'New version %s available.', 'wpify-core' ), $available_v );
 
 										if ( $is_active && ! empty( $plugin['license'] ) ) {

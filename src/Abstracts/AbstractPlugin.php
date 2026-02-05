@@ -254,6 +254,7 @@ abstract class AbstractPlugin {
 		?>
         <div class="<?= $class ?>">
             <p><?php
+				/* translators: 1: Plugin name, 2: Settings URL. */
 				printf( __( 'Your %1$s plugin licence is not activated yet. Please <a href="%2$s">activate the domain</a> by connecting it with your WPify account!', 'wpify-core' ), $this->name(), $this->settings_url() );
 				?></p>
         </div>
