@@ -208,11 +208,6 @@ class SupportPage {
 													</option>
 												<?php } ?>
 											</select>
-											<?php if ( $logs_url ) { ?>
-												<a class="button" href="<?php echo esc_url( $logs_url ); ?>">
-													<?php _e( 'Open WPify Logs', 'wpify-core' ); ?>
-												</a>
-											<?php } ?>
 										</span>
 										<span class="description"><?php _e( 'Hold Ctrl (Windows) or Cmd (Mac) to select multiple logs.', 'wpify-core' ); ?></span>
 									</p>
@@ -257,12 +252,13 @@ class SupportPage {
 					}
 
 					const options = Array.from(logSelect.options);
+					const normalizeChannel = (value) => (value || '').replace(/-/g, '_');
 					const syncOptions = () => {
 						const plugin = pluginSelect.value || 'general';
-						const channel = plugin === 'general' ? '' : plugin.replace(/-/g, '_');
+						const channel = plugin === 'general' ? '' : normalizeChannel(plugin);
 
 						options.forEach(option => {
-							const optionChannel = option.getAttribute('data-channel') || '';
+							const optionChannel = normalizeChannel(option.getAttribute('data-channel') || '');
 							option.hidden = channel && optionChannel !== channel;
 							if (option.hidden) {
 								option.selected = false;
