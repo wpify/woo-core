@@ -42,6 +42,11 @@ class Settings {
 		$this->modules_manager = $modules_manager;
 		$this->asset_factory   = $asset_factory;
 
+		$allow_initialization = apply_filters( 'wpify_core_allow_initialization', true, static::class );
+		if ( ! $allow_initialization ) {
+			return;
+		}
+
 		// Check if the WpifyWoo Core settings have been initialized already
 		$this->initialized = apply_filters( 'wpify_core_settings_initialized', false );
 
