@@ -16,7 +16,7 @@
   },
   "require": {
     "php": ">=8.1",
-    "wpify/custom-fields": "^4.0",
+    "wpify/custom-fields": "dev-render-refactoring",
     "wpify/license": "^2"
   },
   "autoload": {
