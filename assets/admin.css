@@ -2,9 +2,12 @@
     --wpify-core-primary: #00A0D2;
     --wpify-core-secondary: #826eb4;
     --wpify-core-success: green;
-    --wpify-core-error: red;
-    --wpify-core-gray: #e5e5e5;
+    --wpify-core-danger: red;
     --wpify-core-light: #f1f7fb;
+    --wpify-core-gray: #dbe3ec;
+    --wpify-core-dark: #5f6b7a;
+    --wpify-core-bg: #ffffff;
+    --wpify-core-bg-soft: #f3f7fb;
     --wpify-core-radius: 10px;
     --wpify-core-card-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
@@ -65,7 +68,7 @@
 
 .wpify__logo {
     padding-left: 20px;
-    border-left: 1px solid silver;
+    border-left: 1px solid var(--wpify-core-gray);
 }
 
 .wpify__logo svg {
@@ -86,12 +89,13 @@
     align-items: center;
     flex-wrap: wrap;
     height: 60px;
-    color: dimgray;
+    color: var(--wpify-core-dark);
     text-decoration: none;
 }
 
-.wpify__menu-bar-item:hover {
-    color: black;
+.wpify__menu-bar-item:hover,
+.wpify__menu-section-bar-item:hover {
+    color: var(--wpify-core-secondary);
 }
 
 .wpify__menu-bar-item.current,
@@ -101,7 +105,7 @@
 }
 
 .wpify__menu-section-bar {
-    background: white;
+    background: var(--wpify-core-bg);
     padding: 0 20px;
     display: flex;
     flex-wrap: wrap;
@@ -112,7 +116,7 @@
 
 .wpify__menu-section-bar-item {
     padding: 10px 20px;
-    color: dimgray;
+    color: var(--wpify-core-dark);
     text-decoration: none;
 }
 
@@ -126,8 +130,9 @@
 .wpify__card {
     display: flex;
     flex-direction: column;
-    background: white;
+    background: var(--wpify-core-bg);
     width: 100%;
+    flex: 1 1 300px;
     border-radius: var(--wpify-core-radius);
     overflow: hidden;
     box-shadow: var(--wpify-core-card-shadow);
@@ -149,7 +154,7 @@
 }
 
 .wpify__card.active.no-licence {
-    border-top: 3px solid var(--wpify-core-error);
+    border-top: 3px solid var(--wpify-core-danger);
 }
 
 .wpify__card.inactive {
@@ -221,7 +226,7 @@ th:has(label[for=enabled_modules]) + td {
     border: var(--wpify-core-gray) 1px solid;
 }
 .wpify__modules-toggle > div:hover {
-    border-color: var(--wpify-core-primary);
+    border-color: var(--wpify-core-secondary);
 }
 
 .wpify__modules-toggle.wpify__modules-toggle--full > div {
@@ -254,94 +259,105 @@ th:has(label[for=enabled_modules]) + td {
 }
 
 #wpbody .wrap > form {
-    display: flex;
-    column-gap: 0;
-    flex-wrap: wrap;
-    justify-content: start;
     max-width: 1200px;
 }
+.wpifycf-app-instance {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
 
-form .components-base-control__field label {
+.wpifycf-app-instance .components-base-control__field label {
     font-size: 14px;
 }
 
-form .wpifycf-field__description {
-    color: #888;
+.wpifycf-app-instance .wpifycf-field__description {
+    color: var(--wpify-core-dark);
     font-size: 13px;
 }
 
-form .wpifycf-field-multi-group__item {
-    border-radius: 5px;
+.wpifycf-app-instance .wpifycf-field-multi-group__item {
+    border-radius: var(--wpify-core-radius);
+    border-color: var(--wpify-core-gray);
 }
 
-form .wpifycf-field-multi-group__item-header {
-    background: var(--wpify-core-gray);
+.wpifycf-app-instance .wpifycf-field-group {
+    padding: 0;
+    border: none;
+    gap: 30px;
 }
-
-form .wpifycf-field-multi-group__content .wpifycf-field-group {
+.wpifycf-app-instance .wpifycf-field-multi-group__content .wpifycf-field-group {
     padding-right: 1px;
     gap: 20px;
 }
 
-.wpifycf-app {
-    border-bottom: 1px solid var(--wpify-core-gray);
-
-    @media screen and (min-width: 783px) {
-        border-bottom: none;
-        border-right: 1px solid var(--wpify-core-gray);
-        width: 20%;
-    }
-}
-
-.wpifycf-app:empty {
-    display: none;
-}
-
-.form-table {
+.wpifycf-field__wrapper:has(.wpify_group_container) {
+    display: flex;
+    flex-direction: column;
     border-radius: var(--wpify-core-radius);
-    flex-wrap: wrap;
-    justify-content: space-between;
+    border: 1px solid var(--wpify-core-gray);
+    gap: 0;
+}
+.wpifycf-field__wrapper:has(.wpify_group_container) > label,
+.wpifycf-app-instance .wpifycf-field-multi-group__item-header {
+    padding: 10px var(--wpifycf-gap-4);
+    background: var(--wpify-core-gray);
+    border-top-left-radius: var(--wpify-core-radius);
+    border-top-right-radius: var(--wpify-core-radius);
+    font-weight: bold;
+}
+.wpifycf-field__wrapper:has(.wpify_group_container) > .wpifycf-field__control {
+    padding: var(--wpifycf-gap-4);
+}
+.wpifycf-field__wrapper .wpifycf-field__control .wpify_group_container {
+    width: 100%;
+}
+.wpifycf-field__wrapper .wpifycf-field__control .wpify_group_container .wpifycf-field-columns {
+    gap: 30px;
+}
+
+.wpifycf-field__wrapper:has(.wpify_group_container--row) {
+    flex-direction: row;
+}
+.wpify_group_container--row .wpifycf-field-multi-group__item {
+    display: flex;
+    flex-direction: row;
+}
+.wpify_group_container--row .wpifycf-field-multi-group__item-header {
+    flex-direction: column;
+    border-top-left-radius: var(--wpify-core-radius);
+    border-bottom-left-radius: var(--wpify-core-radius);
+    border-top-right-radius: 0
+}
+.wpify_group_container--row .wpifycf-field-multi-group__title {
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wpify_group_container--row .wpifycf-field-multi-group__header-actions {
+    flex-direction: column;
+}
+.wpify_group_container--row .wpifycf-field-multi-group__content{
+    flex: 1;
+}
+
+
+.wpifycf-app-instance__fields {
+    border-radius: var(--wpify-core-radius);
     box-shadow: var(--wpify-core-card-shadow);
-    background: white;
-    margin-top: 0;
+    background: var(--wpify-core-bg);
+    padding: 40px;
+    gap: 40px;
 
     @media screen and (min-width: 783px) {
         flex: 1;
     }
 }
 
-.form-table th {
-    padding-left: 40px;
-}
-.form-table td {
-    padding: 20px 40px 20px 10px;
-}
-.form-table td[colspan="2"] {
-    padding-left: 40px;
-}
-.form-table tr:first-child th, .form-table tr:first-child td {
-    padding-top: 40px;
-}
-.form-table tr:last-child th, .form-table tr:last-child td {
-    padding-bottom: 40px;
-}
-
-.form-table .full-width {
-    margin-left: -220px;
-    width: calc(100% + 220px);
-}
-
-.form-table .full-width .wpifycf-field__label {
-    width: 200px;
-}
-.form-table .full-width .wpifycf-field__wrapper {
-    gap: 20px;
-}
-
-.form-table td .wpifycf-field-group {
-    border: none;
-    padding: 0;
-    gap: 30px
+.wpify-divider {
+    border-bottom: 1px solid var(--wpify-core-gray);
 }
 
 p.submit {
@@ -350,31 +366,30 @@ p.submit {
 }
 
 .nav-tab-wrapper {
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     border-radius: var(--wpify-core-radius);
     box-shadow: var(--wpify-core-card-shadow);
-    background: white;
+    background: var(--wpify-core-bg);
     padding: 20px;
     gap: 5px;
-    margin-bottom: 20px;
-
+    min-width: 200px;
 
     @media screen and (min-width: 783px) {
         border-bottom: none;
-        display: flex;
         flex-direction: column;
         margin-bottom: 0;
-        margin-right: 40px;
+        align-self: flex-start;
     }
 }
 
 .nav-tab-wrapper .nav-tab {
-    background: white;
+    background: var(--wpify-core-bg);
     text-align: left;
     margin-left: 0;
     padding: 10px 20px;
-    border: 1px solid white;
+    border: 1px solid var(--wpify-core-bg);
     border-radius: 5px;
 
     @media screen and (min-width: 783px) {
@@ -382,7 +397,7 @@ p.submit {
 }
 
 .nav-tab-wrapper .nav-tab:hover {
-    color: var(--wpify-core-primary);
+    color: var(--wpify-core-secondary);
 }
 
 .nav-tab-wrapper .nav-tab.nav-tab-active {
@@ -398,6 +413,11 @@ p.submit {
 }
 
 @media screen and (min-width: 783px) {
+    .wpifycf-app-instance {
+        flex-direction: row;
+        gap: 40px;
+    }
+
     .wpify-dashboard__wrap {
         flex-direction: row;
     }
@@ -409,58 +429,88 @@ p.submit {
     .wpify-dashboard__sidebar {
         width: 300px;
     }
-
-    .wpify__card {
-        max-width: 300px;
-    }
 }
 
 input[type=date], input[type=datetime-local], input[type=datetime], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], select, textarea {
     padding: 5px 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--wpify-core-gray);
     border-radius: 5px;
 }
 
 input[type=color] {
     padding: 1px 3px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--wpify-core-gray);
     border-radius: 5px;
 }
 
 .wpifycf-select .wpifycf-select__control {
     padding: 5px 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--wpify-core-gray);
     border-radius: 5px;
 }
 
 .wpifycf-select .wpifycf-select__clear-indicator {
-    color: red;
+    color: var(--wpify-core-danger);
 }
 
-.form-table .components-form-toggle {
+.wpifycf-app-instance .components-form-toggle {
     height: 28px;
 }
 
-.form-table .components-form-toggle .components-form-toggle__track {
+.wpifycf-app-instance .components-form-toggle .components-form-toggle__track {
     width: 50px;
     height: 28px;
     border-radius: 16px;
-    border-color: #cccccc;
+    background-color: var(--wpify-core-bg-soft);
+    border-color: var(--wpify-core-gray);
 }
 
-.form-table .components-form-toggle.is-checked .components-form-toggle__track {
+.wpifycf-app-instance .components-toggle-control:hover .components-form-toggle .components-form-toggle__track {
+    border-color: var(--wpify-core-secondary);
+}
+
+.wpifycf-app-instance .components-form-toggle.is-checked .components-form-toggle__track {
     background-color: var(--wpify-core-primary);
     border-color: var(--wpify-core-primary);
 }
 
-.form-table .components-form-toggle .components-form-toggle__thumb {
+.wpifycf-app-instance .components-form-toggle .components-form-toggle__thumb {
     width: 24px;
     height: 24px;
-    background-color: #555555;
+    background-color: var(--wpify-core-dark);
+}
+.wpifycf-app-instance .components-form-toggle.is-checked .components-form-toggle__thumb {
+    background-color: var(--wpify-core-bg);
+
 }
 
-.form-table .components-form-toggle.is-checked .components-form-toggle__thumb {
+.wpifycf-app-instance .components-form-toggle.is-checked .components-form-toggle__thumb {
     transform: translateX(22px);
+}
+
+.wpifycf-app-instance table {
+    border-color: var(--wpify-core-gray);
+}
+.wpifycf-app-instance table tr th, .wpifycf-app-instance table tr td {
+    border-color: var(--wpify-core-gray);
+    padding: 10px;
+}
+.wpifycf-app-instance table thead {
+    background: var(--wpify-core-gray);
+}
+.wpifycf-app-instance table tfoot {
+    background: var(--wpify-core-bg-soft);
+}
+.wpifycf-app-instance .wpifycf-button,
+.wpifycf-app-instance .button {
+    border-color: var(--wpify-core-primary);
+    color: var(--wpify-core-primary)!important;
+    background: var(--wpify-core-bg-soft);
+}
+.wpifycf-app-instance .wpifycf-button:hover,
+.wpifycf-app-instance .button:hover {
+    border-color: var(--wpify-core-secondary);
+    color: var(--wpify-core-secondary)!important;
 }
 
 .wpify-admin-page form p .button-primary, .wpify__card .button-primary, .license-field .components-button.is-primary {
@@ -486,7 +536,8 @@ input[type=color] {
     width: 40px;
     height: 24px;
     border-radius: 15px;
-    background: #999;
+    background: var(--wpify-core-bg-soft);
+    border: 1px solid var(--wpify-core-gray);
 }
 
 .wpify__card .toggle-button.active {
@@ -494,7 +545,7 @@ input[type=color] {
 }
 
 .wpify__card .toggle-button:hover, .wpify__card .toggle-button.active:hover {
-    background: var(--wpify-core-secondary);
+    border-color: var(--wpify-core-secondary);
 }
 
 .wpify__card .toggle-button__thumb {
@@ -503,13 +554,14 @@ input[type=color] {
     left: 2px;
     width: 20px;
     height: 20px;
-    background-color: white;
+    background-color: var(--wpify-core-dark);
     border-radius: 10px;
 }
 
 .wpify__card .toggle-button.active .toggle-button__thumb {
     left: auto;
     right: 2px;
+    background: var(--wpify-core-bg);
 }
 
 .wpify__card .toggle-button__label {
