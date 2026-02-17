@@ -4,18 +4,17 @@
     --wpify-core-success: green;
     --wpify-core-danger: red;
     --wpify-core-light: #dbe3ec;
-    --wpify-core-gray: #98a4b6;
-    --wpify-core-dark: #5f6b7a;
+    --wpify-core-gray: #647080;
+    --wpify-core-dark: #191e23;
     --wpify-core-bg: #ffffff;
     --wpify-core-bg-soft: #f3f7fb;
-    --wpify-core-radius: 10px;
+    --wpify-core-radius: 8px;
     --wpify-core-card-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .wpify-admin-page #wpcontent {
     padding-left: 0;
 }
-
 
 .wpify-admin-page #wpbody *:focus-visible {
     outline-color: var(--wpify-core-secondary);
@@ -25,6 +24,13 @@
 .wpify-admin-page .wpify__menu-section-bar a:focus {
     color: var(--wpify-core-secondary);
     box-shadow: 0 0 0 2px var(--wpify-core-secondary);
+}
+
+.wpify-admin-page #wpbody,
+.wpify-admin-page .wpify__menu-bar,
+.wpify-admin-page .wpify__menu-section-bar,
+.wpify-admin-page h1, .wpify-admin-page h2, .wpify-admin-page h3{
+    color: var(--wpify-core-dark);
 }
 
 .wpify-admin-page #wpbody {
@@ -213,7 +219,7 @@
 
 .wpify__modules-toggle {
     flex-flow: row wrap;
-    gap: 20px;
+    gap: var(--wpifycf-gap-4);
 }
 .wpify__modules-toggle.wpify__modules-toggle--full {
     flex-flow: column;
@@ -233,6 +239,7 @@ th:has(label[for=enabled_modules]) + td {
     padding: 10px 20px;
     border-radius: var(--wpify-core-radius);
     border: var(--wpify-core-light) 1px solid;
+    background: var(--wpify-core-bg-soft);
 }
 .wpify__modules-toggle > div:hover {
     border-color: var(--wpify-core-secondary);
@@ -242,7 +249,7 @@ th:has(label[for=enabled_modules]) + td {
     max-width: 100%;
 }
 .wpify__modules-toggle.wpify__modules-toggle--full .components-toggle-control__label {
-    padding-left: 20px;
+    padding-left: var(--wpifycf-gap-4);
 }
 .wpify__modules-toggle.wpify__modules-toggle--full .components-toggle-control__label div {
     display: flex;
@@ -273,7 +280,7 @@ th:has(label[for=enabled_modules]) + td {
 .wpifycf-app-instance {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: var(--wpifycf-gap-4);
 }
 
 .wpifycf-app-instance .components-base-control__field label {
@@ -281,7 +288,7 @@ th:has(label[for=enabled_modules]) + td {
 }
 
 .wpifycf-app-instance .wpifycf-field__description {
-    color: var(--wpify-core-dark);
+    color: var(--wpify-core-gray);
     font-size: 13px;
 }
 
@@ -293,36 +300,46 @@ th:has(label[for=enabled_modules]) + td {
 .wpifycf-app-instance .wpifycf-field-group {
     padding: 0;
     border: none;
-    gap: 30px;
+    gap: var(--wpifycf-gap-4);
 }
 .wpifycf-app-instance .wpifycf-field-multi-group__content .wpifycf-field-group {
     padding-right: 1px;
-    gap: 20px;
+    gap: var(--wpifycf-gap-4);
+}
+.wpifycf-field__wrapper:has(>.wpifycf-field__label) {
+    column-gap: 30px;
 }
 
-.wpifycf-field__wrapper:has(.wpify_group_container) {
+.wpifycf-field__wrapper:has(.wpify_group_container),
+.wpifycf-field__wrapper:has(.wpify_field_container) {
     display: flex;
     flex-direction: column;
     border-radius: var(--wpify-core-radius);
     border: 1px solid var(--wpify-core-light);
     gap: 0;
+    background: var(--wpify-core-bg);
 }
 .wpifycf-field__wrapper:has(.wpify_group_container) > label,
 .wpifycf-app-instance .wpifycf-field-multi-group__item-header {
     padding: 10px var(--wpifycf-gap-4);
     background: var(--wpify-core-light);
-    border-top-left-radius: var(--wpify-core-radius);
-    border-top-right-radius: var(--wpify-core-radius);
+    border-top-left-radius: calc(var(--wpify-core-radius) - 1px);
+    border-top-right-radius: calc(var(--wpify-core-radius) - 1px);
     font-weight: bold;
 }
-.wpifycf-field__wrapper:has(.wpify_group_container) > .wpifycf-field__control {
+.wpifycf-field__wrapper:has(.wpify_field_container) > label {
+    padding: var(--wpifycf-gap-4);
+    padding-bottom: 0;
+}
+.wpifycf-field__wrapper:has(.wpify_group_container) > .wpifycf-field__control,
+.wpifycf-field__wrapper:has(.wpify_field_container) > .wpifycf-field__control {
     padding: var(--wpifycf-gap-4);
 }
 .wpifycf-field__wrapper .wpifycf-field__control .wpify_group_container {
     width: 100%;
 }
 .wpifycf-field__wrapper .wpifycf-field__control .wpify_group_container .wpifycf-field-columns {
-    gap: 30px;
+    gap: var(--wpifycf-gap-4);
 }
 
 .wpifycf-field__wrapper:has(.wpify_group_container--row) {
@@ -335,8 +352,8 @@ th:has(label[for=enabled_modules]) + td {
 .wpifycf-field__wrapper:has(.wpify_group_container--row) > label,
 .wpify_group_container--row .wpifycf-field-multi-group__item-header {
     flex-direction: column;
-    border-top-left-radius: var(--wpify-core-radius);
-    border-bottom-left-radius: var(--wpify-core-radius);
+    border-top-left-radius: calc(var(--wpify-core-radius) - 1px);
+    border-bottom-left-radius: calc(var(--wpify-core-radius) - 1px);
     border-top-right-radius: 0;
 }
 .wpifycf-field__wrapper:has(.wpify_group_container--row) > label,
@@ -353,6 +370,18 @@ th:has(label[for=enabled_modules]) + td {
 .wpifycf-field__wrapper:has(.wpify_group_container--row) > .wpifycf-field__control,
 .wpify_group_container--row .wpifycf-field-multi-group__content {
     flex: 1;
+}
+.wpifycf-field-multi-group__content {
+    padding: var(--wpifycf-gap-4);
+}
+.wpifycf-field__wrapper:has(.wpify_bg_soft),
+.wpifycf-field-multi-group__content {
+    background: var(--wpify-core-bg-soft);
+}
+.wpify_bg_soft .wpifycf-field-multi-group__content,
+.wpify_bg_soft .wpify_group_container,
+.wpifycf-field-multi-group__content .wpifycf-field-multi-group__content {
+    background: var(--wpify-core-bg);
 }
 
 .wpifycf-app-instance__fields {
@@ -383,7 +412,7 @@ p.submit {
     border-radius: var(--wpify-core-radius);
     box-shadow: var(--wpify-core-card-shadow);
     background: var(--wpify-core-bg);
-    padding: 20px;
+    padding: var(--wpifycf-gap-4);
     gap: 5px;
     min-width: 200px;
 
@@ -402,6 +431,7 @@ p.submit {
     padding: 10px 20px;
     border: 1px solid var(--wpify-core-bg);
     border-radius: 5px;
+    color: var(--wpify-core-dark);
 }
 
 .nav-tab-wrapper .nav-tab:hover {
@@ -450,12 +480,12 @@ p.submit {
     padding: 5px 10px;
 }
 
-.wpify-admin-page #wpbody input:hover,
+.wpify-admin-page #wpbody input:not(.wpifycf-select__input):hover,
 .wpify-admin-page #wpbody textarea:hover,
 .wpifycf-select .wpifycf-select__control:hover {
     border-color: var(--wpify-core-secondary);
 }
-.wpify-admin-page #wpbody input:focus,
+.wpify-admin-page #wpbody input:not(.wpifycf-select__input):focus,
 .wpify-admin-page #wpbody textarea:focus,
 .wpifycf-select .wpifycf-select__control--is-focused,
 .components-form-toggle .components-form-toggle__input:focus+.components-form-toggle__track {
@@ -467,6 +497,16 @@ p.submit {
     padding: 1px 3px;
 }
 
+.wpifycf-select .wpifycf-select__indicator {
+    cursor: pointer;
+}
+.wpifycf-select .wpifycf-select__dropdown-indicator {
+    color: var(--wpify-core-gray);
+}
+.wpifycf-select .wpifycf-select__control--is-focused .wpifycf-select__dropdown-indicator,
+.wpifycf-select .wpifycf-select__control:hover .wpifycf-select__dropdown-indicator {
+    color: var(--wpify-core-secondary);
+}
 .wpifycf-select .wpifycf-select__clear-indicator {
     color: var(--wpify-core-danger);
 }
@@ -474,6 +514,9 @@ p.submit {
     color: var(--wpify-core-gray);
 }
 
+.wpifycf-field-multi-select__option {
+    background: var(--wpify-core-light);
+}
 .wpifycf-app-instance .components-form-toggle {
     height: 28px;
 }
@@ -482,7 +525,7 @@ p.submit {
     width: 50px;
     height: 28px;
     border-radius: 16px;
-    background-color: var(--wpify-core-bg-soft);
+    background-color: var(--wpify-core-bg);
     border-color: var(--wpify-core-light);
 }
 
@@ -518,6 +561,7 @@ p.submit {
 .wpifycf-app-instance table tfoot {
     background: var(--wpify-core-bg-soft);
 }
+
 .wpifycf-app-instance .wpifycf-button,
 .wpifycf-app-instance .button {
     border-color: var(--wpify-core-primary);
@@ -588,6 +632,13 @@ p.submit {
     opacity: 0;
 }
 
+.wpifycf-icon-button--light:not(.wpifycf-icon-button--trash) svg {
+    fill: var(--wpify-core-dark);
+}
+.wpifycf-icon-button--light:not(.wpifycf-icon-button--trash):hover svg {
+    fill: var(--wpify-core-primary);
+}
+
 .wpify-notice, .license-field {
     border: 1px solid rgba(6, 44, 241, 0.46);
     background-color: rgba(7, 73, 149, 0.12);
@@ -599,7 +650,7 @@ p.submit {
 .license-field {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: var(--wpifycf-gap-4);
 }
 
 .license-field__text {
