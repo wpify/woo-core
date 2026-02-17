@@ -3,8 +3,8 @@
     --wpify-core-secondary: #826eb4;
     --wpify-core-success: green;
     --wpify-core-danger: red;
-    --wpify-core-light: #f1f7fb;
-    --wpify-core-gray: #dbe3ec;
+    --wpify-core-light: #dbe3ec;
+    --wpify-core-gray: #98a4b6;
     --wpify-core-dark: #5f6b7a;
     --wpify-core-bg: #ffffff;
     --wpify-core-bg-soft: #f3f7fb;
@@ -16,6 +16,17 @@
     padding-left: 0;
 }
 
+
+.wpify-admin-page #wpbody *:focus-visible {
+    outline-color: var(--wpify-core-secondary);
+}
+.wpify-admin-page #wpbody a:focus,
+.wpify-admin-page .wpify__menu-bar a:focus,
+.wpify-admin-page .wpify__menu-section-bar a:focus {
+    color: var(--wpify-core-secondary);
+    box-shadow: 0 0 0 2px var(--wpify-core-secondary);
+}
+
 .wpify-admin-page #wpbody {
     padding: 20px 0 0 20px;
 }
@@ -23,7 +34,6 @@
 .wpify-dashboard__wrap {
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
     gap: 40px;
 }
 
@@ -32,9 +42,9 @@
     padding: 0 20px;
     display: flex;
     justify-content: space-between;
-    align-content: center;
+    align-items: center;
     min-height: 60px;
-    border-bottom: 1px solid var(--wpify-core-gray);
+    border-bottom: 1px solid var(--wpify-core-light);
 
     @media screen and (max-width: 600px) {
         padding-top: 50px;
@@ -44,7 +54,7 @@
 
 .wpify__menu-bar-column {
     display: flex;
-    align-content: center;
+    align-items: center;
     flex-wrap: wrap;
     column-gap: 20px;
 }
@@ -68,7 +78,7 @@
 
 .wpify__logo {
     padding-left: 20px;
-    border-left: 1px solid var(--wpify-core-gray);
+    border-left: 1px solid var(--wpify-core-light);
 }
 
 .wpify__logo svg {
@@ -109,9 +119,9 @@
     padding: 0 20px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: start;
-    align-content: center;
-    border-bottom: 1px solid var(--wpify-core-gray);
+    justify-content: flex-start;
+    align-items: center;
+    border-bottom: 1px solid var(--wpify-core-light);
 }
 
 .wpify__menu-section-bar-item {
@@ -136,7 +146,7 @@
     border-radius: var(--wpify-core-radius);
     overflow: hidden;
     box-shadow: var(--wpify-core-card-shadow);
-    border: 1px solid var(--wpify-core-gray);
+    border: 1px solid var(--wpify-core-light);
 }
 
 .wpify__card.wpify__card--50, .wpify__card.wpify__card--100 {
@@ -158,7 +168,7 @@
 }
 
 .wpify__card.inactive {
-    border-top: 3px solid var(--wpify-core-gray);
+    border-top: 3px solid var(--wpify-core-light);
 }
 
 .wpify__card.inactive .wpify__card-head {
@@ -170,7 +180,7 @@
     display: flex;
     gap: 10px;
     padding: 20px;
-    justify-content: start;
+    justify-content: flex-start;
 }
 
 .wpify__card-head > div {
@@ -202,8 +212,7 @@
 }
 
 .wpify__modules-toggle {
-    flex-flow: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
     gap: 20px;
 }
 .wpify__modules-toggle.wpify__modules-toggle--full {
@@ -223,7 +232,7 @@ th:has(label[for=enabled_modules]) + td {
     max-width: 327px;
     padding: 10px 20px;
     border-radius: var(--wpify-core-radius);
-    border: var(--wpify-core-gray) 1px solid;
+    border: var(--wpify-core-light) 1px solid;
 }
 .wpify__modules-toggle > div:hover {
     border-color: var(--wpify-core-secondary);
@@ -278,7 +287,7 @@ th:has(label[for=enabled_modules]) + td {
 
 .wpifycf-app-instance .wpifycf-field-multi-group__item {
     border-radius: var(--wpify-core-radius);
-    border-color: var(--wpify-core-gray);
+    border-color: var(--wpify-core-light);
 }
 
 .wpifycf-app-instance .wpifycf-field-group {
@@ -295,13 +304,13 @@ th:has(label[for=enabled_modules]) + td {
     display: flex;
     flex-direction: column;
     border-radius: var(--wpify-core-radius);
-    border: 1px solid var(--wpify-core-gray);
+    border: 1px solid var(--wpify-core-light);
     gap: 0;
 }
 .wpifycf-field__wrapper:has(.wpify_group_container) > label,
 .wpifycf-app-instance .wpifycf-field-multi-group__item-header {
     padding: 10px var(--wpifycf-gap-4);
-    background: var(--wpify-core-gray);
+    background: var(--wpify-core-light);
     border-top-left-radius: var(--wpify-core-radius);
     border-top-right-radius: var(--wpify-core-radius);
     font-weight: bold;
@@ -323,12 +332,14 @@ th:has(label[for=enabled_modules]) + td {
     display: flex;
     flex-direction: row;
 }
+.wpifycf-field__wrapper:has(.wpify_group_container--row) > label,
 .wpify_group_container--row .wpifycf-field-multi-group__item-header {
     flex-direction: column;
     border-top-left-radius: var(--wpify-core-radius);
     border-bottom-left-radius: var(--wpify-core-radius);
-    border-top-right-radius: 0
+    border-top-right-radius: 0;
 }
+.wpifycf-field__wrapper:has(.wpify_group_container--row) > label,
 .wpify_group_container--row .wpifycf-field-multi-group__title {
     writing-mode: vertical-lr;
     text-orientation: mixed;
@@ -339,10 +350,10 @@ th:has(label[for=enabled_modules]) + td {
 .wpify_group_container--row .wpifycf-field-multi-group__header-actions {
     flex-direction: column;
 }
-.wpify_group_container--row .wpifycf-field-multi-group__content{
+.wpifycf-field__wrapper:has(.wpify_group_container--row) > .wpifycf-field__control,
+.wpify_group_container--row .wpifycf-field-multi-group__content {
     flex: 1;
 }
-
 
 .wpifycf-app-instance__fields {
     border-radius: var(--wpify-core-radius);
@@ -357,7 +368,7 @@ th:has(label[for=enabled_modules]) + td {
 }
 
 .wpify-divider {
-    border-bottom: 1px solid var(--wpify-core-gray);
+    border-bottom: 1px solid var(--wpify-core-light);
 }
 
 p.submit {
@@ -391,19 +402,19 @@ p.submit {
     padding: 10px 20px;
     border: 1px solid var(--wpify-core-bg);
     border-radius: 5px;
-
-    @media screen and (min-width: 783px) {
-    }
 }
 
 .nav-tab-wrapper .nav-tab:hover {
     color: var(--wpify-core-secondary);
 }
+.nav-tab-wrapper .nav-tab:focus {
+    border-color: var(--wpify-core-secondary);
+}
 
 .nav-tab-wrapper .nav-tab.nav-tab-active {
     border-color: var(--wpify-core-primary);
     color: var(--wpify-core-primary);
-    background-color: var(--wpify-core-light);
+    background-color: var(--wpify-core-bg-soft);
 }
 
 @media screen and (max-width: 783px) {
@@ -431,26 +442,36 @@ p.submit {
     }
 }
 
-input[type=date], input[type=datetime-local], input[type=datetime], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], select, textarea {
-    padding: 5px 10px;
-    border: 1px solid var(--wpify-core-gray);
-    border-radius: 5px;
-}
-
-input[type=color] {
-    padding: 1px 3px;
-    border: 1px solid var(--wpify-core-gray);
-    border-radius: 5px;
-}
-
+.wpify-admin-page #wpbody input,
+.wpify-admin-page #wpbody textarea,
 .wpifycf-select .wpifycf-select__control {
-    padding: 5px 10px;
-    border: 1px solid var(--wpify-core-gray);
+    border: 1px solid var(--wpify-core-light);
     border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.wpify-admin-page #wpbody input:hover,
+.wpify-admin-page #wpbody textarea:hover,
+.wpifycf-select .wpifycf-select__control:hover {
+    border-color: var(--wpify-core-secondary);
+}
+.wpify-admin-page #wpbody input:focus,
+.wpify-admin-page #wpbody textarea:focus,
+.wpifycf-select .wpifycf-select__control--is-focused,
+.components-form-toggle .components-form-toggle__input:focus+.components-form-toggle__track {
+    border-color: var(--wpify-core-secondary);
+    box-shadow: 0 0 0 1px var(--wpify-core-secondary);
+}
+
+.wpify-admin-page #wpbody input[type=color] {
+    padding: 1px 3px;
 }
 
 .wpifycf-select .wpifycf-select__clear-indicator {
     color: var(--wpify-core-danger);
+}
+.wpifycf-select .wpifycf-select__placeholder {
+    color: var(--wpify-core-gray);
 }
 
 .wpifycf-app-instance .components-form-toggle {
@@ -462,7 +483,7 @@ input[type=color] {
     height: 28px;
     border-radius: 16px;
     background-color: var(--wpify-core-bg-soft);
-    border-color: var(--wpify-core-gray);
+    border-color: var(--wpify-core-light);
 }
 
 .wpifycf-app-instance .components-toggle-control:hover .components-form-toggle .components-form-toggle__track {
@@ -481,22 +502,18 @@ input[type=color] {
 }
 .wpifycf-app-instance .components-form-toggle.is-checked .components-form-toggle__thumb {
     background-color: var(--wpify-core-bg);
-
-}
-
-.wpifycf-app-instance .components-form-toggle.is-checked .components-form-toggle__thumb {
     transform: translateX(22px);
 }
 
 .wpifycf-app-instance table {
-    border-color: var(--wpify-core-gray);
+    border-color: var(--wpify-core-light);
 }
 .wpifycf-app-instance table tr th, .wpifycf-app-instance table tr td {
-    border-color: var(--wpify-core-gray);
+    border-color: var(--wpify-core-light);
     padding: 10px;
 }
 .wpifycf-app-instance table thead {
-    background: var(--wpify-core-gray);
+    background: var(--wpify-core-light);
 }
 .wpifycf-app-instance table tfoot {
     background: var(--wpify-core-bg-soft);
@@ -537,7 +554,7 @@ input[type=color] {
     height: 24px;
     border-radius: 15px;
     background: var(--wpify-core-bg-soft);
-    border: 1px solid var(--wpify-core-gray);
+    border: 1px solid var(--wpify-core-light);
 }
 
 .wpify__card .toggle-button.active {
