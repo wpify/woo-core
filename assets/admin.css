@@ -349,14 +349,14 @@ th:has(label[for=enabled_modules]) + td {
     display: flex;
     flex-direction: row;
 }
-.wpifycf-field__wrapper:has(.wpify_group_container--row) > label,
+.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_group_container--row) > label,
 .wpify_group_container--row .wpifycf-field-multi-group__item-header {
     flex-direction: column;
     border-top-left-radius: calc(var(--wpify-core-radius) - 1px);
     border-bottom-left-radius: calc(var(--wpify-core-radius) - 1px);
     border-top-right-radius: 0;
 }
-.wpifycf-field__wrapper:has(.wpify_group_container--row) > label,
+.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_group_container--row) > label,
 .wpify_group_container--row .wpifycf-field-multi-group__title {
     writing-mode: vertical-lr;
     text-orientation: mixed;
