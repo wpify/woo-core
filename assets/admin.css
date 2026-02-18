@@ -310,8 +310,8 @@ th:has(label[for=enabled_modules]) + td {
     column-gap: 30px;
 }
 
-.wpifycf-field__wrapper:has(.wpify_group_container),
-.wpifycf-field__wrapper:has(.wpify_field_container) {
+.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_group_container),
+.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_field_container) {
     display: flex;
     flex-direction: column;
     border-radius: var(--wpify-core-radius);
@@ -319,7 +319,7 @@ th:has(label[for=enabled_modules]) + td {
     gap: 0;
     background: var(--wpify-core-bg);
 }
-.wpifycf-field__wrapper:has(.wpify_group_container) > label,
+.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_group_container) > label,
 .wpifycf-app-instance .wpifycf-field-multi-group__item-header {
     padding: 10px var(--wpifycf-gap-4);
     background: var(--wpify-core-light);
@@ -327,12 +327,12 @@ th:has(label[for=enabled_modules]) + td {
     border-top-right-radius: calc(var(--wpify-core-radius) - 1px);
     font-weight: bold;
 }
-.wpifycf-field__wrapper:has(.wpify_field_container) > label {
+.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_field_container) > label {
     padding: var(--wpifycf-gap-4);
     padding-bottom: 0;
 }
-.wpifycf-field__wrapper:has(.wpify_group_container) > .wpifycf-field__control,
-.wpifycf-field__wrapper:has(.wpify_field_container) > .wpifycf-field__control {
+.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_group_container) > .wpifycf-field__control,
+.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_field_container) > .wpifycf-field__control {
     padding: var(--wpifycf-gap-4);
 }
 .wpifycf-field__wrapper .wpifycf-field__control .wpify_group_container {
@@ -342,21 +342,29 @@ th:has(label[for=enabled_modules]) + td {
     gap: var(--wpifycf-gap-4);
 }
 
-.wpifycf-field__wrapper:has(.wpify_group_container--row) {
+.wpifycf-field__wrapper:has(> .wpifycf-field__control >  .wpify_group_container--row) {
     flex-direction: row;
+}
+
+.wpifycf-field__wrapper:has(> .wpifycf-field__control >  .wpify_wrapper--column) {
+    grid-template-columns: 1fr;
+}
+.wpifycf-field__wrapper:has(> .wpifycf-field__control >  .wpifycf-field-group),
+.wpifycf-field__wrapper:has(> .wpifycf-field__control >  .wpifycf-field-multi-group) {
+    row-gap: var(--wpifycf-gap-2);
 }
 .wpify_group_container--row .wpifycf-field-multi-group__item {
     display: flex;
     flex-direction: row;
 }
-.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_group_container--row) > label,
+.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_group_container--row:not(.wpifycf-field-multi-group)) > label,
 .wpify_group_container--row .wpifycf-field-multi-group__item-header {
     flex-direction: column;
     border-top-left-radius: calc(var(--wpify-core-radius) - 1px);
     border-bottom-left-radius: calc(var(--wpify-core-radius) - 1px);
     border-top-right-radius: 0;
 }
-.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_group_container--row) > label,
+.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_group_container--row:not(.wpifycf-field-multi-group)) > label,
 .wpify_group_container--row .wpifycf-field-multi-group__title {
     writing-mode: vertical-lr;
     text-orientation: mixed;
@@ -388,11 +396,13 @@ th:has(label[for=enabled_modules]) + td {
     border-radius: var(--wpify-core-radius);
     box-shadow: var(--wpify-core-card-shadow);
     background: var(--wpify-core-bg);
-    padding: 40px;
-    gap: 40px;
+    padding: 20px;
+    gap: 30px;
 
     @media screen and (min-width: 783px) {
         flex: 1;
+        padding: 40px;
+        gap: 40px;
     }
 }
 
