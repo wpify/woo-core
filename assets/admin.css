@@ -148,6 +148,7 @@
     flex-direction: column;
     background: var(--wpify-core-bg);
     width: 100%;
+    max-width: 400px;
     flex: 1 1 300px;
     border-radius: var(--wpify-core-radius);
     overflow: hidden;
@@ -157,6 +158,7 @@
 
 .wpify__card.wpify__card--50, .wpify__card.wpify__card--100 {
     max-width: 100%;
+    flex: 1 1 100%;
 }
 
 .wpify__card.wpify__card--50 {
