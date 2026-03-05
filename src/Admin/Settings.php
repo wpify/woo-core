@@ -47,25 +47,47 @@ class Settings {
 			return;
 		}
 
-		// Check if the WpifyWoo Core settings have been initialized already
+		// Version-aware initialization: highest woo-core version wins
+		$my_version = $this->get_core_version();
+
+		global $wpify_woo_core_active_version, $wpify_woo_core_active_instance;
+
+		if ( ! isset( $wpify_woo_core_active_version ) || version_compare( $my_version, $wpify_woo_core_active_version, '>' ) ) {
+			$wpify_woo_core_active_version  = $my_version;
+			$wpify_woo_core_active_instance = $this;
+		}
+
+		// Register hooks only once (first instance), but delegate to the active instance
 		$this->initialized = apply_filters( 'wpify_core_settings_initialized', false );
 
 		if ( ! $this->initialized ) {
 			add_filter( 'wpify_core_settings_initialized', '__return_true' );
 
-			add_action( 'init', [ $this, 'load_textdomain' ] );
-			add_action( 'init', [ $this, 'register_settings' ] );
-			add_action( 'admin_init', [ $this, 'hide_admin_notices' ] );
-			add_filter( 'admin_body_class', [ $this, 'add_admin_body_class' ], 9999 );
-
-			add_action( 'activated_plugin', [ $this, 'maybe_set_redirect' ] );
-			add_action( 'deactivated_plugin', [ $this, 'maybe_set_redirect' ] );
-			add_action( 'admin_init', [ $this, 'maybe_redirect' ] );
-
-			// Initialize page components (they register themselves)
-			$this->get_dashboard_page();
-			$this->get_support_page();
-			$this->get_menu_bar();
+			add_action( 'init', function () {
+				global $wpify_woo_core_active_instance;
+				$wpify_woo_core_active_instance->load_textdomain();
+			} );
+			add_action( 'init', function () {
+				global $wpify_woo_core_active_instance;
+				$wpify_woo_core_active_instance->register_settings();
+				$wpify_woo_core_active_instance->get_dashboard_page();
+				$wpify_woo_core_active_instance->get_support_page();
+				$wpify_woo_core_active_instance->get_menu_bar();
+			} );
+			add_action( 'admin_init', function () {
+				global $wpify_woo_core_active_instance;
+				$wpify_woo_core_active_instance->hide_admin_notices();
+				$wpify_woo_core_active_instance->maybe_redirect();
+			} );
+			add_filter( 'admin_body_class', [ static::class, 'add_admin_body_class' ], 9999 );
+			add_action( 'activated_plugin', function () {
+				global $wpify_woo_core_active_instance;
+				$wpify_woo_core_active_instance->maybe_set_redirect();
+			} );
+			add_action( 'deactivated_plugin', function () {
+				global $wpify_woo_core_active_instance;
+				$wpify_woo_core_active_instance->maybe_set_redirect();
+			} );
 		}
 	}
 
@@ -468,6 +490,24 @@ class Settings {
 		$page_attributes = explode( '/', $current_page );
 
 		return end( $page_attributes );
+	}
+
+	/**
+	 * Get woo-core version from composer installed.php
+	 *
+	 * @return string
+	 */
+	private function get_core_version(): string {
+		// From src/Admin/ go up to the composer dir: woo-core -> wpify -> deps|vendor -> composer
+		$installed_php = dirname( __DIR__, 4 ) . '/composer/installed.php';
+		if ( file_exists( $installed_php ) ) {
+			$data = @include $installed_php;
+			if ( is_array( $data ) && isset( $data['versions']['wpify/woo-core']['pretty_version'] ) ) {
+				return $data['versions']['wpify/woo-core']['pretty_version'];
+			}
+		}
+
+		return '0';
 	}
 
 	/**
