@@ -319,8 +319,13 @@ th:has(label[for=enabled_modules]) + td {
     border-radius: var(--wpify-core-radius);
     border: 1px solid var(--wpify-core-light);
     gap: 0;
+}
+
+.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_group_container:not(.wpify_bg_soft)),
+.wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_field_container:not(.wpify_bg_soft)) {
     background: var(--wpify-core-bg);
 }
+
 .wpifycf-field__wrapper:has(> .wpifycf-field__control > .wpify_group_container) > label,
 .wpifycf-app-instance .wpifycf-field-multi-group__item-header {
     padding: 10px var(--wpifycf-gap-4);
