@@ -27,8 +27,6 @@ class Settings {
 	private ModulesManager $modules_manager;
 	private AssetFactory $asset_factory;
 
-	private bool $initialized;
-
 	private ?DashboardPage $dashboard_page = null;
 	private ?SupportPage $support_page = null;
 	private ?MenuBar $menu_bar = null;
@@ -57,38 +55,38 @@ class Settings {
 			$wpify_woo_core_active_instance = $this;
 		}
 
-		// Register hooks only once (first instance), but delegate to the active instance
-		$this->initialized = apply_filters( 'wpify_core_settings_initialized', false );
-
-		if ( ! $this->initialized ) {
-			add_filter( 'wpify_core_settings_initialized', '__return_true' );
-
-			add_action( 'init', function () {
+		// Register deferred init once — runs after all plugins have loaded (priority 99)
+		// so we know which version is the highest
+		global $wpify_woo_core_init_registered;
+		if ( ! $wpify_woo_core_init_registered ) {
+			$wpify_woo_core_init_registered = true;
+			add_action( 'plugins_loaded', function () {
 				global $wpify_woo_core_active_instance;
-				$wpify_woo_core_active_instance->load_textdomain();
-			} );
-			add_action( 'init', function () {
-				global $wpify_woo_core_active_instance;
-				$wpify_woo_core_active_instance->register_settings();
-				$wpify_woo_core_active_instance->get_dashboard_page();
-				$wpify_woo_core_active_instance->get_support_page();
-				$wpify_woo_core_active_instance->get_menu_bar();
-			} );
-			add_action( 'admin_init', function () {
-				global $wpify_woo_core_active_instance;
-				$wpify_woo_core_active_instance->hide_admin_notices();
-				$wpify_woo_core_active_instance->maybe_redirect();
-			} );
-			add_filter( 'admin_body_class', [ static::class, 'add_admin_body_class' ], 9999 );
-			add_action( 'activated_plugin', function () {
-				global $wpify_woo_core_active_instance;
-				$wpify_woo_core_active_instance->maybe_set_redirect();
-			} );
-			add_action( 'deactivated_plugin', function () {
-				global $wpify_woo_core_active_instance;
-				$wpify_woo_core_active_instance->maybe_set_redirect();
-			} );
+				$wpify_woo_core_active_instance->initialize_core();
+			}, 99 );
 		}
+	}
+
+	/**
+	 * Initialize core hooks and page components.
+	 * Called once from deferred plugins_loaded (priority 99) on the highest-version instance.
+	 *
+	 * @return void
+	 */
+	public function initialize_core(): void {
+		add_action( 'init', [ $this, 'load_textdomain' ] );
+		add_action( 'init', [ $this, 'register_settings' ] );
+		add_action( 'admin_init', [ $this, 'hide_admin_notices' ] );
+		add_filter( 'admin_body_class', [ static::class, 'add_admin_body_class' ], 9999 );
+
+		add_action( 'activated_plugin', [ $this, 'maybe_set_redirect' ] );
+		add_action( 'deactivated_plugin', [ $this, 'maybe_set_redirect' ] );
+		add_action( 'admin_init', [ $this, 'maybe_redirect' ] );
+
+		// Initialize page components (they register themselves)
+		$this->get_dashboard_page();
+		$this->get_support_page();
+		$this->get_menu_bar();
 	}
 
 	/**
