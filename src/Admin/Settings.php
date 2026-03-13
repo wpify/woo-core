@@ -45,6 +45,10 @@ class Settings {
 			return;
 		}
 
+		// Block old core (filter-based) from initializing.
+		// Use own callback (not __return_true) so we can detect old core in initialize_core().
+		add_filter( 'wpify_core_settings_initialized', [ $this, 'is_initialized' ] );
+
 		// Version-aware initialization: highest woo-core version wins
 		$my_version = $this->get_core_version();
 
@@ -74,6 +78,11 @@ class Settings {
 	 * @return void
 	 */
 	public function initialize_core(): void {
+		// If old core already initialized (it uses __return_true on this filter), skip
+		if ( has_filter( 'wpify_core_settings_initialized', '__return_true' ) ) {
+			return;
+		}
+
 		add_action( 'init', [ $this, 'load_textdomain' ] );
 		add_action( 'init', [ $this, 'register_settings' ] );
 		add_action( 'admin_init', [ $this, 'hide_admin_notices' ] );
@@ -126,6 +135,16 @@ class Settings {
 		}
 
 		return $this->menu_bar;
+	}
+
+	/**
+	 * Filter callback to signal that new core is present.
+	 * Used instead of __return_true so we can detect old core separately.
+	 *
+	 * @return bool
+	 */
+	public function is_initialized(): bool {
+		return true;
 	}
 
 	/**
