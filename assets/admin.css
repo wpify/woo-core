@@ -718,6 +718,16 @@ p.submit {
     margin-bottom: 0;
 }
 
+.wpify-notice.wpifycf-field-wrapper,
+.wpify-notice.wpifycf-field-columns {
+    padding: 0;
+    margin-bottom: 0;
+}
+.wpify-notice.wpifycf-field-wrapper .wpifycf-field__wrapper,
+.wpify-notice.wpifycf-field-columns > div {
+    padding: 20px;
+}
+
 .wpify-notice.wpify-notice-primary {
     border-color: var(--wpify-core-primary);
     background-color: rgba(7, 73, 149, 0.12);
