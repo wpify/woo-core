@@ -96,8 +96,8 @@ class SupportPage {
 
 				<?php do_action( 'wpify_dashboard_before_support_content' ); ?>
 
-				<div class="wpify__cards">
-					<div class="wpify__card wpify__card--50">
+				<div class="wpify__cards grid-layout-2">
+					<div class="wpify__card">
 						<div class="wpify__card-body">
 							<h2><?php _e( 'Quick debugging checklist', 'wpify-core' ); ?></h2>
 							<ol>
@@ -147,7 +147,7 @@ class SupportPage {
 							</p>
 						</div>
 					</div>
-					<div class="wpify__card wpify__card--50">
+					<div class="wpify__card">
 						<div class="wpify__card-body">
 							<h2><?php _e( 'Frequently Asked Questions', 'wpify-core' ); ?></h2>
 

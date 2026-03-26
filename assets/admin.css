@@ -138,10 +138,18 @@
 }
 
 .wpify__cards {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
     margin-bottom: 2rem;
+}
+
+.wpify__cards.grid-layout-2 {
+    grid-template-columns: repeat(1, 1fr);
+
+    @media screen and (min-width: 1380px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 .wpify__card {
@@ -149,7 +157,6 @@
     flex-direction: column;
     background: var(--wpify-core-bg);
     width: 100%;
-    max-width: 400px;
     flex: 1 1 300px;
     border-radius: var(--wpify-core-radius);
     overflow: hidden;
@@ -157,15 +164,8 @@
     border: 1px solid var(--wpify-core-light);
 }
 
-.wpify__card.wpify__card--50, .wpify__card.wpify__card--100 {
-    max-width: 100%;
-    flex: 1 1 100%;
-}
-
-.wpify__card.wpify__card--50 {
-    @media screen and (min-width: 1200px) {
-        max-width: calc(50% - 12px);
-    }
+.wpify__card.wpify__card--100 {
+    grid-column: 1 / -1;
 }
 
 .wpify__card.active {
@@ -722,6 +722,7 @@ p.submit {
     padding: 0;
     margin-bottom: 0;
 }
+
 .wpify-notice.wpifycf-field-wrapper .wpifycf-field__wrapper,
 .wpify-notice.wpifycf-field-columns > div {
     padding: 20px;
