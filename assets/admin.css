@@ -24,7 +24,6 @@
 .wpify-admin-page #wpbody a:focus,
 .wpify-admin-page .wpify__menu-bar a:focus,
 .wpify-admin-page .wpify__menu-section-bar a:focus {
-    color: var(--wpify-core-secondary);
     box-shadow: 0 0 0 2px var(--wpify-core-secondary);
 }
 
@@ -754,18 +753,22 @@ p.submit {
 }
 
 .wpify-badge {
-    background-color: var(--wpify-core-gray);
-    padding: 3px 7px;
+    background-color: var(--wpify-core-light);
+    padding: 4px 8px;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 1;
-    text-transform: uppercase;
-    color: white;
+    color: var(--wpify-core-dark);
     border-radius: 3px;
 }
 
+.wpify-badge.wpify-badge-gray {
+    background-color: var(--wpify-core-gray);
+    color: var(--wpify-core-light);
+}
 .wpify-badge.wpify-badge-dark {
     background-color: var(--wpify-core-dark);
+    color: var(--wpify-core-light);
 }
 
 .wpify-badge.wpify-badge-light {
@@ -774,21 +777,27 @@ p.submit {
 }
 
 .wpify-badge.wpify-badge-primary {
-    background-color: var(--wpify-core-primary);
+    color: var(--wpify-core-primary);
+    background-color: color-mix(in srgb, var(--wpify-core-primary) 20%, white);
 }
 
 .wpify-badge.wpify-badge-secondary {
-    background-color: var(--wpify-core-secondary);
+    color: var(--wpify-core-secondary);
+    background-color: color-mix(in srgb, var(--wpify-core-secondary) 20%, white);
 }
 
 .wpify-badge.wpify-badge-success {
-    background-color: var(--wpify-core-success);
+    color: var(--wpify-core-success);
+    background-color: color-mix(in srgb, var(--wpify-core-success) 20%, white);
 }
 
 .wpify-badge.wpify-badge-warning {
-    background-color: var(--wpify-core-warning);
+    color: var(--wpify-core-warning);
+    background-color: color-mix(in srgb, var(--wpify-core-warning) 20%, white);
 }
 
 .wpify-badge.wpify-badge-error {
-    background-color: var(--wpify-core-danger);
+    color: var(--wpify-core-danger);
+    background-color: color-mix(in srgb, var(--wpify-core-danger) 20%, white);
 }
+
