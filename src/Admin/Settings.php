@@ -547,26 +547,12 @@ class Settings {
 			return true;
 		}
 
-		if ( ! is_admin() ) {
-			return false;
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request routing
-		$current_page = isset( $_REQUEST['page'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['page'] ) ) : '';
-		if ( $current_page === DashboardPage::SLUG || str_starts_with( $current_page, 'wpify/' ) ) {
-			return true;
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only save request detection
-		$option_page = isset( $_POST['option_page'] ) ? sanitize_text_field( wp_unslash( $_POST['option_page'] ) ) : '';
-		if ( $option_page !== '' && str_starts_with( $option_page, self::OPTION_NAME . '-' ) ) {
-			return true;
-		}
-
-		$section = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : '';
-		$module_id = isset( $_GET['module_id'] ) ? sanitize_text_field( wp_unslash( $_GET['module_id'] ) ) : '';
-
-		return wp_is_json_request() && ( $section !== '' || $module_id !== '' );
+		/*
+		 * Settings pages must be registered on every admin request.
+		 * Restricting this to WPify pages breaks menu/submenu registration and makes
+		 * settings pages disappear until a WPify page initializes the tree first.
+		 */
+		return is_admin();
 	}
 
 	/**
