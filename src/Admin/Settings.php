@@ -22,6 +22,8 @@ class Settings {
 	const OPTION_NAME = 'wpify-woo-settings';
 
 	private array $pages = [];
+	private ?array $plugins_cache = null;
+	private array $sections_cache = [];
 
 	private CustomFields $custom_fields;
 	private ModulesManager $modules_manager;
@@ -240,7 +242,7 @@ class Settings {
 	 * @return void
 	 */
 	public function register_settings(): void {
-		if ( ! is_admin() && ! $this->is_wpifycf_rest_request() ) {
+		if ( ! $this->should_register_settings() ) {
 			return;
 		}
 
@@ -309,6 +311,10 @@ class Settings {
 	 * @return array
 	 */
 	public function get_plugins(): array {
+		if ( $this->plugins_cache !== null ) {
+			return $this->plugins_cache;
+		}
+
 		$all_plugins = get_plugins();
 		$active      = apply_filters( 'wpify_installed_plugins', [] );
 
@@ -339,7 +345,9 @@ class Settings {
 			}
 		}
 
-		return $wpify_plugins;
+		$this->plugins_cache = $wpify_plugins;
+
+		return $this->plugins_cache;
 	}
 
 	/**
@@ -371,7 +379,14 @@ class Settings {
 			$subpage = explode( '/', $current_page )[1] ?? '';
 		}
 
-		return apply_filters( 'wpify_get_sections_' . sanitize_key( $subpage ), [] );
+		$subpage = sanitize_key( $subpage );
+		if ( isset( $this->sections_cache[ $subpage ] ) ) {
+			return $this->sections_cache[ $subpage ];
+		}
+
+		$this->sections_cache[ $subpage ] = apply_filters( 'wpify_get_sections_' . $subpage, [] );
+
+		return $this->sections_cache[ $subpage ];
 	}
 
 	/**
@@ -525,6 +540,33 @@ class Settings {
 		}
 
 		return '0';
+	}
+
+	private function should_register_settings(): bool {
+		if ( $this->is_wpifycf_rest_request() ) {
+			return true;
+		}
+
+		if ( ! is_admin() ) {
+			return false;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request routing
+		$current_page = isset( $_REQUEST['page'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['page'] ) ) : '';
+		if ( $current_page === DashboardPage::SLUG || str_starts_with( $current_page, 'wpify/' ) ) {
+			return true;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only save request detection
+		$option_page = isset( $_POST['option_page'] ) ? sanitize_text_field( wp_unslash( $_POST['option_page'] ) ) : '';
+		if ( $option_page !== '' && str_starts_with( $option_page, self::OPTION_NAME . '-' ) ) {
+			return true;
+		}
+
+		$section = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : '';
+		$module_id = isset( $_GET['module_id'] ) ? sanitize_text_field( wp_unslash( $_GET['module_id'] ) ) : '';
+
+		return wp_is_json_request() && ( $section !== '' || $module_id !== '' );
 	}
 
 	/**

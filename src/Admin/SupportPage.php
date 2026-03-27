@@ -14,6 +14,7 @@ class SupportPage {
 	const SLUG = 'wpify/support';
 
 	private DashboardPage $dashboard_page;
+	private ?array $log_files_cache = null;
 
 	public function __construct( DashboardPage $dashboard_page ) {
 		$this->dashboard_page = $dashboard_page;
@@ -448,6 +449,10 @@ class SupportPage {
 	}
 
 	private function get_log_files(): array {
+		if ( $this->log_files_cache !== null ) {
+			return $this->log_files_cache;
+		}
+
 		$logs  = apply_filters( 'wpify_logs', [] );
 		$files = [];
 
@@ -478,7 +483,9 @@ class SupportPage {
 			return strcmp( $right['label'], $left['label'] );
 		} );
 
-		return $files;
+		$this->log_files_cache = $files;
+
+		return $this->log_files_cache;
 	}
 
 	private function format_log_label( string $file, string $channel ): string {

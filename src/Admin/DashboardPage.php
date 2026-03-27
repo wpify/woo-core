@@ -13,6 +13,7 @@ class DashboardPage {
 
 	const SLUG = 'wpify';
 	const MENU_ICON = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTUwIiBoZWlnaHQ9IjU1MCIgdmlld0JveD0iMCAwIDU1MCA1NTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IG9wYWNpdHk9IjAuMyIgd2lkdGg9IjUzMiIgaGVpZ2h0PSI3OCIgcng9IjM5IiB0cmFuc2Zvcm09Im1hdHJpeCgtNC4zNzExNGUtMDggMSAxIDQuMzcxMTRlLTA4IDM2Ny43NSA5LjAwMDEyKSIgZmlsbD0id2hpdGUiLz4KPHJlY3Qgb3BhY2l0eT0iMC4zIiB3aWR0aD0iNTMwIiBoZWlnaHQ9Ijc4IiByeD0iMzkiIHRyYW5zZm9ybT0ibWF0cml4KC00LjM3MTE0ZS0wOCAxIDEgNC4zNzExNGUtMDggMjA0Ljc1IDkuMDAwMTIpIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCBvcGFjaXR5PSIwLjgiIHdpZHRoPSI1NTcuODgyIiBoZWlnaHQ9Ijc4LjE1ODUiIHJ4PSIzOS4wNzkyIiB0cmFuc2Zvcm09Im1hdHJpeCgwLjMzODc4MSAwLjk0MDg2NSAwLjk0MDg2NSAtMC4zMzg3ODEgMzEuNzUgMjQuNDc4OCkiIGZpbGw9IndoaXRlIi8+CjxyZWN0IG9wYWNpdHk9IjAuOCIgd2lkdGg9IjU2MC42NzYiIGhlaWdodD0iNzguMTU4NSIgcng9IjM5LjA3OTIiIHRyYW5zZm9ybT0ibWF0cml4KDAuMzM4NzgxIDAuOTQwODY1IDAuOTQwODY1IC0wLjMzODc4MSAxOTMuMjQ5IDI0LjQ3ODgpIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCBvcGFjaXR5PSIwLjgiIHdpZHRoPSIyNTkuNjQ2IiBoZWlnaHQ9Ijc4LjE1ODUiIHJ4PSIzOS4wNzkyIiB0cmFuc2Zvcm09Im1hdHJpeCgwLjMzODc4MSAwLjk0MDg2NSAwLjk0MDg2NSAtMC4zMzg3ODEgMzU2Ljc1IDI0LjQ3ODYpIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=';
+	const REMOTE_TIMEOUT = 3;
 
 	private Settings $settings;
 
@@ -83,23 +84,21 @@ class DashboardPage {
 	 */
 	public function get_plugins_overview(): string {
 		$installed_plugins = $this->settings->get_plugins();
-		$extensions        = get_transient( 'wpify_core_all_plugins' );
-
-		if ( ! $extensions ) {
-			$response = wp_remote_get( 'https://wpify.cz/wp-json/wpify/v1/plugins-list' );
-
-			if ( ! is_wp_error( $response ) && ! empty( $response['body'] ) ) {
-				$decoded    = json_decode( $response['body'], true );
-				$extensions = is_array( $decoded ) && isset( $decoded['plugins'] ) ? $decoded['plugins'] : null;
-				if ( $extensions ) {
-					set_transient( 'wpify_core_all_plugins', $extensions, 2 * HOUR_IN_SECONDS );
-				}
-			}
-		}
+		$extensions        = $this->get_cached_remote_data(
+			'wpify_core_all_plugins',
+			'https://wpify.cz/wp-json/wpify/v1/plugins-list',
+			2 * HOUR_IN_SECONDS,
+			15 * MINUTE_IN_SECONDS,
+			'plugins'
+		);
 
 		$extensions_map = array();
-		if ( $extensions ) {
+		if ( is_array( $extensions ) ) {
 			foreach ( $extensions as $extension ) {
+				if ( empty( $extension['slug'] ) ) {
+					continue;
+				}
+
 				$extensions_map[ $extension['slug'] ] = $extension;
 			}
 			foreach ( $installed_plugins as $slug => $plugin ) {
@@ -112,30 +111,26 @@ class DashboardPage {
 					}
 					unset( $extensions_map[ $slug ] );
 				} else {
-					$update_data = get_transient( 'wpify_core_plugin_update_data_' . $slug );
-					if ( ! $update_data ) {
-						$check_url = add_query_arg( [
-							'update_action'        => 'get_metadata',
-							'update_slug'          => $slug,
-							'installed_version'    => $plugin['version'],
-							'locale'               => get_locale(),
-							'checking_for_updates' => '1',
-						], 'https://wpify.cz' );
-
-						$response = wp_remote_get( $check_url );
-						$data     = [];
-						if ( ! is_wp_error( $response ) && ! empty( $response['body'] ) ) {
-							$data = json_decode( $response['body'], true );
-						}
-						$update_data = [
-							'name'         => $data['name'] ?? '',
-							'version'      => $data['version'] ?? '',
-							'requires_php' => $data['requires_php'] ?? '',
-							'requires_wp'  => $data['requires'] ?? '',
-							'changelog'    => $data['sections']['changelog'] ?? '',
-						];
-						set_transient( 'wpify_core_plugin_update_data_' . $slug, $update_data, 6 * HOUR_IN_SECONDS );
-					}
+					$check_url = add_query_arg( [
+						'update_action'        => 'get_metadata',
+						'update_slug'          => $slug,
+						'installed_version'    => $plugin['version'],
+						'locale'               => get_locale(),
+						'checking_for_updates' => '1',
+					], 'https://wpify.cz' );
+					$data = $this->get_cached_remote_data(
+						'wpify_core_plugin_update_data_' . $slug,
+						$check_url,
+						6 * HOUR_IN_SECONDS,
+						15 * MINUTE_IN_SECONDS
+					);
+					$update_data = [
+						'name'         => $data['name'] ?? '',
+						'version'      => $data['version'] ?? '',
+						'requires_php' => $data['requires_php'] ?? '',
+						'requires_wp'  => $data['requires'] ?? '',
+						'changelog'    => $data['sections']['changelog'] ?? '',
+					];
 					if ( $update_data ) {
 						$installed_plugins[ $slug ]['plugin_info'] = $update_data;
 					}
@@ -376,22 +371,14 @@ class DashboardPage {
 	 * @return void
 	 */
 	public function render_news_posts(): void {
-		$posts = get_transient( 'wpify_core_news' );
-
-		if ( ! $posts ) {
-			$response = wp_remote_get( 'https://wpify.cz/wp-json/wp/v2/posts?per_page=4&_embed' );
-
-			if ( ! is_wp_error( $response ) ) {
-				$body = wp_remote_retrieve_body( $response );
-				if ( ! empty( $body ) ) {
-					$decoded = json_decode( $body );
-					if ( is_array( $decoded ) && ! empty( $decoded ) ) {
-						$posts = $decoded;
-						set_transient( 'wpify_core_news', $posts, DAY_IN_SECONDS );
-					}
-				}
-			}
-		}
+		$posts = $this->get_cached_remote_data(
+			'wpify_core_news',
+			'https://wpify.cz/wp-json/wp/v2/posts?per_page=4&_embed',
+			DAY_IN_SECONDS,
+			15 * MINUTE_IN_SECONDS,
+			null,
+			false
+		);
 
 		if ( empty( $posts ) ) {
 			return;
@@ -432,5 +419,65 @@ class DashboardPage {
 			?>
 		</div>
 		<?php
+	}
+
+	private function get_cached_remote_data(
+		string $cache_key,
+		string $url,
+		int $ttl,
+		int $failure_ttl,
+		?string $root_key = null,
+		bool $assoc = true
+	) {
+		$data = get_transient( $cache_key );
+		if ( $data !== false ) {
+			return $data;
+		}
+
+		$fallback_key = 'wpify_core_fallback_' . md5( $cache_key );
+		$failure_key  = $cache_key . '_failed';
+		if ( get_transient( $failure_key ) ) {
+			return get_option( $fallback_key, [] );
+		}
+
+		$response = wp_remote_get(
+			$url,
+			[
+				'timeout' => self::REMOTE_TIMEOUT,
+			]
+		);
+		if ( is_wp_error( $response ) ) {
+			set_transient( $failure_key, 1, $failure_ttl );
+
+			return get_option( $fallback_key, [] );
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+		if ( $body === '' ) {
+			set_transient( $failure_key, 1, $failure_ttl );
+
+			return get_option( $fallback_key, [] );
+		}
+
+		$decoded = json_decode( $body, $assoc );
+		if ( $decoded === null ) {
+			$decoded = json_decode( $body );
+		}
+
+		if ( $root_key !== null && is_array( $decoded ) ) {
+			$decoded = $decoded[ $root_key ] ?? [];
+		}
+
+		if ( empty( $decoded ) ) {
+			set_transient( $failure_key, 1, $failure_ttl );
+
+			return get_option( $fallback_key, [] );
+		}
+
+		set_transient( $cache_key, $decoded, $ttl );
+		update_option( $fallback_key, $decoded, false );
+		delete_transient( $failure_key );
+
+		return $decoded;
 	}
 }

@@ -16,6 +16,8 @@ abstract class AbstractPlugin {
 	private PluginUtils $plugin_utils;
 
 	private License $license;
+	private ?array $plugin_data_cache = null;
+	private ?string $icon_file_cache = null;
 
 	public function __construct(
 		WpifyWooCore $wpify_woo_core,
@@ -52,7 +54,11 @@ abstract class AbstractPlugin {
 	 * @return array
 	 */
 	public function plugin_data(): array {
-		return get_plugin_data( $this->plugin_utils->get_plugin_file() );
+		if ( $this->plugin_data_cache === null ) {
+			$this->plugin_data_cache = get_plugin_data( $this->plugin_utils->get_plugin_file() );
+		}
+
+		return $this->plugin_data_cache;
 	}
 
 	/**
@@ -139,11 +145,19 @@ abstract class AbstractPlugin {
 	 * @return string
 	 */
 	public function icon_file(): string {
-		if ( file_exists( $this->plugin_utils->get_plugin_path( 'icon.svg' ) ) ) {
-			return $this->plugin_utils->get_plugin_url( 'icon.svg' );
+		if ( $this->icon_file_cache !== null ) {
+			return $this->icon_file_cache;
 		}
 
-		return '';
+		if ( file_exists( $this->plugin_utils->get_plugin_path( 'icon.svg' ) ) ) {
+			$this->icon_file_cache = $this->plugin_utils->get_plugin_url( 'icon.svg' );
+
+			return $this->icon_file_cache;
+		}
+
+		$this->icon_file_cache = '';
+
+		return $this->icon_file_cache;
 	}
 
 	/**
