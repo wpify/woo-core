@@ -11,12 +11,37 @@ namespace Wpify\WooCore\Admin;
  */
 class MenuBar {
 
+	const COMPONENTS_HANDLE = 'wpify-core-components';
+
 	private Settings $settings;
 
 	public function __construct( Settings $settings ) {
 		$this->settings = $settings;
 
+		// Priority 1 so plugins can enqueue the components handle on their own screens.
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_head_assets' ], 1 );
 		add_action( 'in_admin_header', [ $this, 'render' ] );
+	}
+
+	/**
+	 * Whether the current admin screen is one of ours.
+	 *
+	 * @return bool
+	 */
+	private function should_render(): bool {
+		$screen       = get_current_screen();
+		$current_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+		// A plugin's OWN native screens (a CPT's list table / editor) never
+		// have a `?page=` query var at all — `post_type` instead — so this
+		// check is always false there, and the bar never renders. There was
+		// no hook around this early return for a plugin to opt its own such
+		// screens in; `wpify_woo_menu_bar_should_render` is that hook. The
+		// default behavior (bar only on `?page=...wpify...` screens) is
+		// unchanged for every plugin that doesn't use the filter.
+		$should_render = $screen && str_contains( $current_page, 'wpify' );
+
+		return (bool) apply_filters( 'wpify_woo_menu_bar_should_render', $should_render, $screen, $current_page );
 	}
 
 	/**
@@ -25,18 +50,19 @@ class MenuBar {
 	 * @return void
 	 */
 	public function render(): void {
-		/** @var \WP_Screen $screen */
-		$screen       = get_current_screen();
-		$current_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
-
-		if ( ! $screen || ! str_contains( $current_page, 'wpify' ) ) {
+		if ( ! $this->should_render() ) {
 			return;
 		}
 
+		// Enqueued here, after <head> was printed, on purpose: the stylesheet lands in the
+		// body behind the Custom Fields styles that are injected at runtime, and its rules
+		// rely on that order to override them at the same specificity.
 		$this->enqueue_styles();
 
 		wp_enqueue_script( 'thickbox' );
 		wp_enqueue_style( 'thickbox' );
+
+		$current_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 
 		global $title;
 
@@ -63,7 +89,16 @@ class MenuBar {
 				unset( $sections[ $section_id ] );
 			}
 		}
-		$data['sections'] = $sections;
+
+		// `$sections` above is `Settings::get_sections()`'s own result — the
+		// SAME array `Settings::register_settings()` reads to decide which
+		// real submenu pages to create. A plugin that wants a tab here for
+		// something that ISN'T a registered settings page (e.g. a link back
+		// to its own CPT's native list-table screen) can't add one to
+		// `$sections` itself without the framework also trying to register a
+		// phantom page for it. This filter is a separate, page-registration-
+		// blind list specifically for what the tab bar shows.
+		$data['sections'] = apply_filters( 'wpify_admin_menu_bar_sections', $sections, $data );
 
 		$plugins = $this->settings->get_plugins();
 		if ( isset( $plugins[ $data['plugin'] ] ) ) {
@@ -240,29 +275,76 @@ class MenuBar {
 	}
 
 	/**
+	 * Register the components stylesheet for the whole admin and load it in <head> on our screens.
+	 *
+	 * @return void
+	 */
+	public function enqueue_head_assets(): void {
+		self::register_components_style();
+
+		if ( $this->should_render() ) {
+			wp_enqueue_style( self::COMPONENTS_HANDLE );
+		}
+	}
+
+	/**
+	 * Load the components stylesheet (tokens, badges, notices) on a screen outside the WPify pages,
+	 * e.g. the order list or detail. Registers it from this copy of woo-core when the copy
+	 * that runs the WPify admin is older and did not register it.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_components_style(): void {
+		self::register_components_style();
+		wp_enqueue_style( self::COMPONENTS_HANDLE );
+	}
+
+	/**
+	 * @return void
+	 */
+	private static function register_components_style(): void {
+		if ( wp_style_is( self::COMPONENTS_HANDLE, 'registered' ) ) {
+			return;
+		}
+
+		[ $url, $ver ] = self::get_asset( 'components.css' );
+		wp_register_style( self::COMPONENTS_HANDLE, $url, [], $ver );
+	}
+
+	/**
 	 * Enqueue admin styles
 	 *
 	 * @return void
 	 */
 	private function enqueue_styles(): void {
-		$base_dir   = dirname( __DIR__, 2 );
-		$asset_path = $base_dir . '/assets/admin.css';
+		self::register_components_style();
+
+		[ $url, $ver ] = self::get_asset( 'admin.css' );
+		wp_enqueue_style( 'wpify-core-admin', $url, [ self::COMPONENTS_HANDLE ], $ver );
+	}
+
+	/**
+	 * URL and version of a file in this package's assets folder.
+	 *
+	 * @param string $file File name.
+	 *
+	 * @return array{0: string, 1: int|null}
+	 */
+	private static function get_asset( string $file ): array {
+		$asset_path = dirname( __DIR__, 2 ) . '/assets/' . $file;
 
 		$reflection   = new \ReflectionClass( static::class );
 		$package_root = dirname( $reflection->getFileName(), 3 );
 
 		$relative_path = str_replace( $package_root, '', $asset_path );
 		$package_url   = str_replace( wp_normalize_path( WP_CONTENT_DIR ), content_url(), wp_normalize_path( $package_root ) );
-		$url           = $package_url . $relative_path;
 
-		$ver = file_exists( $asset_path ) ? filemtime( $asset_path ) : null;
-
-		wp_enqueue_style( 'wpify-core-admin', $url, [], $ver );
+		return [ $package_url . $relative_path, file_exists( $asset_path ) ? filemtime( $asset_path ) : null ];
 	}
 
 	private function get_docs_base_url(): string {
 		$domain = 'https://docs.wpify.cz/';
-		if ( in_array( get_locale(), array( 'cs_CZ', 'sk_SK' ), true ) ) {
+		if ( in_array( determine_locale(), array( 'cs_CZ', 'sk_SK' ), true ) ) {
 			$domain = 'https://docs.wpify.cz/cs/';
 		}
 

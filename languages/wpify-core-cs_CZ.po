@@ -170,9 +170,8 @@ msgid "Open WPify Logs"
 msgstr "Otevřít WPify Logs"
 
 #: src/Admin/SupportPage.php:122
-#, fuzzy
 msgid "Check plugin documentation"
-msgstr "Dokumentace"
+msgstr "Projděte dokumentaci pluginu"
 
 #: src/Admin/SupportPage.php:123
 msgid ""
@@ -213,9 +212,8 @@ msgid "Send a support request"
 msgstr "Odeslat žádost o podporu"
 
 #: src/Admin/SupportPage.php:177
-#, fuzzy
 msgid "Plugin"
-msgstr "Pluginy WPify"
+msgstr "Plugin"
 
 #: src/Admin/SupportPage.php:179 src/Admin/SupportPage.php:326
 msgid "General"
@@ -278,3 +276,108 @@ msgstr "Nemáte oprávnění odesílat žádosti o podporu."
 
 #~ msgid "Your license has been deactivated."
 #~ msgstr "Vaše licence byla deaktivována."
+
+#: src/Admin/SupportPage.php
+msgid "Most problems can be solved in a few minutes with the steps and documentation below. Please go through them before sending a request — you will get the answer faster."
+msgstr "Většinu problémů vyřešíte během pár minut podle kroků a dokumentace níže. Než nám napíšete, projděte je prosím — k odpovědi se dostanete rychleji."
+
+#: src/Admin/SupportPage.php
+msgid "Find your plugin in the list below"
+msgstr "Najděte svůj plugin v seznamu níže"
+
+#: src/Admin/SupportPage.php
+msgid "If the problem persists, send us a request with the form below. Describe the problem and the steps to reproduce it — diagnostics and the selected logs are attached for you."
+msgstr "Pokud problém přetrvává, pošlete nám žádost formulářem níže. Popište problém a postup, jak ho vyvolat — diagnostiku a vybrané logy přiložíme za vás."
+
+#: src/Admin/SupportPage.php
+msgid "Go to the support form"
+msgstr "Přejít na formulář podpory"
+
+#: src/Admin/SupportPage.php
+msgid "Your WPify plugins"
+msgstr "Vaše WPify pluginy"
+
+#: src/Admin/SupportPage.php
+msgid "Open the documentation of the plugin you have trouble with — most common problems are described there."
+msgstr "Otevřete dokumentaci pluginu, se kterým máte potíže — většina častých problémů je popsaná tam."
+
+#: src/Admin/SupportPage.php
+msgid "Version"
+msgstr "Verze"
+
+#: src/Admin/SupportPage.php
+msgid "License"
+msgstr "Licence"
+
+#: src/Admin/SupportPage.php
+msgid "Open documentation"
+msgstr "Otevřít dokumentaci"
+
+#: src/Admin/SupportPage.php
+msgid "Did not find the answer in the steps and documentation above? Write to us."
+msgstr "Nenašli jste odpověď v krocích a dokumentaci výše? Napište nám."
+
+#: src/Admin/SupportPage.php
+msgid "Have you gone through the documentation of this plugin?"
+msgstr "Prošli jste dokumentaci tohoto pluginu?"
+
+#: src/Admin/SupportPage.php
+msgid "Attach logs"
+msgstr "Přiložit logy"
+
+#: src/Admin/SupportPage.php
+msgid "Select a plugin above to attach its logs."
+msgstr "Pro přiložení logů vyberte výše plugin."
+
+#: src/Admin/SupportPage.php
+msgid "This plugin has no logs."
+msgstr "Tento plugin nemá žádné logy."
+
+#: src/Admin/SupportPage.php
+msgid "Do not attach logs"
+msgstr "Nepřikládat logy"
+
+#: src/Admin/SupportPage.php
+msgid "The latest log"
+msgstr "Poslední log"
+
+#: src/Admin/SupportPage.php
+msgid "The latest 3 logs"
+msgstr "Poslední 3 logy"
+
+#: src/Admin/SupportPage.php
+msgid "All kept logs"
+msgstr "Všechny uchované logy"
+
+#: src/Admin/SupportPage.php
+#, php-format
+msgid "All kept logs (%d)"
+msgstr "Všechny uchované logy (%d)"
+
+#: src/Admin/SupportPage.php
+msgid "Choose specific files"
+msgstr "Vybrat konkrétní soubory"
+
+#: src/Admin/SupportPage.php
+msgid "Selected files are attached in addition to the latest logs. Hold Ctrl (Windows) or Cmd (Mac) to select multiple logs."
+msgstr "Vybrané soubory se přiloží navíc k posledním logům. Pro výběr více souborů podržte Ctrl (Windows) nebo Cmd (Mac)."
+
+#: src/Admin/SupportPage.php
+msgid "What is sent automatically"
+msgstr "Co se odešle automaticky"
+
+#: src/Admin/SupportPage.php
+msgid "With a plugin selected, also its license status and key."
+msgstr "Při zvoleném pluginu také stav a klíč jeho licence."
+
+#: src/Admin/SupportPage.php
+msgid "Not activated"
+msgstr "Neaktivováno"
+
+#: src/Admin/SupportPage.php
+msgid "Invalid"
+msgstr "Neplatná"
+
+#: src/Admin/SupportPage.php
+msgid "Active"
+msgstr "Aktivní"

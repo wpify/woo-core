@@ -15,7 +15,7 @@ abstract class AbstractPlugin {
 	private WpifyWooCore $wpify_woo_core;
 	private PluginUtils $plugin_utils;
 
-	private License $license;
+	private ?License $license = null;
 	private ?array $plugin_data_cache = null;
 	private ?string $icon_file_cache = null;
 
@@ -121,7 +121,7 @@ abstract class AbstractPlugin {
 	 */
 	public function documentation_url(): string {
 		$domain = 'https://docs.wpify.cz/';
-		if ( in_array( get_locale(), array( 'cs_CZ', 'sk_SK' ), true ) ) {
+		if ( in_array( determine_locale(), array( 'cs_CZ', 'sk_SK' ), true ) ) {
 			$domain = 'https://docs.wpify.cz/cs/';
 		}
 

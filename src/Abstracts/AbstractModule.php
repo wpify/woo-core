@@ -114,7 +114,7 @@ abstract class AbstractModule {
 		}
 
 		$domain = 'https://docs.wpify.cz/';
-		if ( in_array( get_locale(), array( 'cs_CZ', 'sk_SK' ), true ) ) {
+		if ( in_array( determine_locale(), array( 'cs_CZ', 'sk_SK' ), true ) ) {
 			$domain = 'https://docs.wpify.cz/cs/';
 		}
 

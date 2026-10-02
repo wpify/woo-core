@@ -1,0 +1,548 @@
+/* Design tokens and standalone elements that carry their own wpify-* class.
+   Safe on any admin screen (order list, order detail, product...): nothing here
+   targets WordPress, WooCommerce or Custom Fields markup. The layout of the
+   WPify pages and the overrides of other markup live in admin.css. */
+
+:root {
+    --wpify-core-primary: #00A0D2;
+    --wpify-core-secondary: #826eb4;
+    --wpify-core-success: green;
+    --wpify-core-danger: red;
+    --wpify-core-warning: orange;
+    --wpify-core-info: rgba(6, 44, 241, 0.46);
+    --wpify-core-light: #dbe3ec;
+    --wpify-core-gray: #647080;
+    --wpify-core-dark: #191e23;
+    --wpify-core-bg: #ffffff;
+    --wpify-core-bg-soft: #f3f7fb;
+    --wpify-core-radius: 8px;
+    --wpify-core-card-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+
+    /* Tinted backgrounds for notices and sections. */
+    --wpify-core-primary-soft: rgba(7, 73, 149, 0.12);
+    --wpify-core-secondary-soft: rgba(100, 5, 220, 0.12);
+    --wpify-core-success-soft: rgba(7, 149, 66, 0.12);
+    --wpify-core-warning-soft: rgba(220, 128, 1, 0.16);
+    --wpify-core-danger-soft: rgba(220, 17, 1, 0.16);
+    --wpify-core-info-soft: var(--wpify-core-primary-soft);
+}
+
+.wpify-notice {
+    border: 1px solid var(--wpify-core-info);
+    background-color: var(--wpify-core-info-soft);
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+}
+
+.wpify-notice > *:last-child {
+    margin-bottom: 0;
+}
+
+.wpify-notice.wpify-notice-info {
+    border-color: var(--wpify-core-info);
+    background-color: var(--wpify-core-info-soft);
+}
+
+.wpify-notice.wpify-notice-primary {
+    border-color: var(--wpify-core-primary);
+    background-color: var(--wpify-core-primary-soft);
+}
+
+.wpify-notice.wpify-notice-secondary {
+    border-color: var(--wpify-core-secondary);
+    background-color: var(--wpify-core-secondary-soft);
+}
+
+.wpify-notice.wpify-notice-success {
+    border-color: var(--wpify-core-success);
+    background-color: var(--wpify-core-success-soft);
+}
+
+.wpify-notice.wpify-notice-warning {
+    border-color: var(--wpify-core-warning);
+    background-color: var(--wpify-core-warning-soft);
+}
+
+.wpify-notice.wpify-notice-error {
+    border-color: var(--wpify-core-danger);
+    background-color: var(--wpify-core-danger-soft);
+}
+
+.wpify-badge {
+    background-color: var(--wpify-core-light);
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--wpify-core-dark);
+    border-radius: 3px;
+}
+
+.wpify-badge.wpify-badge-gray {
+    background-color: var(--wpify-core-gray);
+    color: var(--wpify-core-light);
+}
+
+.wpify-badge.wpify-badge-dark {
+    background-color: var(--wpify-core-dark);
+    color: var(--wpify-core-light);
+}
+
+.wpify-badge.wpify-badge-light {
+    background-color: var(--wpify-core-light);
+    color: var(--wpify-core-dark);
+}
+
+.wpify-badge.wpify-badge-primary {
+    color: var(--wpify-core-primary);
+    background-color: color-mix(in srgb, var(--wpify-core-primary) 20%, white);
+}
+
+.wpify-badge.wpify-badge-secondary {
+    color: var(--wpify-core-secondary);
+    background-color: color-mix(in srgb, var(--wpify-core-secondary) 20%, white);
+}
+
+.wpify-badge.wpify-badge-success {
+    color: var(--wpify-core-success);
+    background-color: color-mix(in srgb, var(--wpify-core-success) 20%, white);
+}
+
+.wpify-badge.wpify-badge-warning {
+    color: var(--wpify-core-warning);
+    background-color: color-mix(in srgb, var(--wpify-core-warning) 20%, white);
+}
+
+.wpify-badge.wpify-badge-error {
+    color: var(--wpify-core-danger);
+    background-color: color-mix(in srgb, var(--wpify-core-danger) 20%, white);
+}
+
+/* ─── Card: header + body (+ footer), also on WP <Card className="wpify-card"> ─── */
+
+.wpify-card {
+    border: 1px solid var(--wpify-core-light);
+    border-radius: var(--wpify-core-radius);
+    background: var(--wpify-core-bg);
+    box-shadow: none;
+}
+
+/* WP <Card> gets its ring shadow and radius from a runtime class of the same
+   specificity, injected after this file. */
+.wpify-card.components-card {
+    box-shadow: none;
+    border-radius: var(--wpify-core-radius);
+}
+
+.wpify-card__header,
+.wpify-card .components-card__header {
+    background: var(--wpify-core-bg-soft);
+    border-bottom: 1px solid var(--wpify-core-light);
+    border-radius: var(--wpify-core-radius) var(--wpify-core-radius) 0 0;
+    padding: 14px 18px;
+}
+
+.wpify-card__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--wpify-core-dark);
+}
+
+.wpify-card__description {
+    margin: 4px 0 0;
+    color: var(--wpify-core-gray);
+    line-height: 1.45;
+}
+
+.wpify-card__body,
+.wpify-card .components-card__body {
+    padding: 16px 18px;
+}
+
+.wpify-card__footer,
+.wpify-card .components-card__footer {
+    border-top: 1px solid var(--wpify-core-light);
+    padding: 12px 18px;
+}
+
+/* ─── Section: a titled group of fields, optionally tinted ─── */
+
+.wpify-section {
+    --wpify-section-bg: var(--wpify-core-bg-soft);
+    --wpify-section-border: var(--wpify-core-light);
+    border: 1px solid var(--wpify-section-border);
+    background: var(--wpify-section-bg);
+    padding: 12px;
+    border-radius: var(--wpify-core-radius);
+}
+
+.wpify-section + .wpify-section {
+    margin-top: 20px;
+}
+
+.wpify-section--success {
+    --wpify-section-bg: #f0fdf4;
+    --wpify-section-border: #bbf7d0;
+    padding: 10px 12px;
+}
+
+.wpify-section--danger {
+    --wpify-section-bg: #fff7f7;
+    --wpify-section-border: #ffd6d6;
+    padding: 10px 12px;
+}
+
+.wpify-section--warning {
+    --wpify-section-bg: #fffbeb;
+    --wpify-section-border: #fde68a;
+    padding: 10px 12px;
+}
+
+.wpify-section--info {
+    --wpify-section-bg: #eff6ff;
+    --wpify-section-border: #bfdbfe;
+    padding: 10px 12px;
+}
+
+.wpify-section__head {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--wpify-section-border);
+}
+
+.wpify-section__title,
+.wpify-section__head > strong {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--wpify-core-dark);
+}
+
+.wpify-section__description,
+.wpify-section__head p {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: var(--wpify-core-gray);
+    line-height: 1.45;
+}
+
+.wpify-section__content {
+    display: grid;
+    gap: 12px;
+}
+
+/* ─── Repeater: numbered items with a side bar (number + delete) ─── */
+
+.wpify-repeater {
+    display: grid;
+    gap: 10px;
+}
+
+.wpify-repeater__item {
+    display: flex;
+    background: var(--wpify-core-bg);
+    border: 1px solid var(--wpify-core-light);
+    border-radius: var(--wpify-core-radius);
+}
+
+.wpify-repeater__sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 0;
+    min-width: 40px;
+    background: var(--wpify-core-light);
+    border-radius: calc(var(--wpify-core-radius) - 1px) 0 0 calc(var(--wpify-core-radius) - 1px);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--wpify-core-gray);
+}
+
+.wpify-repeater__content {
+    flex: 1;
+    min-width: 0;
+    padding: 10px;
+}
+
+.wpify-repeater__rows {
+    display: grid;
+    gap: 8px;
+}
+
+.wpify-repeater__actions {
+    margin-top: 10px;
+}
+
+/* ─── Logic: OR connector between groups, AND operator on a line ─── */
+
+.wpify-connector {
+    --wpify-connector-color: #4f46e5;
+    --wpify-connector-bg: #eef2ff;
+    --wpify-connector-border: #c7d2fe;
+    display: inline-block;
+    position: relative;
+    top: -8px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--wpify-connector-color);
+    background: var(--wpify-connector-bg);
+    border: 1px solid var(--wpify-connector-border);
+    border-radius: 999px;
+}
+
+.wpify-line {
+    position: relative;
+    padding: 8px;
+    border: 1px dashed var(--wpify-core-light);
+    border-radius: var(--wpify-core-radius);
+    background: #fcfdff;
+}
+
+.wpify-line__row {
+    row-gap: 8px;
+}
+
+.wpify-line__operator {
+    --wpify-operator-color: #1e40af;
+    --wpify-operator-bg: #dbeafe;
+    display: block;
+    position: absolute;
+    top: -14px;
+    left: 10px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--wpify-operator-color);
+    background: var(--wpify-operator-bg);
+    border-radius: var(--wpify-core-radius);
+}
+
+/* ─── Accordion ─── */
+
+.wpify-accordion__item + .wpify-accordion__item {
+    border-top: 1px solid var(--wpify-core-light);
+}
+
+.wpify-accordion__toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    padding: 12px 14px;
+    background: var(--wpify-core-bg);
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--wpify-core-dark);
+}
+
+.wpify-accordion__toggle:hover {
+    background: var(--wpify-core-bg-soft);
+}
+
+.wpify-accordion__title {
+    display: inline-block;
+    line-height: 1.45;
+    padding-right: 8px;
+}
+
+.wpify-accordion__caret {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--wpify-core-gray);
+}
+
+.wpify-accordion__content {
+    background: #fcfdff;
+}
+
+/* The same look on native <details class="wpify-accordion__item"> with <summary class="wpify-accordion__toggle">. */
+summary.wpify-accordion__toggle {
+    box-sizing: border-box;
+    list-style: none;
+}
+
+summary.wpify-accordion__toggle::-webkit-details-marker {
+    display: none;
+}
+
+details.wpify-accordion__item .wpify-accordion__caret {
+    transition: transform 0.15s ease;
+}
+
+details.wpify-accordion__item[open] .wpify-accordion__caret {
+    transform: rotate(180deg);
+}
+
+/* ─── Tooltip: <span class="wpify-tooltip" data-wpify-tooltip="…">term</span> ─── */
+
+.wpify-tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted var(--wpify-core-gray);
+    cursor: help;
+}
+
+.wpify-tooltip::after {
+    content: attr(data-wpify-tooltip);
+    position: absolute;
+    left: 0;
+    top: calc(100% + 8px);
+    z-index: 1000;
+    min-width: 120px;
+    max-width: 420px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: #0f172a;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: normal;
+    word-break: break-word;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    pointer-events: none;
+}
+
+.wpify-tooltip:hover::after,
+.wpify-tooltip:focus-visible::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ─── Icon button ─── */
+
+.wpify-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--wpify-core-gray);
+    cursor: pointer;
+}
+
+.wpify-icon-btn:hover {
+    background: var(--wpify-core-light);
+}
+
+.wpify-icon-btn--danger {
+    color: var(--wpify-core-danger);
+}
+
+.wpify-icon-btn--danger:hover {
+    background: var(--wpify-core-danger-soft);
+}
+
+/* ─── Spinner, empty state, text utilities ─── */
+
+.wpify-spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: wpify-spin 0.7s linear infinite;
+    vertical-align: middle;
+}
+
+@keyframes wpify-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.wpify-empty {
+    padding: 24px;
+    text-align: center;
+    color: var(--wpify-core-gray);
+}
+
+.wpify-text-muted {
+    color: var(--wpify-core-gray);
+}
+
+.wpify-text-error {
+    color: var(--wpify-core-danger);
+}
+
+.wpify-code-copy {
+    user-select: all;
+    cursor: text;
+}
+
+/* ─── Toggle variants for WP ToggleControl ───
+   admin.css reads these variables on WPify pages; the rules below apply them elsewhere. */
+
+.wpify-toggle-compact {
+    --wpify-toggle-width: 38px;
+    --wpify-toggle-height: 22px;
+    --wpify-toggle-radius: 11px;
+    --wpify-toggle-thumb: 18px;
+    --wpify-toggle-shift: 16px;
+}
+
+.wpify-section--danger {
+    --wpify-toggle-off-bg: #991b1b;
+    --wpify-toggle-off-border: #991b1b;
+    --wpify-toggle-on-bg: #991b1b;
+    --wpify-toggle-hover-border: #991b1b;
+    --wpify-toggle-thumb-off: var(--wpify-core-bg);
+}
+
+.wpify-section--success {
+    --wpify-toggle-off-bg: #166534;
+    --wpify-toggle-off-border: #166534;
+    --wpify-toggle-on-bg: #166534;
+    --wpify-toggle-hover-border: #166534;
+    --wpify-toggle-thumb-off: var(--wpify-core-bg);
+}
+
+.wpify-toggle-compact .components-form-toggle {
+    height: var(--wpify-toggle-height);
+}
+
+.wpify-toggle-compact .components-form-toggle .components-form-toggle__track {
+    width: var(--wpify-toggle-width);
+    height: var(--wpify-toggle-height);
+    border-radius: var(--wpify-toggle-radius);
+}
+
+.wpify-toggle-compact .components-form-toggle .components-form-toggle__thumb {
+    width: var(--wpify-toggle-thumb);
+    height: var(--wpify-toggle-thumb);
+}
+
+.wpify-toggle-compact .components-form-toggle.is-checked .components-form-toggle__thumb {
+    transform: translateX(var(--wpify-toggle-shift));
+}
+
+.wpify-toggle-compact .components-toggle-control__help {
+    margin-inline-start: calc(var(--wpify-toggle-width) + 8px);
+}
+
+:is(.wpify-section--danger, .wpify-section--success) .components-form-toggle .components-form-toggle__track,
+:is(.wpify-section--danger, .wpify-section--success) .components-form-toggle.is-checked .components-form-toggle__track {
+    background-color: var(--wpify-toggle-off-bg);
+    border-color: var(--wpify-toggle-off-border);
+}
+
+:is(.wpify-section--danger, .wpify-section--success) .components-form-toggle .components-form-toggle__thumb {
+    background-color: var(--wpify-toggle-thumb-off);
+}

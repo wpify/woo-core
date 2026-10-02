@@ -156,8 +156,17 @@ class Settings {
 	 */
 	public function maybe_set_redirect(): void {
 		if ( ! empty( $_GET['wpify_redirect'] ) ) {
-			set_transient( 'wpify_redirect', esc_url_raw( wp_unslash( $_GET['wpify_redirect'] ) ), 3 );
+			set_transient( $this->get_redirect_key(), esc_url_raw( wp_unslash( $_GET['wpify_redirect'] ) ), 3 );
 		}
+	}
+
+	/**
+	 * Per user, so another admin's request can't consume the redirect.
+	 *
+	 * @return string
+	 */
+	private function get_redirect_key(): string {
+		return 'wpify_redirect_' . get_current_user_id();
 	}
 
 	/**
@@ -166,9 +175,14 @@ class Settings {
 	 * @return void
 	 */
 	public function maybe_redirect(): void {
-		$redirect = get_transient( 'wpify_redirect' );
+		// Background requests (heartbeat) would swallow the redirect meant for the page.
+		if ( wp_doing_ajax() ) {
+			return;
+		}
+
+		$redirect = get_transient( $this->get_redirect_key() );
 		if ( $redirect ) {
-			delete_transient( 'wpify_redirect' );
+			delete_transient( $this->get_redirect_key() );
 			wp_safe_redirect( $redirect );
 			exit;
 		}
@@ -180,7 +194,7 @@ class Settings {
 	 * @return void
 	 */
 	public function load_textdomain(): void {
-		$mo_file = dirname( __DIR__, 2 ) . '/languages/wpify-core-' . get_locale() . '.mo';
+		$mo_file = dirname( __DIR__, 2 ) . '/languages/wpify-core-' . determine_locale() . '.mo';
 		if ( file_exists( $mo_file ) ) {
 			load_textdomain( 'wpify-core', $mo_file );
 		}

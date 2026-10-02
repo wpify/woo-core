@@ -1,17 +1,5 @@
-:root {
-    --wpify-core-primary: #00A0D2;
-    --wpify-core-secondary: #826eb4;
-    --wpify-core-success: green;
-    --wpify-core-danger: red;
-    --wpify-core-warning: orange;
-    --wpify-core-light: #dbe3ec;
-    --wpify-core-gray: #647080;
-    --wpify-core-dark: #191e23;
-    --wpify-core-bg: #ffffff;
-    --wpify-core-bg-soft: #f3f7fb;
-    --wpify-core-radius: 8px;
-    --wpify-core-card-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-}
+/* Layout of the WPify admin pages and overrides of WordPress / Custom Fields markup.
+   Loaded only on WPify screens, after components.css (tokens, badges, notices). */
 
 .wpify-admin-page #wpcontent {
     padding-left: 0;
@@ -35,7 +23,67 @@
 }
 
 .wpify-admin-page #wpbody {
-    padding: 20px 0 0 20px;
+    padding-left: 20px;
+}
+
+.wpify-admin-page .postbox:not(:has(.wpifycf-app-instance)) {
+    border: 1px solid var(--wpify-core-light);
+    box-shadow: var(--wpify-core-card-shadow);
+    border-radius: var(--wpify-core-radius);
+}
+
+.wpify-admin-page .postbox:has(.wpifycf-app-instance) {
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.wpify-admin-page .postbox .postbox-header {
+    border-bottom: 1px solid var(--wpify-core-light);
+}
+
+.wpify-admin-page #postbox-container-1 #side-sortables {
+    position: sticky;
+    display: block;
+    top: 50px;
+}
+
+/* The floated sidebar column is only as tall as its boxes, which leaves the sticky
+   #side-sortables no room to move. A grid stretches the column over the whole
+   editor and still grows the page when the sidebar is the taller one, so it never
+   runs over the footer. Below 851px WordPress stacks the columns, keep its layout. */
+@media screen and (min-width: 851px) {
+    .wpify-admin-page #poststuff #post-body.columns-2 {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 280px;
+        grid-template-rows: auto 1fr;
+        column-gap: 20px;
+        margin-right: 0;
+    }
+
+    .wpify-admin-page #poststuff #post-body.columns-2 #post-body-content {
+        grid-column: 1;
+        grid-row: 1;
+        float: none;
+        width: auto;
+    }
+
+    .wpify-admin-page #poststuff #post-body.columns-2 #postbox-container-2 {
+        grid-column: 1;
+        grid-row: 2;
+        float: none;
+        width: auto;
+    }
+
+    .wpify-admin-page #poststuff #post-body.columns-2 #postbox-container-1 {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        position: static;
+        float: none;
+        width: auto;
+        height: auto;
+        margin-right: 0;
+    }
 }
 
 .wpify-dashboard__wrap {
@@ -59,6 +107,14 @@
     }
 }
 
+/* Below 600px WordPress pads #wpbody to clear the absolute admin bar; the menu bar above
+   already does that with its own top padding, so the two added up to a gap. */
+@media screen and (max-width: 600px) {
+    .wpify-admin-page #wpbody {
+        padding-top: 0;
+    }
+}
+
 .wpify__menu-bar-column {
     display: flex;
     align-items: center;
@@ -68,7 +124,8 @@
 
 .wpify__menu-bar-column.menu-column {
     @media screen and (min-width: 600px) {
-        flex: 1;
+        flex: 1 0 auto;
+        flex-wrap: nowrap;
     }
 
     @media screen and (max-width: 600px) {
@@ -81,6 +138,32 @@
     display: flex;
     align-content: center;
     flex-wrap: wrap;
+}
+
+/* A long plugin name wraps next to its icon instead of pushing the WPify logo onto its own row. */
+.wpify__menu-bar-column.title-column {
+    flex: 0 1 auto;
+    flex-wrap: nowrap;
+    min-width: 0;
+    column-gap: 12px;
+}
+
+.wpify__menu-bar-column.title-column .wpify__plugin-icon {
+    flex-shrink: 0;
+}
+
+.wpify__menu-bar-column.title-column .wpify__menu-bar-name {
+    min-width: 0;
+}
+
+@media screen and (max-width: 600px) {
+    .wpify__menu-bar-column.title-column {
+        flex: 1 1 0;
+    }
+
+    .wpify__menu-bar-column.title-column + .menu-column + .wpify__menu-bar-column {
+        flex-shrink: 0;
+    }
 }
 
 .wpify__logo {
@@ -261,9 +344,17 @@ th:has(label[for=enabled_modules]) + td {
 
 .wpify__modules-toggle.wpify__modules-toggle--full .components-toggle-control__label div {
     display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     width: 100%;
     justify-content: space-between;
     align-items: end;
+}
+
+/* The settings button drops below the description only once the description would get
+   narrower than 240px (phones); on wider screens they stay side by side. */
+.wpify__modules-toggle.wpify__modules-toggle--full .components-toggle-control__label div > p {
+    flex: 1 1 240px;
 }
 
 .wpify__modules-toggle .components-base-control .components-toggle-control__label > span {
@@ -282,8 +373,19 @@ th:has(label[for=enabled_modules]) + td {
     margin: 20px 10px 20px 0;
 }
 
-#wpbody .wrap > form {
+/* Only the main settings pages: those under the WPify menu (hook suffix wpify_page_wpify-*)
+   and the hidden module subpages (admin_page_wpify-*), not list tables, post editors
+   or pages a plugin hangs under its own menu. */
+.wpify-admin-page:is([class*="wpify_page_wpify-"], [class*="admin_page_wpify-"]) #wpbody .wrap > form {
     max-width: 1200px;
+}
+
+/* Settings forms outside the main settings pages (e.g. a list-like page under a CPT menu)
+   sit straight on the page like a native list table, without the card around them. */
+.wpify-admin-page:not([class*="wpify_page_wpify-"], [class*="admin_page_wpify-"], .post-php, .post-new-php) #wpbody .wrap > form .wpifycf-app-instance__fields {
+    padding: 0;
+    background: none;
+    box-shadow: none;
 }
 
 .wpifycf-app-instance {
@@ -360,6 +462,13 @@ th:has(label[for=enabled_modules]) + td {
 
 .wpifycf-field__wrapper .wpifycf-field__control .wpify_group_container .wpifycf-field-columns {
     gap: var(--wpifycf-gap-4);
+}
+
+/* Custom Fields columns keep their column count at any width; on phones they stack. */
+@media screen and (max-width: 600px) {
+    .wpify-admin-page .wpifycf-field-columns {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
 
 .wpifycf-field__wrapper:has(> .wpifycf-field__control >  .wpify_group_container--row) {
@@ -447,12 +556,14 @@ th:has(label[for=enabled_modules]) + td {
     border-bottom: 1px solid var(--wpify-core-light);
 }
 
-p.submit {
+/* :where() keeps the specificity of the bare `p.submit` it replaced, so a plugin's own
+   rule (e.g. the inline Save button on WPify Logs) still wins. */
+:where(.wpify-admin-page) p.submit {
     width: 100%;
     text-align: right;
 }
 
-.nav-tab-wrapper {
+.wpify-admin-page .nav-tab-wrapper {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -471,7 +582,7 @@ p.submit {
     }
 }
 
-.nav-tab-wrapper .nav-tab {
+.wpify-admin-page .nav-tab-wrapper .nav-tab {
     background: var(--wpify-core-bg);
     text-align: left;
     margin-left: 0;
@@ -481,18 +592,58 @@ p.submit {
     color: var(--wpify-core-dark);
 }
 
-.nav-tab-wrapper .nav-tab:hover {
+.wpify-admin-page .nav-tab-wrapper .nav-tab:hover {
     color: var(--wpify-core-secondary);
 }
 
-.nav-tab-wrapper .nav-tab:focus {
+.wpify-admin-page .nav-tab-wrapper .nav-tab:focus {
     border-color: var(--wpify-core-secondary);
 }
 
-.nav-tab-wrapper .nav-tab.nav-tab-active {
+.wpify-admin-page .nav-tab-wrapper .nav-tab.nav-tab-active {
     border-color: var(--wpify-core-primary);
     color: var(--wpify-core-primary);
     background-color: var(--wpify-core-bg-soft);
+}
+
+/* In the post editor the tabs sit on top of the fields as a tab bar
+   (same look as the section bar in the header), not as a side menu. */
+/* Block, not a column flexbox: the tabs and the fields simply stack, and a column
+   flexbox let the flex: 1 field groups inside grow far below their content. */
+.wpify-admin-page #poststuff .wpifycf-app-instance {
+    display: block;
+}
+
+.wpify-admin-page #poststuff .nav-tab-wrapper {
+    flex-direction: row;
+    align-self: stretch;
+    min-width: 0;
+    margin: 0;
+    padding: 0 20px;
+    gap: 0;
+    background: var(--wpify-core-bg);
+    border-bottom: 1px solid var(--wpify-core-light);
+    border-radius: var(--wpify-core-radius) var(--wpify-core-radius) 0 0;
+    box-shadow: none;
+}
+
+.wpify-admin-page #poststuff .nav-tab-wrapper .nav-tab {
+    margin: 0 0 -1px;
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+}
+
+.wpify-admin-page #poststuff .nav-tab-wrapper .nav-tab.nav-tab-active {
+    color: var(--wpify-core-primary);
+    border-bottom-color: var(--wpify-core-primary);
+    background: none;
+}
+
+.wpify-admin-page #poststuff .nav-tab-wrapper + .wpifycf-app-instance__fields {
+    border-radius: 0 0 var(--wpify-core-radius) var(--wpify-core-radius);
 }
 
 @media screen and (max-width: 783px) {
@@ -520,22 +671,36 @@ p.submit {
     }
 }
 
-.wpify-admin-page #wpbody input,
-.wpify-admin-page #wpbody textarea,
+/* Plugins opt a field, or everything inside a wrapper, out with .wpify-input-quiet
+   (e.g. inputs inside a table cell, or an editor that styles its own fields). */
+.wpify-admin-page #wpbody input:not(.button):not(:where(.wpify-input-quiet, .wpify-input-quiet *)),
+.wpify-admin-page #wpbody textarea:not(:where(.wpify-input-quiet, .wpify-input-quiet *)),
 .wpifycf-select .wpifycf-select__control {
     border: 1px solid var(--wpify-core-light);
     border-radius: 5px;
     padding: 5px 10px;
 }
 
-.wpify-admin-page #wpbody input:not(.wpifycf-select__input):hover,
-.wpify-admin-page #wpbody textarea:hover,
+/* Same height as the text and number inputs (40px). */
+.wpifycf-select .wpifycf-select__control {
+    min-height: 40px;
+}
+
+/* wpify/log puts the Custom Fields class on a native <select>; the vertical padding
+   meant for the React control makes it 50px tall. */
+.wpifycf-select select.wpifycf-select__control {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.wpify-admin-page #wpbody input:not(.wpifycf-select__input):not(:where(.wpify-input-quiet, .wpify-input-quiet *)):hover,
+.wpify-admin-page #wpbody textarea:not(:where(.wpify-input-quiet, .wpify-input-quiet *)):hover,
 .wpifycf-select .wpifycf-select__control:hover {
     border-color: var(--wpify-core-secondary);
 }
 
-.wpify-admin-page #wpbody input:not(.wpifycf-select__input):focus,
-.wpify-admin-page #wpbody textarea:focus,
+.wpify-admin-page #wpbody input:not(.wpifycf-select__input):not(:where(.wpify-input-quiet, .wpify-input-quiet *)):focus,
+.wpify-admin-page #wpbody textarea:not(:where(.wpify-input-quiet, .wpify-input-quiet *)):focus,
 .wpifycf-select .wpifycf-select__control--is-focused,
 .components-form-toggle .components-form-toggle__input:focus + .components-form-toggle__track {
     border-color: var(--wpify-core-secondary);
@@ -571,53 +736,141 @@ p.submit {
     background: var(--wpify-core-light);
 }
 
+/* Toggle sizes and colors come from variables, so .wpify-toggle-compact and the tinted
+   sections (components.css) adjust them without fighting over specificity. */
 .wpifycf-app-instance .components-form-toggle {
-    height: 28px;
+    height: var(--wpify-toggle-height, 28px);
 }
 
 .wpifycf-app-instance .components-form-toggle .components-form-toggle__track {
-    width: 50px;
-    height: 28px;
-    border-radius: 16px;
-    background-color: var(--wpify-core-bg);
-    border-color: var(--wpify-core-light);
+    width: var(--wpify-toggle-width, 50px);
+    height: var(--wpify-toggle-height, 28px);
+    border-radius: var(--wpify-toggle-radius, 16px);
+    background-color: var(--wpify-toggle-off-bg, var(--wpify-core-bg));
+    border-color: var(--wpify-toggle-off-border, var(--wpify-core-light));
 }
 
 .wpifycf-app-instance .components-toggle-control:hover .components-form-toggle .components-form-toggle__track {
-    border-color: var(--wpify-core-secondary);
+    border-color: var(--wpify-toggle-hover-border, var(--wpify-core-secondary));
 }
 
 .wpifycf-app-instance .components-form-toggle.is-checked .components-form-toggle__track {
-    background-color: var(--wpify-core-primary);
-    border-color: var(--wpify-core-primary);
+    background-color: var(--wpify-toggle-on-bg, var(--wpify-core-primary));
+    border-color: var(--wpify-toggle-on-bg, var(--wpify-core-primary));
 }
 
 .wpifycf-app-instance .components-form-toggle .components-form-toggle__thumb {
-    width: 24px;
-    height: 24px;
-    background-color: var(--wpify-core-dark);
+    width: var(--wpify-toggle-thumb, 24px);
+    height: var(--wpify-toggle-thumb, 24px);
+    background-color: var(--wpify-toggle-thumb-off, var(--wpify-core-dark));
 }
 
 .wpifycf-app-instance .components-form-toggle.is-checked .components-form-toggle__thumb {
     background-color: var(--wpify-core-bg);
-    transform: translateX(22px);
+    transform: translateX(var(--wpify-toggle-shift, 22px));
 }
 
+.wpify-admin-page table.wp-list-table,
 .wpifycf-app-instance table {
     border-color: var(--wpify-core-light);
 }
 
+.wpify-admin-page table.wp-list-table tr th,
+.wpify-admin-page table.wp-list-table tr td,
 .wpifycf-app-instance table tr th, .wpifycf-app-instance table tr td {
     border-color: var(--wpify-core-light);
     padding: 10px;
 }
 
+.wpify-admin-page table.wp-list-table thead,
 .wpifycf-app-instance table thead {
     background: var(--wpify-core-light);
 }
 
 .wpifycf-app-instance table tfoot {
     background: var(--wpify-core-bg-soft);
+}
+
+/* Native list tables follow the custom WPify tables (e.g. the term matrix):
+   rounded frame, compact uppercase header, plain rows split by a line. */
+.wpify-admin-page table.wp-list-table {
+    border: 1px solid var(--wpify-core-light);
+    border-radius: var(--wpify-core-radius);
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    box-shadow: none;
+    background: var(--wpify-core-bg);
+}
+
+.wpify-admin-page table.wp-list-table thead th,
+.wpify-admin-page table.wp-list-table thead td,
+.wpify-admin-page table.wp-list-table tfoot th,
+.wpify-admin-page table.wp-list-table tfoot td {
+    padding: 12px 10px;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 18px;
+    color: var(--wpify-core-gray);
+    vertical-align: middle;
+}
+
+.wpify-admin-page table.wp-list-table thead th a,
+.wpify-admin-page table.wp-list-table tfoot th a {
+    padding: 0;
+    color: inherit;
+}
+
+.wpify-admin-page table.wp-list-table thead {
+    border-bottom: 1px solid var(--wpify-core-light);
+}
+
+.wpify-admin-page table.wp-list-table tbody tr,
+.wpify-admin-page table.wp-list-table.striped > tbody > :nth-child(odd) {
+    background: var(--wpify-core-bg);
+}
+
+.wpify-admin-page table.wp-list-table tbody th,
+.wpify-admin-page table.wp-list-table tbody td {
+    padding: 15px 10px;
+    border-top: 1px solid var(--wpify-core-light);
+    line-height: 18px;
+}
+
+.wpify-admin-page table.wp-list-table .check-column {
+    width: 2.2em;
+    padding-left: 10px;
+    vertical-align: middle;
+}
+
+.wpify-admin-page table.wp-list-table tbody .check-column {
+    vertical-align: top;
+}
+
+.wpify-admin-page table.wp-list-table tbody .check-column input {
+    margin: 1px 0 0;
+}
+
+.wpify-admin-page table.wp-list-table tfoot {
+    background: var(--wpify-core-light);
+    border-top: 1px solid var(--wpify-core-light);
+}
+
+/* Section titles: one size everywhere. The ID keeps #poststuff h2 (14px) from
+   shrinking them inside metaboxes. */
+.wpify-admin-page #wpbody .wpifycf-app-instance .wpifycf-field--title h2 {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+span.wpifycf-field__label.wpifycf-field__label--group:empty {
+    display: none;
 }
 
 .wpifycf-app-instance .wpifycf-button,
@@ -699,30 +952,26 @@ p.submit {
     fill: var(--wpify-core-primary);
 }
 
-.wpify-notice, .license-field {
-    border: 1px solid rgba(6, 44, 241, 0.46);
-    background-color: rgba(7, 73, 149, 0.12);
+.license-field {
+    border: 1px solid var(--wpify-core-info);
+    background-color: var(--wpify-core-info-soft);
     padding: 5px 10px;
     margin-bottom: 10px;
     border-radius: 3px;
-}
-
-.license-field {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--wpifycf-gap-4);
 }
 
-.license-field__text {
-    flex: 1;
+/* The button drops below the text once the text would get narrower than 240px.
+   Two classes: wpify/license ships `.wpifycf-field__control .license-field__text { flex: 1 }`. */
+.license-field .license-field__text {
+    flex: 1 1 240px;
 }
 
 .license-field h3 {
     margin: 0;
-}
-
-.wpify-notice > *:last-child {
-    margin-bottom: 0;
 }
 
 .wpify-notice.wpifycf-field-wrapper,
@@ -735,77 +984,259 @@ p.submit {
     margin: 5px 0;
 }
 
-.wpify-notice.wpify-notice-primary {
-    border-color: var(--wpify-core-primary);
-    background-color: rgba(7, 73, 149, 0.12);
-}
-
-.wpify-notice.wpify-notice-secondary {
-    border-color: var(--wpify-core-secondary);
-    background-color: rgba(100, 5, 220, 0.12);
-}
-
-.wpify-notice.wpify-notice-success, .license-field.active {
+.license-field.active {
     border-color: var(--wpify-core-success);
-    background-color: rgba(7, 149, 66, 0.12);
+    background-color: var(--wpify-core-success-soft);
 }
 
-.wpify-notice.wpify-notice-warning {
-    border-color: var(--wpify-core-warning);
-    background-color: rgba(220, 128, 1, 0.16);
-}
-
-.wpify-notice.wpify-notice-error, .license-field.not-active {
+.license-field.not-active {
     border-color: var(--wpify-core-danger);
-    background-color: rgba(220, 17, 1, 0.16);
+    background-color: var(--wpify-core-danger-soft);
 }
 
-.wpify-badge {
-    background-color: var(--wpify-core-light);
-    padding: 4px 8px;
+/* Custom Fields put a zero-size lazy-render sentinel before every field. Inside a
+   field without its control wrapper (columns, groups, custom types) it lands
+   straight in a grid / flex parent and still takes a gap. Out of flow it keeps
+   working for the IntersectionObserver and takes no space. */
+.wpifycf-app-instance span[aria-hidden="true"][style*="height: 0"] {
+    position: absolute;
+}
+
+/* ─── Support page: self-help first (checklist, FAQ, plugin docs), the form last ─── */
+
+.wpify-support .wpify-dashboard__content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+}
+
+.wpify-support .wpify-dashboard__content > h1 {
+    margin-bottom: 0;
+}
+
+.wpify-support__intro {
+    margin: 0;
+    max-width: 760px;
+    font-size: 14px;
+    color: var(--wpify-core-gray);
+}
+
+.wpify-support .wpify-card__title {
+    font-size: 16px;
+}
+
+.wpify-support__steps {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: wpify-step;
+}
+
+@media screen and (min-width: 1280px) {
+    .wpify-support__steps {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .wpify-support__steps {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* li.wpify-section outranks the core `.wpify-section + .wpify-section` gap; the grid spaces the steps. */
+.wpify-support__steps > li.wpify-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0;
+    padding-left: 44px;
+    counter-increment: wpify-step;
+}
+
+/* The step number, a circle in the section's padding. */
+.wpify-support__steps > li::before {
+    content: counter(wpify-step);
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--wpify-core-primary);
+    color: #fff;
     font-size: 12px;
-    font-weight: 400;
-    line-height: 1;
-    color: var(--wpify-core-dark);
-    border-radius: 3px;
+    font-weight: 600;
+    line-height: 22px;
+    text-align: center;
 }
 
-.wpify-badge.wpify-badge-gray {
-    background-color: var(--wpify-core-gray);
-    color: var(--wpify-core-light);
-}
-.wpify-badge.wpify-badge-dark {
-    background-color: var(--wpify-core-dark);
-    color: var(--wpify-core-light);
+.wpify-support__steps .wpify-section__head {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: 0;
 }
 
-.wpify-badge.wpify-badge-light {
-    background-color: var(--wpify-core-light);
-    color: var(--wpify-core-dark);
+.wpify-support__steps .wpify-section__head + * {
+    margin-top: auto;
+    padding-top: 10px;
 }
 
-.wpify-badge.wpify-badge-primary {
+.wpify-support .wpify-card__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.wpify-support .wpify-card__footer p {
+    margin: 0;
+    color: var(--wpify-core-gray);
+}
+
+/* FAQ: roomier than the compact core accordion. */
+.wpify-support__faqs .wpify-accordion__toggle {
+    padding: 14px 18px;
+    font-size: 14px;
+}
+
+.wpify-support__faqs .wpify-accordion__caret {
+    font-size: 18px;
+}
+
+.wpify-support__faqs .wpify-accordion__content {
+    padding: 0 18px 14px;
+    background: var(--wpify-core-bg);
+}
+
+.wpify-support__faqs .wpify-accordion__content p {
+    margin: 0;
+    color: var(--wpify-core-gray);
+}
+
+.wpify-support__plugins {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.wpify-support__plugins th,
+.wpify-support__plugins td {
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--wpify-core-light);
+    text-align: left;
+}
+
+.wpify-support__plugins th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--wpify-core-gray);
+}
+
+.wpify-support__plugins tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.wpify-support__form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    max-width: 640px;
+}
+
+.wpify-support__field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+}
+
+.wpify-support__field label {
+    font-weight: 600;
+}
+
+.wpify-support__field :is(select, input[type=text], input[type=email], textarea) {
+    width: 100%;
+    max-width: none;
+}
+
+.wpify-support__field input[type=file] {
+    max-width: 100%;
+}
+
+.wpify-support__field p {
+    margin: 0;
+}
+
+.wpify-support__logs:not([hidden]) {
+    display: grid;
+    gap: 8px;
+}
+
+.wpify-support__details summary {
+    cursor: pointer;
     color: var(--wpify-core-primary);
-    background-color: color-mix(in srgb, var(--wpify-core-primary) 20%, white);
 }
 
-.wpify-badge.wpify-badge-secondary {
-    color: var(--wpify-core-secondary);
-    background-color: color-mix(in srgb, var(--wpify-core-secondary) 20%, white);
+.wpify-support__details[open] summary {
+    margin-bottom: 8px;
 }
 
-.wpify-badge.wpify-badge-success {
-    color: var(--wpify-core-success);
-    background-color: color-mix(in srgb, var(--wpify-core-success) 20%, white);
+.wpify-support__diagnostics {
+    border-collapse: collapse;
+    font-size: 12px;
 }
 
-.wpify-badge.wpify-badge-warning {
-    color: var(--wpify-core-warning);
-    background-color: color-mix(in srgb, var(--wpify-core-warning) 20%, white);
+.wpify-support__diagnostics th,
+.wpify-support__diagnostics td {
+    padding: 3px 12px 3px 0;
+    overflow-wrap: anywhere;
+    text-align: left;
+    vertical-align: top;
 }
 
-.wpify-badge.wpify-badge-error {
-    color: var(--wpify-core-danger);
-    background-color: color-mix(in srgb, var(--wpify-core-danger) 20%, white);
+.wpify-support__diagnostics th {
+    font-weight: 600;
+    white-space: nowrap;
 }
 
+/* Narrow screens: each plugin row becomes a small block (name, then version, license and link). */
+@media screen and (max-width: 600px) {
+    .wpify-support__plugins thead {
+        display: none;
+    }
+
+    .wpify-support__plugins tr {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 12px;
+        padding: 10px 18px;
+        border-bottom: 1px solid var(--wpify-core-light);
+    }
+
+    .wpify-support__plugins tbody tr:last-child {
+        border-bottom: 0;
+    }
+
+    .wpify-support__plugins td,
+    .wpify-support__plugins tbody tr:last-child td {
+        padding: 0;
+        border: 0;
+    }
+
+    .wpify-support__plugins td:first-child {
+        flex-basis: 100%;
+    }
+
+    .wpify-support__plugins td:empty,
+    .wpify-support__plugins td:has(> .wpify-text-muted:only-child) {
+        display: none;
+    }
+}
