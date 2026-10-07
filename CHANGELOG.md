@@ -2,6 +2,11 @@
 
 All notable changes to this package are documented here.
 
+## [5.7.1]
+
+### Fixed
+- WPify dashboard shows a plugin whose license WPify reports as not valid as unlicensed ("The license is not valid.") instead of active, and offers no update link for it.
+
 ## [5.7.0]
 
 ### Added

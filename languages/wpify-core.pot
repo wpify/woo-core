@@ -7,14 +7,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-02T20:27:39+02:00\n"
+"POT-Creation-Date: 2026-10-05T21:20:07+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: wpify-core\n"
 
 #: src/Abstracts/AbstractModule.php:309
 #: src/Abstracts/AbstractPlugin.php:220
-#: src/Admin/DashboardPage.php:330
+#: src/Admin/DashboardPage.php:338
 msgid "Settings"
 msgstr ""
 
@@ -23,8 +23,8 @@ msgid "Get more plugins and support"
 msgstr ""
 
 #: src/Abstracts/AbstractPlugin.php:249
-#: src/Admin/DashboardPage.php:272
-#: src/Admin/DashboardPage.php:298
+#: src/Admin/DashboardPage.php:280
+#: src/Admin/DashboardPage.php:306
 #: src/Admin/MenuBar.php:171
 #: src/Admin/SupportPage.php:169
 #: src/Admin/SupportPage.php:185
@@ -53,36 +53,40 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:144
+#: src/Admin/DashboardPage.php:145
 msgid "Installed plugins"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:150
+#: src/Admin/DashboardPage.php:151
 msgid "Our other plugins"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:235
+#: src/Admin/DashboardPage.php:242
+msgid "The license is not valid."
+msgstr ""
+
+#: src/Admin/DashboardPage.php:242
 msgid "Please, activate the license."
 msgstr ""
 
 #. translators: %s: Available version number.
-#: src/Admin/DashboardPage.php:245
+#: src/Admin/DashboardPage.php:253
 msgid "New version %s available."
 msgstr ""
 
-#: src/Admin/DashboardPage.php:317
+#: src/Admin/DashboardPage.php:325
 msgid "Deactivate"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:342
+#: src/Admin/DashboardPage.php:350
 msgid "Activate"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:354
+#: src/Admin/DashboardPage.php:362
 msgid "Get plugin"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:390
+#: src/Admin/DashboardPage.php:400
 msgid "WPify News"
 msgstr ""
 

@@ -66,6 +66,10 @@ msgstr "Naše další pluginy"
 msgid "Please, activate the license."
 msgstr "Prosím, aktivujte vaši licenci."
 
+#: src/Admin/DashboardPage.php
+msgid "The license is not valid."
+msgstr "Licence není platná."
+
 #. translators: %s: Available version number.
 #: src/Admin/DashboardPage.php:249
 msgid "New version %s available."

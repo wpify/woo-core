@@ -204,10 +204,13 @@ class DashboardPage {
 				}
 				$is_active = $installed && ( ( ! empty( $plugin['plugin_file'] ) ? is_plugin_active( $plugin['plugin_file'] ) : ! empty( $plugin['settings_url'] ) ) );
 				$license   = $plugin['license'] ?? true;
+				// A stored activation counts unless the server reported it invalid; older activations carry no `valid` key.
+				$license_invalid = is_array( $license ) && ! empty( $license['license'] ) && false === ( $license['valid'] ?? true );
+				$licensed        = is_array( $license ) ? ! empty( $license['license'] ) && ! $license_invalid : (bool) $license;
 				?>
 				<div class="wpify__card <?php
 				echo $installed ? $is_active ? 'active' : 'inactive' : 'buy';
-				echo $installed && ! $license ? ' no-licence' : '';
+				echo $installed && ! $licensed ? ' no-licence' : '';
 				?>">
 					<div class="wpify__card-head">
 						<?php
@@ -230,10 +233,14 @@ class DashboardPage {
 							<?php
 							$metas   = [];
 							$notices = [];
-							if ( $installed && isset( $plugin['license'] ) && ! $plugin['license'] ) {
+							if ( $installed && ! $licensed ) {
 								$notices[] = array(
 									'type'    => 'error',
-									'content' => sprintf( '<a href="%s">❗ %s</a>', esc_url( $plugin['settings_url'] ?? '#' ), esc_html__( 'Please, activate the license.', 'wpify-core' ) ),
+									'content' => sprintf(
+										'<a href="%s">❗ %s</a>',
+										esc_url( $plugin['settings_url'] ?? '#' ),
+										$license_invalid ? esc_html__( 'The license is not valid.', 'wpify-core' ) : esc_html__( 'Please, activate the license.', 'wpify-core' )
+									),
 								);
 							}
 							if ( $installed && isset( $plugin['version'] ) ) {
@@ -245,7 +252,7 @@ class DashboardPage {
 										/* translators: %s: Available version number. */
 										$update_notice = '⚠️ ' . sprintf( esc_html__( 'New version %s available.', 'wpify-core' ), esc_html( $available_v ) );
 
-										if ( $is_active && ! empty( $plugin['license'] ) ) {
+										if ( $is_active && ! empty( $plugin['license'] ) && ! $license_invalid ) {
 											$can_update = current_user_can( 'update_plugins' );
 											if ( is_multisite() ) {
 												$can_update = $can_update && current_user_can( 'manage_network_plugins' );
