@@ -1,18 +1,18 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WPify Woo Core\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-05T21:20:07+02:00\n"
+"POT-Creation-Date: 2026-10-09T14:13:38+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: wpify-core\n"
 
-#: src/Abstracts/AbstractModule.php:309
+#: src/Abstracts/AbstractModule.php:333
 #: src/Abstracts/AbstractPlugin.php:220
 #: src/Admin/DashboardPage.php:338
 msgid "Settings"
@@ -25,9 +25,9 @@ msgstr ""
 #: src/Abstracts/AbstractPlugin.php:249
 #: src/Admin/DashboardPage.php:280
 #: src/Admin/DashboardPage.php:306
-#: src/Admin/MenuBar.php:171
-#: src/Admin/SupportPage.php:169
-#: src/Admin/SupportPage.php:185
+#: src/Admin/MenuBar.php:299
+#: src/Admin/SupportPage.php:181
+#: src/Admin/SupportPage.php:197
 msgid "Documentation"
 msgstr ""
 
@@ -49,7 +49,7 @@ msgid "WPify Plugins Dashboard"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:46
-#: src/Admin/MenuBar.php:77
+#: src/Admin/MenuBar.php:205
 msgid "Dashboard"
 msgstr ""
 
@@ -90,9 +90,77 @@ msgstr ""
 msgid "WPify News"
 msgstr ""
 
-#: src/Admin/MenuBar.php:179
+#: src/Admin/MenuBar.php:307
 #: src/Admin/SupportPage.php:35
 msgid "Support"
+msgstr ""
+
+#: src/Admin/Settings.php:570
+msgid "All languages"
+msgstr ""
+
+#. translators: %s: language name
+#: src/Admin/Settings.php:605
+msgid "Delete the settings for %s permanently? The language will use the main settings again."
+msgstr ""
+
+#: src/Admin/Settings.php:609
+msgid "Delete unused settings"
+msgstr ""
+
+#. translators: %s: language name
+#: src/Admin/Settings.php:611
+msgid "Delete settings for %s"
+msgstr ""
+
+#: src/Admin/Settings.php:621
+msgid "The unused settings saved under \"All languages\" were deleted."
+msgstr ""
+
+#. translators: %s: language name
+#: src/Admin/Settings.php:624
+msgid "The settings for %s were deleted. The language uses the main settings again."
+msgstr ""
+
+#: src/Admin/Settings.php:646
+msgid "You are editing the main settings"
+msgstr ""
+
+#. translators: %s: default language name
+#: src/Admin/Settings.php:648
+msgid "They apply to the default language (%s) and to every other language that has no settings of its own."
+msgstr ""
+
+#. translators: %s: list of language names
+#: src/Admin/Settings.php:653
+msgid "Languages with their own settings (changes made here do not affect them): %s"
+msgstr ""
+
+#: src/Admin/Settings.php:657
+msgid "Settings saved under \"All languages\" by an older version are not used anywhere."
+msgstr ""
+
+#. translators: %s: language name
+#: src/Admin/Settings.php:677
+msgid "You are editing the settings for %s only"
+msgstr ""
+
+#. translators: %s: language name
+#: src/Admin/Settings.php:681
+msgid "%s has its own settings. Changes of the main settings do not apply to it."
+msgstr ""
+
+#. translators: %s: language name
+#: src/Admin/Settings.php:683
+msgid "%1$s uses the main settings for now. Once you change something here and save, %1$s gets its own copy of all settings on this page, and later changes of the main settings will no longer apply to it."
+msgstr ""
+
+#: src/Admin/Settings.php:687
+msgid "Edit main settings"
+msgstr ""
+
+#: src/Admin/Settings.php:708
+msgid "You are not allowed to do this."
 msgstr ""
 
 #: src/Admin/SupportPage.php:34
@@ -100,238 +168,262 @@ msgid "WPify Plugins Support"
 msgstr ""
 
 #: src/Admin/SupportPage.php:63
-msgid "How do the pricing plans work?"
+msgid "Where do I find the license key?"
 msgstr ""
 
 #: src/Admin/SupportPage.php:64
-msgid "When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew."
+msgid "There is no key to enter. Click \"Activate domain\" in the plugin settings and the site connects to your WPify account. If the button is missing, the license field tells you that the server blocks the plugin files and which file it is."
 msgstr ""
 
 #: src/Admin/SupportPage.php:67
-msgid "Will the plugin work if I do not renew my license?"
+msgid "How do I move the license to a new domain?"
 msgstr ""
 
 #: src/Admin/SupportPage.php:68
-msgid "Yes, the plugin will continue to work, but you will no longer have access to updates and support."
+msgid "On the old site, click \"Deactivate domain\" in the plugin settings, then click \"Activate domain\" on the new site. If the old site is no longer available, contact us."
 msgstr ""
 
 #: src/Admin/SupportPage.php:71
-msgid "I need a feature that the plugin does not currently support."
+msgid "Why is a plugin update not available?"
 msgstr ""
 
 #: src/Admin/SupportPage.php:72
-msgid "Let us know, and we will consider adding the requested functionality."
+msgid "Updates need a valid license for this domain. The license field in the plugin settings and the plugin list show the reason, e.g. an expired subscription or a license activated for another domain."
+msgstr ""
+
+#: src/Admin/SupportPage.php:75
+msgid "Will the plugin work if I do not renew my license?"
+msgstr ""
+
+#: src/Admin/SupportPage.php:76
+msgid "Yes, the plugin will continue to work, but you will no longer have access to updates and support."
+msgstr ""
+
+#: src/Admin/SupportPage.php:79
+msgid "My settings do not apply in another language."
+msgstr ""
+
+#: src/Admin/SupportPage.php:80
+msgid "On multilingual sites (WPML, Polylang) the main settings apply to every language without settings of its own. When you change and save the settings with one language selected, that language gets its own copy. The notice at the top of the settings page tells you which settings you are editing and lets you delete the settings of a language."
 msgstr ""
 
 #: src/Admin/SupportPage.php:83
+msgid "I need a feature that the plugin does not currently support."
+msgstr ""
+
+#: src/Admin/SupportPage.php:84
+msgid "Let us know, and we will consider adding the requested functionality."
+msgstr ""
+
+#: src/Admin/SupportPage.php:95
 msgid "Support page"
 msgstr ""
 
-#: src/Admin/SupportPage.php:93
+#: src/Admin/SupportPage.php:105
 msgid "Your support request has been sent. We will get back to you shortly."
 msgstr ""
 
-#: src/Admin/SupportPage.php:94
+#: src/Admin/SupportPage.php:106
 msgid "Your support request could not be sent. Please try again."
 msgstr ""
 
-#: src/Admin/SupportPage.php:103
+#: src/Admin/SupportPage.php:115
 msgid "Most problems can be solved in a few minutes with the steps and documentation below. Please go through them before sending a request — you will get the answer faster."
 msgstr ""
 
-#: src/Admin/SupportPage.php:108
+#: src/Admin/SupportPage.php:120
 msgid "Quick debugging checklist"
 msgstr ""
 
-#: src/Admin/SupportPage.php:114
+#: src/Admin/SupportPage.php:126
 msgid "Check order notes"
 msgstr ""
 
-#: src/Admin/SupportPage.php:115
+#: src/Admin/SupportPage.php:127
 msgid "In the WooCommerce order detail, you’ll find notes that plugins automatically add. Look for messages about errors or failed operations."
 msgstr ""
 
-#: src/Admin/SupportPage.php:120
+#: src/Admin/SupportPage.php:132
 msgid "Review logs"
 msgstr ""
 
-#: src/Admin/SupportPage.php:121
+#: src/Admin/SupportPage.php:133
 msgid "Most plugins log communication in WPify → WPify Logs. Select the relevant plugin and date, look for records marked as ERROR."
 msgstr ""
 
-#: src/Admin/SupportPage.php:124
+#: src/Admin/SupportPage.php:136
 msgid "Open WPify Logs"
 msgstr ""
 
-#: src/Admin/SupportPage.php:129
+#: src/Admin/SupportPage.php:141
 msgid "Check plugin documentation"
 msgstr ""
 
-#: src/Admin/SupportPage.php:130
+#: src/Admin/SupportPage.php:142
 msgid "Each plugin has its own troubleshooting section with descriptions of common errors and their solutions."
 msgstr ""
 
-#: src/Admin/SupportPage.php:133
+#: src/Admin/SupportPage.php:145
 msgid "Find your plugin in the list below"
 msgstr ""
 
-#: src/Admin/SupportPage.php:138
+#: src/Admin/SupportPage.php:150
 msgid "Contact support"
 msgstr ""
 
-#: src/Admin/SupportPage.php:139
+#: src/Admin/SupportPage.php:151
 msgid "If the problem persists, send us a request with the form below. Describe the problem and the steps to reproduce it — diagnostics and the selected logs are attached for you."
 msgstr ""
 
-#: src/Admin/SupportPage.php:141
+#: src/Admin/SupportPage.php:153
 msgid "Go to the support form"
 msgstr ""
 
-#: src/Admin/SupportPage.php:146
+#: src/Admin/SupportPage.php:158
 msgid "Full debugging guide"
 msgstr ""
 
-#: src/Admin/SupportPage.php:152
+#: src/Admin/SupportPage.php:164
 msgid "Frequently Asked Questions"
 msgstr ""
 
-#: src/Admin/SupportPage.php:168
+#: src/Admin/SupportPage.php:180
 msgid "Check out the plugin documentation to see if your question is already answered."
 msgstr ""
 
-#: src/Admin/SupportPage.php:176
+#: src/Admin/SupportPage.php:188
 msgid "Your WPify plugins"
 msgstr ""
 
-#: src/Admin/SupportPage.php:177
+#: src/Admin/SupportPage.php:189
 msgid "Open the documentation of the plugin you have trouble with — most common problems are described there."
 msgstr ""
 
-#: src/Admin/SupportPage.php:182
-#: src/Admin/SupportPage.php:227
+#: src/Admin/SupportPage.php:194
+#: src/Admin/SupportPage.php:239
 msgid "Plugin"
 msgstr ""
 
-#: src/Admin/SupportPage.php:183
+#: src/Admin/SupportPage.php:195
 msgid "Version"
 msgstr ""
 
-#: src/Admin/SupportPage.php:184
+#: src/Admin/SupportPage.php:196
 msgid "License"
 msgstr ""
 
-#: src/Admin/SupportPage.php:204
-#: src/Admin/SupportPage.php:236
+#: src/Admin/SupportPage.php:216
+#: src/Admin/SupportPage.php:248
 msgid "Open documentation"
 msgstr ""
 
-#: src/Admin/SupportPage.php:218
+#: src/Admin/SupportPage.php:230
 msgid "Send a support request"
 msgstr ""
 
-#: src/Admin/SupportPage.php:219
+#: src/Admin/SupportPage.php:231
 msgid "Did not find the answer in the steps and documentation above? Write to us."
 msgstr ""
 
-#: src/Admin/SupportPage.php:229
-#: src/Admin/SupportPage.php:518
+#: src/Admin/SupportPage.php:241
+#: src/Admin/SupportPage.php:530
 msgid "General"
 msgstr ""
 
-#: src/Admin/SupportPage.php:235
+#: src/Admin/SupportPage.php:247
 msgid "Have you gone through the documentation of this plugin?"
 msgstr ""
 
-#: src/Admin/SupportPage.php:240
+#: src/Admin/SupportPage.php:252
 msgid "Subject (optional)"
 msgstr ""
 
-#: src/Admin/SupportPage.php:241
+#: src/Admin/SupportPage.php:253
 msgid "Short summary of the issue"
 msgstr ""
 
-#: src/Admin/SupportPage.php:244
+#: src/Admin/SupportPage.php:256
 msgid "Contact email"
 msgstr ""
 
-#: src/Admin/SupportPage.php:248
+#: src/Admin/SupportPage.php:260
 msgid "Message"
 msgstr ""
 
-#: src/Admin/SupportPage.php:253
+#: src/Admin/SupportPage.php:265
 msgid "Attach logs"
 msgstr ""
 
-#: src/Admin/SupportPage.php:254
+#: src/Admin/SupportPage.php:266
 msgid "Select a plugin above to attach its logs."
 msgstr ""
 
-#: src/Admin/SupportPage.php:255
+#: src/Admin/SupportPage.php:267
 msgid "This plugin has no logs."
 msgstr ""
 
-#: src/Admin/SupportPage.php:258
+#: src/Admin/SupportPage.php:270
 msgid "Do not attach logs"
 msgstr ""
 
-#: src/Admin/SupportPage.php:259
+#: src/Admin/SupportPage.php:271
 msgid "The latest log"
 msgstr ""
 
-#: src/Admin/SupportPage.php:260
+#: src/Admin/SupportPage.php:272
 msgid "The latest 3 logs"
 msgstr ""
 
 #. translators: %d: number of log files kept for the plugin
-#: src/Admin/SupportPage.php:261
+#: src/Admin/SupportPage.php:273
 msgid "All kept logs (%d)"
 msgstr ""
 
 #. translators: %d: number of log files kept for the plugin
-#: src/Admin/SupportPage.php:261
+#: src/Admin/SupportPage.php:273
 msgid "All kept logs"
 msgstr ""
 
-#: src/Admin/SupportPage.php:264
+#: src/Admin/SupportPage.php:276
 msgid "Choose specific files"
 msgstr ""
 
-#: src/Admin/SupportPage.php:270
+#: src/Admin/SupportPage.php:282
 msgid "Selected files are attached in addition to the latest logs. Hold Ctrl (Windows) or Cmd (Mac) to select multiple logs."
 msgstr ""
 
-#: src/Admin/SupportPage.php:276
+#: src/Admin/SupportPage.php:288
 msgid "Attach files (optional)"
 msgstr ""
 
-#: src/Admin/SupportPage.php:278
+#: src/Admin/SupportPage.php:290
 msgid "Screenshots or documents that help explain the issue."
 msgstr ""
 
-#: src/Admin/SupportPage.php:281
+#: src/Admin/SupportPage.php:293
 msgid "What is sent automatically"
 msgstr ""
 
-#: src/Admin/SupportPage.php:290
+#: src/Admin/SupportPage.php:302
 msgid "With a plugin selected, also its license status and key."
 msgstr ""
 
-#: src/Admin/SupportPage.php:293
+#: src/Admin/SupportPage.php:305
 msgid "Send request"
 msgstr ""
 
-#: src/Admin/SupportPage.php:429
+#: src/Admin/SupportPage.php:441
 msgid "Not activated"
 msgstr ""
 
-#: src/Admin/SupportPage.php:433
+#: src/Admin/SupportPage.php:445
 msgid "Invalid"
 msgstr ""
 
-#: src/Admin/SupportPage.php:436
+#: src/Admin/SupportPage.php:448
 msgid "Active"
 msgstr ""
 
-#: src/Admin/SupportPage.php:499
+#: src/Admin/SupportPage.php:511
 msgid "You do not have permission to submit support requests."
 msgstr ""

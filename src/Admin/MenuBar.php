@@ -21,6 +21,134 @@ class MenuBar {
 		// Priority 1 so plugins can enqueue the components handle on their own screens.
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_head_assets' ], 1 );
 		add_action( 'in_admin_header', [ $this, 'render' ] );
+		add_filter( 'wpifycf_print_app', [ $this, 'print_fields_style' ] );
+	}
+
+	/**
+	 * Custom Fields render their fields only after DOMContentLoaded, so a skeleton holds their place; product
+	 * tabs also need a few fixes against WooCommerce's panel styles. Printed inline right before the first field
+	 * instance, so the skeleton is there on the first paint. Echoed directly: in the admin WordPress
+	 * concatenates styles and would postpone an inline style of a late handle.
+	 *
+	 * @param bool $print Whether Custom Fields print the app.
+	 *
+	 * @return bool
+	 */
+	public function print_fields_style( $print ) {
+		if ( ! $print || ! is_admin() || did_action( 'wpify_core_fields_style_printed' ) ) {
+			return $print;
+		}
+
+		do_action( 'wpify_core_fields_style_printed' );
+		echo '<style id="wpify-core-fields">
+/* The skeleton copies the Custom Fields rows: label column, 40px input, description; 104px per row. */
+.wpifycf-app-instance[data-loaded="false"] {
+	display: block;
+	container-type: inline-size;
+}
+.wpifycf-app-instance[data-loaded="false"]::before {
+	--wpify-skeleton-column: 208px;
+	content: "";
+	display: block;
+	height: 272px;
+	background:
+		linear-gradient(#dcdcde 0 0) 0 12px / 140px 14px,
+		linear-gradient(#f0f0f1 0 0) var(--wpify-skeleton-column) 0px / calc(100% - var(--wpify-skeleton-column)) 40px,
+		linear-gradient(#f0f0f1 0 0) var(--wpify-skeleton-column) 50px / 40% 10px,
+		linear-gradient(#dcdcde 0 0) 0 116px / 140px 14px,
+		linear-gradient(#f0f0f1 0 0) var(--wpify-skeleton-column) 104px / calc(100% - var(--wpify-skeleton-column)) 40px,
+		linear-gradient(#f0f0f1 0 0) var(--wpify-skeleton-column) 154px / 40% 10px,
+		linear-gradient(#dcdcde 0 0) 0 220px / 140px 14px,
+		linear-gradient(#f0f0f1 0 0) var(--wpify-skeleton-column) 208px / calc(100% - var(--wpify-skeleton-column)) 40px,
+		linear-gradient(#f0f0f1 0 0) var(--wpify-skeleton-column) 258px / 40% 10px;
+	background-repeat: no-repeat;
+	animation: wpify-fields-loading 1.2s ease-in-out infinite alternate;
+}
+/* On the WPify settings pages the skeleton sits in the same white card as the fields. */
+.wpify-admin-page .wpifycf-app-instance[data-loaded="false"] {
+	padding: 40px;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: rgba(149, 157, 165, 0.2) 0 8px 24px;
+}
+.wpify-admin-page .wpifycf-app-instance[data-loaded="false"]::before {
+	--wpify-skeleton-column: 230px;
+}
+@media screen and (max-width: 782px) {
+	.wpify-admin-page .wpifycf-app-instance[data-loaded="false"] {
+		padding: 20px;
+	}
+}
+/* Custom Fields stack the label above the field in containers up to 600px. */
+@container (inline-size <= 600px) {
+	.wpifycf-app-instance[data-loaded="false"]::before {
+		height: 296px;
+		background:
+			linear-gradient(#dcdcde 0 0) 0 0px / 140px 14px,
+			linear-gradient(#f0f0f1 0 0) 0 24px / 100% 40px,
+			linear-gradient(#f0f0f1 0 0) 0 74px / 60% 10px,
+			linear-gradient(#dcdcde 0 0) 0 108px / 140px 14px,
+			linear-gradient(#f0f0f1 0 0) 0 132px / 100% 40px,
+			linear-gradient(#f0f0f1 0 0) 0 182px / 60% 10px,
+			linear-gradient(#dcdcde 0 0) 0 216px / 140px 14px,
+			linear-gradient(#f0f0f1 0 0) 0 240px / 100% 40px,
+			linear-gradient(#f0f0f1 0 0) 0 290px / 60% 10px;
+		background-repeat: no-repeat;
+	}
+}
+@keyframes wpify-fields-loading {
+	to { opacity: .4; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.wpifycf-app-instance[data-loaded="false"]::before { animation: none; }
+}
+/* WooCommerce product tabs: the fields would touch the panel edges, and WooCommerce gives every
+   label a fixed 150px and every text input half the width, floated. */
+.woocommerce_options_panel .wpifycf-app-instance {
+	padding: 12px 20px;
+}
+.woocommerce_options_panel .wpifycf-app-instance label.wpifycf-field__label {
+	width: auto;
+}
+.woocommerce_options_panel .wpifycf-app-instance input:is([type=text], [type=email], [type=number], [type=url], [type=tel], [type=password], [type=date]):not(.wpifycf-select__input) {
+	width: 100%;
+	float: none;
+}
+.woocommerce_options_panel .wpifycf-app-instance textarea {
+	width: 100%;
+	height: auto;
+	min-height: 100px;
+	float: none;
+}
+/* Outside the WPify screens the fields keep the native look; the select and the multi-group header,
+   which Custom Fields draw themselves, are brought to it. */
+body:not(.wpify-admin-page) .wpifycf-app-instance .wpifycf-select__control {
+	min-height: 40px;
+	border: 1px solid #949494;
+	border-radius: 2px;
+	box-shadow: none;
+	color: #1e1e1e;
+	font-size: 14px;
+}
+body:not(.wpify-admin-page) .wpifycf-app-instance .wpifycf-select__control--is-focused {
+	border-color: var(--wp-admin-theme-color, #2271b1);
+	box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #2271b1);
+}
+body:not(.wpify-admin-page) .wpifycf-app-instance .wpifycf-select__value-container {
+	padding: 0 8px;
+}
+body:not(.wpify-admin-page) .wpifycf-app-instance .wpifycf-select__indicator-separator {
+	display: none;
+}
+body:not(.wpify-admin-page) .wpifycf-app-instance .wpifycf-select__dropdown-indicator {
+	color: #1e1e1e;
+}
+body:not(.wpify-admin-page) .wpifycf-app-instance .wpifycf-field-multi-group__item-header {
+	background: #f6f7f7;
+}
+</style>';
+
+		return $print;
 	}
 
 	/**
@@ -291,6 +419,8 @@ class MenuBar {
 	 * Load the components stylesheet (tokens, badges, notices) on a screen outside the WPify pages,
 	 * e.g. the order list or detail. Registers it from this copy of woo-core when the copy
 	 * that runs the WPify admin is older and did not register it.
+	 * Plugins using the components on their own screens should call this themselves: an older
+	 * copy running the admin doesn't know screens registered through newer filters.
 	 *
 	 * @return void
 	 */

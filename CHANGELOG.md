@@ -2,6 +2,27 @@
 
 All notable changes to this package are documented here.
 
+## [5.8.0]
+
+### Added
+- Custom Fields show a loading skeleton until their fields render, on every admin screen with WPify fields (settings, CPT editors, product tabs, terms).
+- Product tabs: Custom Fields no longer touch the panel edges, and WooCommerce's fixed label width, half-width floated inputs and short floated textareas (description beside the field) no longer squeeze them.
+- Outside the WPify screens the Custom Fields select and the multi-group item header match the native WordPress fields (border, height, arrow, focus; tinted header).
+- `AbstractModule::has_language_settings()`: a module that handles languages itself returns false and keeps one set of settings for all languages (no per-language copy, no language notice).
+- Settings pages on multilingual sites say whose settings are being edited: the main settings (only when some languages have their own) or one language only, with a link back to the main settings and a button to delete the settings of that language (or an unused `_all` copy) for good.
+- Support page FAQ answers the common plugin questions from support: where the license key is, moving the license to a new domain, why an update is not available, settings in another language. The pricing question was removed (it belongs to the purchase terms).
+- Polish, German, Hungarian and Romanian translations (alongside Czech and Slovak).
+- A locale without its own translation uses another locale of the same language, e.g. de_AT, de_CH and de_DE_formal use the German one.
+
+### Changed
+- Softer tinted backgrounds of notices, sections and the license field (the `--wpify-core-*-soft` tokens).
+- Small buttons (`.button-small`) on the WPify screens use 12px instead of WordPress's 11px.
+
+### Fixed
+- Multilingual sites (WPML, Polylang): "All languages" in the admin language switcher edits the main settings, the same as the default language. Before, WPML saved them under an `_all` copy that nothing used.
+- Polylang: the settings of a language are edited and saved for that language in the admin too (the language was not known yet when the settings were read).
+- A language without settings of its own shows the main settings in the form, so saving there no longer stores empty values.
+
 ## [5.7.1]
 
 ### Fixed

@@ -28,14 +28,16 @@ abstract class AbstractModule {
 		add_filter( 'wpify_get_sections_' . $this->plugin_slug(), array( $this, 'add_settings_section' ) );
 		add_filter( 'wpify_admin_menu_bar_data', array( $this, 'add_admin_menu_bar_data' ) );
 
-		if ( is_admin() && defined( 'ICL_LANGUAGE_CODE' ) && false === get_option( $this->get_option_key() ) ) {
-			$default_lang = apply_filters( 'wpml_default_language', null );
-			if ( ICL_LANGUAGE_CODE !== $default_lang ) {
+		// On 'init' the language is known: Polylang defines it only in 'setup_theme'.
+		$language_fallback = function () {
+			if ( is_admin() && $this->has_language_settings() && Settings::get_settings_language() && ! Settings::option_exists( $this->get_option_key() ) ) {
+				// After the default of the registered setting (priority 10), so the form shows the main settings.
 				add_filter( 'default_option_' . $this->get_option_key(), function () {
 					return get_option( $this->get_option_key( true ), array() );
-				} );
+				}, 20 );
 			}
-		}
+		};
+		did_action( 'init' ) ? $language_fallback() : add_action( 'init', $language_fallback );
 		add_action( 'admin_init', function () {
 			if ( $this->requires_activation() && $this->is_settings_page() ) {
 				$this->license = new License( $this->plugin_slug(), true, is_multisite() ? get_current_network_id() : 0 );
@@ -147,6 +149,7 @@ abstract class AbstractModule {
 			'tabs'        => $this->settings_tabs(),
 			'settings'    => $this->settings(),
 			'in_menubar'  => $this->display_in_menubar(),
+			'language_settings' => $this->has_language_settings(),
 		);
 
 		return $sections;
@@ -174,23 +177,43 @@ abstract class AbstractModule {
 			return $this->settings_cache;
 		}
 
-		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
-			$default_lang = apply_filters( 'wpml_default_language', null );
-			if ( $default_lang !== ICL_LANGUAGE_CODE && get_option( $this->get_option_key() ) === false ) {
-				// Fallback to default language settings if the translated option does not exist at all.
-				$default = get_option( $this->get_option_key( true ) );
+		if ( $this->has_language_settings() && Settings::get_settings_language() && ! Settings::option_exists( $this->get_option_key() ) ) {
+			// Fallback to default language settings if the translated option does not exist at all.
+			$default = get_option( $this->get_option_key( true ) );
 
-				$this->settings_cache = is_array( $default ) ? $default : array();
-
-				return $this->settings_cache;
-			}
+			return $this->cache_settings( is_array( $default ) ? $default : array() );
 		}
 
 		$settings = get_option( $this->get_option_key() );
 
-		$this->settings_cache = is_array( $settings ) ? $settings : array();
+		return $this->cache_settings( is_array( $settings ) ? $settings : array() );
+	}
 
-		return $this->settings_cache;
+	/**
+	 * Whether the settings have their own copy per language (WPML / Polylang). A module that handles
+	 * languages itself (e.g. rules or feeds per language) returns false and keeps one set of settings
+	 * for all languages.
+	 *
+	 * @return bool
+	 */
+	public function has_language_settings(): bool {
+		return true;
+	}
+
+	/**
+	 * Settings read before the multilingual plugin knows the language (Polylang: 'setup_theme') may belong
+	 * to a different language, so they are cached only afterwards.
+	 *
+	 * @param array $settings Module settings.
+	 *
+	 * @return array
+	 */
+	private function cache_settings( array $settings ): array {
+		if ( did_action( 'setup_theme' ) ) {
+			$this->settings_cache = $settings;
+		}
+
+		return $settings;
 	}
 
 	public function get_option_key( $raw = false ) {
@@ -205,16 +228,17 @@ abstract class AbstractModule {
 
 			return $this->option_key_cache[ $cache_key ];
 		}
-		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
-			$default_lang = apply_filters( 'wpml_default_language', null );
-			if ( $default_lang !== ICL_LANGUAGE_CODE ) {
-				$key = sprintf( '%s_%s', $key, ICL_LANGUAGE_CODE );
-			}
+		$language = $this->has_language_settings() ? Settings::get_settings_language() : '';
+		if ( $language ) {
+			$key = sprintf( '%s_%s', $key, $language );
 		}
 
-		$this->option_key_cache[ $cache_key ] = $key;
+		// Polylang defines the language only in 'setup_theme'; an earlier key is not final.
+		if ( did_action( 'setup_theme' ) ) {
+			$this->option_key_cache[ $cache_key ] = $key;
+		}
 
-		return $this->option_key_cache[ $cache_key ];
+		return $key;
 	}
 
 	/**

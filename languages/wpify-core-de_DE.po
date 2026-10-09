@@ -4,36 +4,37 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-09T14:13:38+02:00\n"
-"PO-Revision-Date: 2025-06-10 19:18+0200\n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Language: sk\n"
+"PO-Revision-Date: 2026-10-09 12:00+0200\n"
+"Last-Translator: WPify\n"
+"Language-Team: de (draft, needs native review)\n"
+"Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: wpify-core\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: WP-CLI 2.11.0\n"
 
 #: src/Abstracts/AbstractModule.php:333 src/Abstracts/AbstractPlugin.php:220 src/Admin/DashboardPage.php:338
 msgid "Settings"
-msgstr "Nastavenia"
+msgstr "Einstellungen"
 
 #: src/Abstracts/AbstractPlugin.php:224
 msgid "Get more plugins and support"
-msgstr "Viac pluginov a podpora"
+msgstr "Weitere Plugins und Support"
 
 #: src/Abstracts/AbstractPlugin.php:249 src/Admin/DashboardPage.php:280 src/Admin/DashboardPage.php:306 src/Admin/MenuBar.php:299 src/Admin/SupportPage.php:181 src/Admin/SupportPage.php:197
 msgid "Documentation"
-msgstr "Dokumentácia"
+msgstr "Dokumentation"
 
 #. translators: 1: Plugin name, 2: Settings URL.
 #: src/Abstracts/AbstractPlugin.php:272
 msgid "Your %1$s plugin licence is not activated yet. Please <a href=\"%2$s\">activate the domain</a> by connecting it with your WPify account!"
-msgstr "Vaša licencia pre plugin %1$s ešte nie je aktivovaná. Prosím, <a href=\"%2$s\">aktivujte doménu</a> prepojením s vaším WPify účtom!"
+msgstr "Die Lizenz des Plugins %1$s ist noch nicht aktiviert. Bitte <a href=\"%2$s\">aktivieren Sie die Domain</a>, indem Sie sie mit Ihrem WPify-Konto verbinden!"
 
 #: src/Admin/DashboardPage.php:34
 msgid "WPify Plugins"
-msgstr "WPify Pluginy"
+msgstr "WPify-Plugins"
 
 #: src/Admin/DashboardPage.php:35
 msgid "WPify"
@@ -41,256 +42,256 @@ msgstr "WPify"
 
 #: src/Admin/DashboardPage.php:45
 msgid "WPify Plugins Dashboard"
-msgstr "Hlavný panel WPify pluginov"
+msgstr "WPify-Plugins-Dashboard"
 
 #: src/Admin/DashboardPage.php:46 src/Admin/MenuBar.php:205
 msgid "Dashboard"
-msgstr "Hlavný panel"
+msgstr "Dashboard"
 
 #: src/Admin/DashboardPage.php:145
 msgid "Installed plugins"
-msgstr "Nainštalované pluginy"
+msgstr "Installierte Plugins"
 
 #: src/Admin/DashboardPage.php:151
 msgid "Our other plugins"
-msgstr "Naše ďalšie pluginy"
+msgstr "Unsere weiteren Plugins"
 
 #: src/Admin/DashboardPage.php:242
 msgid "The license is not valid."
-msgstr "Licencia nie je platná."
+msgstr "Die Lizenz ist nicht gültig."
 
 #: src/Admin/DashboardPage.php:242
 msgid "Please, activate the license."
-msgstr "Prosím, aktivujte licenciu."
+msgstr "Bitte aktivieren Sie die Lizenz."
 
 #. translators: %s: Available version number.
 #: src/Admin/DashboardPage.php:253
 msgid "New version %s available."
-msgstr "Nová verzia %s k dispozícii."
+msgstr "Neue Version %s verfügbar."
 
 #: src/Admin/DashboardPage.php:325
 msgid "Deactivate"
-msgstr "Deaktivovať"
+msgstr "Deaktivieren"
 
 #: src/Admin/DashboardPage.php:350
 msgid "Activate"
-msgstr "Aktivovať"
+msgstr "Aktivieren"
 
 #: src/Admin/DashboardPage.php:362
 msgid "Get plugin"
-msgstr "Získať plugin"
+msgstr "Plugin holen"
 
 #: src/Admin/DashboardPage.php:400
 msgid "WPify News"
-msgstr "Novinky WPify"
+msgstr "WPify-Neuigkeiten"
 
 #: src/Admin/MenuBar.php:307 src/Admin/SupportPage.php:35
 msgid "Support"
-msgstr "Podpora"
+msgstr "Support"
 
 #: src/Admin/Settings.php:570
 msgid "All languages"
-msgstr "Všetky jazyky"
+msgstr "Alle Sprachen"
 
 #. translators: %s: language name
 #: src/Admin/Settings.php:605
 msgid "Delete the settings for %s permanently? The language will use the main settings again."
-msgstr "Natrvalo zmazať nastavenia pre jazyk %s? Jazyk potom znova použije hlavné nastavenia."
+msgstr "Die Einstellungen für %s endgültig löschen? Die Sprache verwendet dann wieder die Haupteinstellungen."
 
 #: src/Admin/Settings.php:609
 msgid "Delete unused settings"
-msgstr "Zmazať nepoužívané nastavenia"
+msgstr "Nicht verwendete Einstellungen löschen"
 
 #. translators: %s: language name
 #: src/Admin/Settings.php:611
 msgid "Delete settings for %s"
-msgstr "Zmazať nastavenia pre %s"
+msgstr "Einstellungen für %s löschen"
 
 #: src/Admin/Settings.php:621
 msgid "The unused settings saved under \"All languages\" were deleted."
-msgstr "Nepoužívané nastavenia uložené v režime „Všetky jazyky“ boli zmazané."
+msgstr "Die nicht verwendeten Einstellungen aus dem Modus „Alle Sprachen“ wurden gelöscht."
 
 #. translators: %s: language name
 #: src/Admin/Settings.php:624
 msgid "The settings for %s were deleted. The language uses the main settings again."
-msgstr "Nastavenia pre jazyk %s boli zmazané. Jazyk znova používa hlavné nastavenia."
+msgstr "Die Einstellungen für %s wurden gelöscht. Die Sprache verwendet wieder die Haupteinstellungen."
 
 #: src/Admin/Settings.php:646
 msgid "You are editing the main settings"
-msgstr "Upravujete hlavné nastavenia"
+msgstr "Sie bearbeiten die Haupteinstellungen"
 
 #. translators: %s: default language name
 #: src/Admin/Settings.php:648
 msgid "They apply to the default language (%s) and to every other language that has no settings of its own."
-msgstr "Platia pre predvolený jazyk (%s) a pre všetky ostatné jazyky, ktoré nemajú vlastné nastavenia."
+msgstr "Sie gelten für die Standardsprache (%s) und für jede andere Sprache ohne eigene Einstellungen."
 
 #. translators: %s: list of language names
 #: src/Admin/Settings.php:653
 msgid "Languages with their own settings (changes made here do not affect them): %s"
-msgstr "Vlastné nastavenia majú tieto jazyky (zmeny tu sa na ne neprejavia): %s"
+msgstr "Sprachen mit eigenen Einstellungen (Änderungen hier wirken sich nicht auf sie aus): %s"
 
 #: src/Admin/Settings.php:657
 msgid "Settings saved under \"All languages\" by an older version are not used anywhere."
-msgstr "Nastavenia uložené staršou verziou v režime „Všetky jazyky“ sa nikde nepoužívajú."
+msgstr "Von einer älteren Version im Modus „Alle Sprachen“ gespeicherte Einstellungen werden nirgends verwendet."
 
 #. translators: %s: language name
 #: src/Admin/Settings.php:677
 msgid "You are editing the settings for %s only"
-msgstr "Upravujete nastavenia iba pre jazyk %s"
+msgstr "Sie bearbeiten nur die Einstellungen für %s"
 
 #. translators: %s: language name
 #: src/Admin/Settings.php:681
 msgid "%s has its own settings. Changes of the main settings do not apply to it."
-msgstr "Jazyk %s má vlastné nastavenia. Zmeny hlavných nastavení sa naň neprenášajú."
+msgstr "%s hat eigene Einstellungen. Änderungen der Haupteinstellungen gelten dafür nicht."
 
 #. translators: %s: language name
 #: src/Admin/Settings.php:683
 msgid "%1$s uses the main settings for now. Once you change something here and save, %1$s gets its own copy of all settings on this page, and later changes of the main settings will no longer apply to it."
-msgstr "Jazyk %1$s zatiaľ používa hlavné nastavenia. Keď tu niečo zmeníte a uložíte, dostane vlastnú kópiu všetkých nastavení tejto stránky a neskoršie zmeny hlavných nastavení sa naň už neprenesú."
+msgstr "%1$s verwendet vorerst die Haupteinstellungen. Sobald Sie hier etwas ändern und speichern, erhält %1$s eine eigene Kopie aller Einstellungen dieser Seite, und spätere Änderungen der Haupteinstellungen gelten dafür nicht mehr."
 
 #: src/Admin/Settings.php:687
 msgid "Edit main settings"
-msgstr "Upraviť hlavné nastavenia"
+msgstr "Haupteinstellungen bearbeiten"
 
 #: src/Admin/Settings.php:708
 msgid "You are not allowed to do this."
-msgstr "Na túto akciu nemáte oprávnenie."
+msgstr "Sie dürfen diese Aktion nicht ausführen."
 
 #: src/Admin/SupportPage.php:34
 msgid "WPify Plugins Support"
-msgstr "Podpora WPify pluginov"
+msgstr "Support für WPify-Plugins"
 
 #: src/Admin/SupportPage.php:63
 msgid "Where do I find the license key?"
-msgstr "Kde nájdem licenčný kľúč?"
+msgstr "Wo finde ich den Lizenzschlüssel?"
 
 #: src/Admin/SupportPage.php:64
 msgid "There is no key to enter. Click \"Activate domain\" in the plugin settings and the site connects to your WPify account. If the button is missing, the license field tells you that the server blocks the plugin files and which file it is."
-msgstr "Žiadny kľúč sa nezadáva. V nastaveniach pluginu kliknite na „Aktivovať doménu“ a web sa prepojí s vaším účtom WPify. Ak tlačidlo chýba, pole licencie vám povie, že server blokuje súbory pluginu, a o ktorý súbor ide."
+msgstr "Es muss kein Schlüssel eingegeben werden. Klicken Sie in den Plugin-Einstellungen auf „Domain aktivieren“, und die Website wird mit Ihrem WPify-Konto verbunden. Fehlt die Schaltfläche, zeigt das Lizenzfeld an, dass der Server die Plugin-Dateien blockiert, und um welche Datei es sich handelt."
 
 #: src/Admin/SupportPage.php:67
 msgid "How do I move the license to a new domain?"
-msgstr "Ako presuniem licenciu na novú doménu?"
+msgstr "Wie übertrage ich die Lizenz auf eine neue Domain?"
 
 #: src/Admin/SupportPage.php:68
 msgid "On the old site, click \"Deactivate domain\" in the plugin settings, then click \"Activate domain\" on the new site. If the old site is no longer available, contact us."
-msgstr "Na starom webe kliknite v nastaveniach pluginu na „Deaktivovať doménu“ a potom na novom webe na „Aktivovať doménu“. Ak starý web už nie je dostupný, ozvite sa nám."
+msgstr "Klicken Sie auf der alten Website in den Plugin-Einstellungen auf „Domain deaktivieren“ und danach auf der neuen Website auf „Domain aktivieren“. Ist die alte Website nicht mehr erreichbar, kontaktieren Sie uns."
 
 #: src/Admin/SupportPage.php:71
 msgid "Why is a plugin update not available?"
-msgstr "Prečo nie je dostupná aktualizácia pluginu?"
+msgstr "Warum ist kein Plugin-Update verfügbar?"
 
 #: src/Admin/SupportPage.php:72
 msgid "Updates need a valid license for this domain. The license field in the plugin settings and the plugin list show the reason, e.g. an expired subscription or a license activated for another domain."
-msgstr "Aktualizácie potrebujú platnú licenciu pre túto doménu. Dôvod uvidíte v poli licencie v nastaveniach pluginu aj v zozname pluginov, napr. vypršané predplatné alebo licencia aktivovaná pre inú doménu."
+msgstr "Updates benötigen eine gültige Lizenz für diese Domain. Den Grund zeigen das Lizenzfeld in den Plugin-Einstellungen und die Plugin-Liste an, z. B. ein abgelaufenes Abonnement oder eine für eine andere Domain aktivierte Lizenz."
 
 #: src/Admin/SupportPage.php:75
 msgid "Will the plugin work if I do not renew my license?"
-msgstr "Bude plugin fungovať, ak neobnovím svoju licenciu?"
+msgstr "Funktioniert das Plugin, wenn ich die Lizenz nicht verlängere?"
 
 #: src/Admin/SupportPage.php:76
 msgid "Yes, the plugin will continue to work, but you will no longer have access to updates and support."
-msgstr "Áno, plugin bude naďalej fungovať, ale už nebudete mať prístup k aktualizáciám a podpore."
+msgstr "Ja, das Plugin funktioniert weiter, Sie haben dann aber keinen Zugriff mehr auf Updates und Support."
 
 #: src/Admin/SupportPage.php:79
 msgid "My settings do not apply in another language."
-msgstr "Nastavenia sa v inom jazyku neprejavujú."
+msgstr "Meine Einstellungen gelten in einer anderen Sprache nicht."
 
 #: src/Admin/SupportPage.php:80
 msgid "On multilingual sites (WPML, Polylang) the main settings apply to every language without settings of its own. When you change and save the settings with one language selected, that language gets its own copy. The notice at the top of the settings page tells you which settings you are editing and lets you delete the settings of a language."
-msgstr "Na viacjazyčných weboch (WPML, Polylang) platia hlavné nastavenia pre každý jazyk bez vlastných nastavení. Keď nastavenia zmeníte a uložíte s vybraným konkrétnym jazykom, tento jazyk dostane vlastnú kópiu. Upozornenie hore na stránke nastavení vám povie, ktoré nastavenia upravujete, a umožní nastavenia jazyka zmazať."
+msgstr "Auf mehrsprachigen Websites (WPML, Polylang) gelten die Haupteinstellungen für jede Sprache ohne eigene Einstellungen. Wenn Sie die Einstellungen bei ausgewählter Sprache ändern und speichern, erhält diese Sprache eine eigene Kopie. Der Hinweis oben auf der Einstellungsseite zeigt, welche Einstellungen Sie bearbeiten, und ermöglicht es, die Einstellungen einer Sprache zu löschen."
 
 #: src/Admin/SupportPage.php:83
 msgid "I need a feature that the plugin does not currently support."
-msgstr "Potrebujem funkciu, ktorú plugin zatiaľ nepodporuje."
+msgstr "Ich brauche eine Funktion, die das Plugin derzeit nicht unterstützt."
 
 #: src/Admin/SupportPage.php:84
 msgid "Let us know, and we will consider adding the requested functionality."
-msgstr "Dajte nám vedieť a zvážime pridanie požadovanej funkcie."
+msgstr "Teilen Sie es uns mit, und wir prüfen, ob wir die gewünschte Funktion ergänzen."
 
 #: src/Admin/SupportPage.php:95
 msgid "Support page"
-msgstr "Stránka podpory"
+msgstr "Support-Seite"
 
 #: src/Admin/SupportPage.php:105
 msgid "Your support request has been sent. We will get back to you shortly."
-msgstr "Vaša žiadosť o podporu bola odoslaná. Čoskoro sa vám ozveme."
+msgstr "Ihre Support-Anfrage wurde gesendet. Wir melden uns in Kürze."
 
 #: src/Admin/SupportPage.php:106
 msgid "Your support request could not be sent. Please try again."
-msgstr "Vašu žiadosť o podporu sa nepodarilo odoslať. Skúste to prosím znova."
+msgstr "Ihre Support-Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut."
 
 #: src/Admin/SupportPage.php:115
 msgid "Most problems can be solved in a few minutes with the steps and documentation below. Please go through them before sending a request — you will get the answer faster."
-msgstr "Väčšinu problémov vyriešite za pár minút podľa krokov a dokumentácie nižšie. Skôr než nám napíšete, prejdite ich, prosím — k odpovedi sa dostanete rýchlejšie."
+msgstr "Die meisten Probleme lassen sich mit den folgenden Schritten und der Dokumentation in wenigen Minuten lösen. Bitte gehen Sie sie durch, bevor Sie eine Anfrage senden — so erhalten Sie schneller eine Antwort."
 
 #: src/Admin/SupportPage.php:120
 msgid "Quick debugging checklist"
-msgstr "Rýchly kontrolný zoznam pre ladenie"
+msgstr "Kurze Checkliste zur Fehlersuche"
 
 #: src/Admin/SupportPage.php:126
 msgid "Check order notes"
-msgstr "Skontrolujte poznámky k objednávke"
+msgstr "Bestellnotizen prüfen"
 
 #: src/Admin/SupportPage.php:127
 msgid "In the WooCommerce order detail, you’ll find notes that plugins automatically add. Look for messages about errors or failed operations."
-msgstr "V detaile objednávky WooCommerce nájdete poznámky, ktoré pluginy automaticky pridávajú. Hľadajte správy o chybách alebo neúspešných operáciách."
+msgstr "In den Bestelldetails von WooCommerce finden Sie Notizen, die Plugins automatisch hinzufügen. Suchen Sie nach Meldungen über Fehler oder fehlgeschlagene Vorgänge."
 
 #: src/Admin/SupportPage.php:132
 msgid "Review logs"
-msgstr "Skontrolujte logy"
+msgstr "Logs prüfen"
 
 #: src/Admin/SupportPage.php:133
 msgid "Most plugins log communication in WPify → WPify Logs. Select the relevant plugin and date, look for records marked as ERROR."
-msgstr "Väčšina pluginov zaznamenáva komunikáciu v WPify → WPify Logs. Vyberte príslušný plugin a dátum, hľadajte záznamy označené ERROR."
+msgstr "Die meisten Plugins protokollieren die Kommunikation unter WPify → WPify Logs. Wählen Sie das betreffende Plugin und Datum und suchen Sie nach Einträgen mit ERROR."
 
 #: src/Admin/SupportPage.php:136
 msgid "Open WPify Logs"
-msgstr "Otvoriť WPify Logs"
+msgstr "WPify Logs öffnen"
 
 #: src/Admin/SupportPage.php:141
 msgid "Check plugin documentation"
-msgstr "Prejdite dokumentáciu pluginu"
+msgstr "Plugin-Dokumentation prüfen"
 
 #: src/Admin/SupportPage.php:142
 msgid "Each plugin has its own troubleshooting section with descriptions of common errors and their solutions."
-msgstr "Každý plugin má vlastnú sekciu na riešenie problémov s popisom bežných chýb a ich riešení."
+msgstr "Jedes Plugin hat einen eigenen Abschnitt zur Fehlerbehebung mit häufigen Fehlern und deren Lösungen."
 
 #: src/Admin/SupportPage.php:145
 msgid "Find your plugin in the list below"
-msgstr "Nájdite svoj plugin v zozname nižšie"
+msgstr "Ihr Plugin finden Sie in der Liste unten"
 
 #: src/Admin/SupportPage.php:150
 msgid "Contact support"
-msgstr "Kontaktujte podporu"
+msgstr "Support kontaktieren"
 
 #: src/Admin/SupportPage.php:151
 msgid "If the problem persists, send us a request with the form below. Describe the problem and the steps to reproduce it — diagnostics and the selected logs are attached for you."
-msgstr "Ak problém pretrváva, pošlite nám žiadosť formulárom nižšie. Opíšte problém a postup, ako ho vyvolať — diagnostiku a vybrané logy priložíme za vás."
+msgstr "Wenn das Problem weiterhin besteht, senden Sie uns eine Anfrage über das Formular unten. Beschreiben Sie das Problem und wie es sich reproduzieren lässt — Diagnosedaten und die ausgewählten Logs werden automatisch angehängt."
 
 #: src/Admin/SupportPage.php:153
 msgid "Go to the support form"
-msgstr "Prejsť na formulár podpory"
+msgstr "Zum Support-Formular"
 
 #: src/Admin/SupportPage.php:158
 msgid "Full debugging guide"
-msgstr "Úplný sprievodca ladením"
+msgstr "Vollständige Anleitung zur Fehlersuche"
 
 #: src/Admin/SupportPage.php:164
 msgid "Frequently Asked Questions"
-msgstr "Často kladené otázky"
+msgstr "Häufig gestellte Fragen"
 
 #: src/Admin/SupportPage.php:180
 msgid "Check out the plugin documentation to see if your question is already answered."
-msgstr "Pozrite si dokumentáciu pluginu, či už neobsahuje odpoveď na vašu otázku."
+msgstr "Sehen Sie in der Plugin-Dokumentation nach, ob Ihre Frage dort bereits beantwortet ist."
 
 #: src/Admin/SupportPage.php:188
 msgid "Your WPify plugins"
-msgstr "Vaše WPify pluginy"
+msgstr "Ihre WPify-Plugins"
 
 #: src/Admin/SupportPage.php:189
 msgid "Open the documentation of the plugin you have trouble with — most common problems are described there."
-msgstr "Otvorte dokumentáciu pluginu, s ktorým máte problém — väčšina častých problémov je opísaná tam."
+msgstr "Öffnen Sie die Dokumentation des Plugins, mit dem Sie Probleme haben — die häufigsten Probleme sind dort beschrieben."
 
 #: src/Admin/SupportPage.php:194 src/Admin/SupportPage.php:239
 msgid "Plugin"
@@ -298,122 +299,122 @@ msgstr "Plugin"
 
 #: src/Admin/SupportPage.php:195
 msgid "Version"
-msgstr "Verzia"
+msgstr "Version"
 
 #: src/Admin/SupportPage.php:196
 msgid "License"
-msgstr "Licencia"
+msgstr "Lizenz"
 
 #: src/Admin/SupportPage.php:216 src/Admin/SupportPage.php:248
 msgid "Open documentation"
-msgstr "Otvoriť dokumentáciu"
+msgstr "Dokumentation öffnen"
 
 #: src/Admin/SupportPage.php:230
 msgid "Send a support request"
-msgstr "Odoslať žiadosť o podporu"
+msgstr "Support-Anfrage senden"
 
 #: src/Admin/SupportPage.php:231
 msgid "Did not find the answer in the steps and documentation above? Write to us."
-msgstr "Nenašli ste odpoveď v krokoch a dokumentácii vyššie? Napíšte nám."
+msgstr "Keine Antwort in den Schritten und der Dokumentation oben gefunden? Schreiben Sie uns."
 
 #: src/Admin/SupportPage.php:241 src/Admin/SupportPage.php:530
 msgid "General"
-msgstr "Všeobecné"
+msgstr "Allgemein"
 
 #: src/Admin/SupportPage.php:247
 msgid "Have you gone through the documentation of this plugin?"
-msgstr "Prešli ste dokumentáciu tohto pluginu?"
+msgstr "Haben Sie die Dokumentation dieses Plugins durchgesehen?"
 
 #: src/Admin/SupportPage.php:252
 msgid "Subject (optional)"
-msgstr "Predmet (voliteľné)"
+msgstr "Betreff (optional)"
 
 #: src/Admin/SupportPage.php:253
 msgid "Short summary of the issue"
-msgstr "Stručné zhrnutie problému"
+msgstr "Kurze Zusammenfassung des Problems"
 
 #: src/Admin/SupportPage.php:256
 msgid "Contact email"
-msgstr "Kontaktný e-mail"
+msgstr "Kontakt-E-Mail"
 
 #: src/Admin/SupportPage.php:260
 msgid "Message"
-msgstr "Správa"
+msgstr "Nachricht"
 
 #: src/Admin/SupportPage.php:265
 msgid "Attach logs"
-msgstr "Priložiť logy"
+msgstr "Logs anhängen"
 
 #: src/Admin/SupportPage.php:266
 msgid "Select a plugin above to attach its logs."
-msgstr "Na priloženie logov vyberte vyššie plugin."
+msgstr "Wählen Sie oben ein Plugin, um seine Logs anzuhängen."
 
 #: src/Admin/SupportPage.php:267
 msgid "This plugin has no logs."
-msgstr "Tento plugin nemá žiadne logy."
+msgstr "Dieses Plugin hat keine Logs."
 
 #: src/Admin/SupportPage.php:270
 msgid "Do not attach logs"
-msgstr "Nepriložiť logy"
+msgstr "Keine Logs anhängen"
 
 #: src/Admin/SupportPage.php:271
 msgid "The latest log"
-msgstr "Posledný log"
+msgstr "Neuestes Log"
 
 #: src/Admin/SupportPage.php:272
 msgid "The latest 3 logs"
-msgstr "Posledné 3 logy"
+msgstr "Die 3 neuesten Logs"
 
 #. translators: %d: number of log files kept for the plugin
 #: src/Admin/SupportPage.php:273
 msgid "All kept logs (%d)"
-msgstr "Všetky uchované logy (%d)"
+msgstr "Alle aufbewahrten Logs (%d)"
 
 #. translators: %d: number of log files kept for the plugin
 #: src/Admin/SupportPage.php:273
 msgid "All kept logs"
-msgstr "Všetky uchované logy"
+msgstr "Alle aufbewahrten Logs"
 
 #: src/Admin/SupportPage.php:276
 msgid "Choose specific files"
-msgstr "Vybrať konkrétne súbory"
+msgstr "Bestimmte Dateien auswählen"
 
 #: src/Admin/SupportPage.php:282
 msgid "Selected files are attached in addition to the latest logs. Hold Ctrl (Windows) or Cmd (Mac) to select multiple logs."
-msgstr "Vybrané súbory sa priložia navyše k posledným logom. Na výber viacerých súborov podržte Ctrl (Windows) alebo Cmd (Mac)."
+msgstr "Die ausgewählten Dateien werden zusätzlich zu den neuesten Logs angehängt. Halten Sie Strg (Windows) oder Cmd (Mac) gedrückt, um mehrere Logs auszuwählen."
 
 #: src/Admin/SupportPage.php:288
 msgid "Attach files (optional)"
-msgstr "Priložiť súbory (voliteľné)"
+msgstr "Dateien anhängen (optional)"
 
 #: src/Admin/SupportPage.php:290
 msgid "Screenshots or documents that help explain the issue."
-msgstr "Snímky obrazovky alebo dokumenty, ktoré pomôžu problém vysvetliť."
+msgstr "Screenshots oder Dokumente, die das Problem erklären."
 
 #: src/Admin/SupportPage.php:293
 msgid "What is sent automatically"
-msgstr "Čo sa odošle automaticky"
+msgstr "Was automatisch gesendet wird"
 
 #: src/Admin/SupportPage.php:302
 msgid "With a plugin selected, also its license status and key."
-msgstr "Pri zvolenom plugine aj stav a kľúč jeho licencie."
+msgstr "Bei ausgewähltem Plugin auch dessen Lizenzstatus und -schlüssel."
 
 #: src/Admin/SupportPage.php:305
 msgid "Send request"
-msgstr "Odoslať žiadosť"
+msgstr "Anfrage senden"
 
 #: src/Admin/SupportPage.php:441
 msgid "Not activated"
-msgstr "Neaktivované"
+msgstr "Nicht aktiviert"
 
 #: src/Admin/SupportPage.php:445
 msgid "Invalid"
-msgstr "Neplatná"
+msgstr "Ungültig"
 
 #: src/Admin/SupportPage.php:448
 msgid "Active"
-msgstr "Aktívna"
+msgstr "Aktiv"
 
 #: src/Admin/SupportPage.php:511
 msgid "You do not have permission to submit support requests."
-msgstr "Nemáte oprávnenie odosielať žiadosti o podporu."
+msgstr "Sie haben keine Berechtigung, Support-Anfragen zu senden."

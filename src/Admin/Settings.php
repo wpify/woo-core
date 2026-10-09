@@ -93,6 +93,7 @@ class Settings {
 		add_action( 'activated_plugin', [ $this, 'maybe_set_redirect' ] );
 		add_action( 'deactivated_plugin', [ $this, 'maybe_set_redirect' ] );
 		add_action( 'admin_init', [ $this, 'maybe_redirect' ] );
+		add_action( 'admin_post_wpify_core_delete_language_settings', [ $this, 'delete_language_settings' ] );
 
 		// Initialize page components (they register themselves)
 		$this->get_dashboard_page();
@@ -194,10 +195,38 @@ class Settings {
 	 * @return void
 	 */
 	public function load_textdomain(): void {
-		$mo_file = dirname( __DIR__, 2 ) . '/languages/wpify-core-' . determine_locale() . '.mo';
-		if ( file_exists( $mo_file ) ) {
+		$mo_file = self::find_translation( dirname( __DIR__, 2 ) . '/languages', 'wpify-core-', '.mo', determine_locale() );
+		if ( $mo_file ) {
 			load_textdomain( 'wpify-core', $mo_file );
 		}
+	}
+
+	/**
+	 * Translation file for the locale, or for another locale of the same language when there is none
+	 * (de_AT, de_CH and de_DE_formal use de_DE; the {language}_{LANGUAGE} variant is preferred).
+	 *
+	 * @param string $dir    Directory with the translations.
+	 * @param string $prefix File name before the locale, e.g. 'wpify-core-'.
+	 * @param string $suffix File name after the locale, e.g. '.mo'.
+	 * @param string $locale Locale.
+	 *
+	 * @return string Empty when no translation exists.
+	 */
+	public static function find_translation( string $dir, string $prefix, string $suffix, string $locale ): string {
+		$file = $dir . '/' . $prefix . $locale . $suffix;
+		if ( file_exists( $file ) ) {
+			return $file;
+		}
+
+		$language  = strtolower( strtok( $locale, '_' ) );
+		$preferred = $dir . '/' . $prefix . $language . '_' . strtoupper( $language ) . $suffix;
+		if ( file_exists( $preferred ) ) {
+			return $preferred;
+		}
+
+		$files = glob( $dir . '/' . $prefix . $language . '_*' . $suffix );
+
+		return $files ? $files[0] : '';
 	}
 
 	/**
@@ -296,6 +325,8 @@ class Settings {
 					$this->pages[ $plugin_id ]['option_name'] = $section['option_name'] ?? $this->get_settings_name( $section['option_id'] );
 					$this->pages[ $plugin_id ]['tabs']        = $this->is_current( '', $section_id ) ? $section['tabs'] : [];
 					$this->pages[ $plugin_id ]['items']       = $this->is_current( '', $section_id ) ? $section['settings'] : [];
+
+					$this->pages[ $plugin_id ]['language_settings'] = $section['language_settings'] ?? true;
 					continue;
 				}
 
@@ -309,12 +340,17 @@ class Settings {
 					'option_name' => $section['option_name'] ?? $this->get_settings_name( $section['option_id'] ),
 					'tabs'        => $this->is_current( '', $section_id ) ? $section['tabs'] : [],
 					'items'       => $this->is_current( '', $section_id ) ? $section['settings'] : [],
+
+					'language_settings' => $section['language_settings'] ?? true,
 				];
 			}
 		}
 
 		foreach ( $this->pages as $page ) {
 			$page['position'] = 1;
+			$page['callback'] = function () use ( $page ) {
+				$this->render_language_notice( $page );
+			};
 			$this->custom_fields->create_options_page( $page );
 		}
 	}
@@ -448,16 +484,237 @@ class Settings {
 	 * @return string
 	 */
 	public function get_settings_name( string $module ): string {
-		$key = sprintf( '%s-%s', self::OPTION_NAME, $module );
+		$key      = sprintf( '%s-%s', self::OPTION_NAME, $module );
+		$language = self::get_settings_language();
 
-		if ( 'general' !== $module && defined( 'ICL_LANGUAGE_CODE' ) ) {
-			$default_lang = apply_filters( 'wpml_default_language', null );
-			if ( $default_lang !== ICL_LANGUAGE_CODE ) {
-				$key = sprintf( '%s_%s', $key, ICL_LANGUAGE_CODE );
-			}
+		if ( 'general' !== $module && $language ) {
+			$key = sprintf( '%s_%s', $key, $language );
 		}
 
 		return $key;
+	}
+
+	/**
+	 * Language whose own copy of the settings is read and saved, or '' for the main settings.
+	 * "All languages" in the WPML / Polylang admin switcher ('all' in WPML, no language in Polylang)
+	 * and the default language both mean the main settings.
+	 *
+	 * @return string
+	 */
+	public static function get_settings_language(): string {
+		if ( ! defined( 'ICL_LANGUAGE_CODE' ) ) {
+			return '';
+		}
+
+		$language = (string) ICL_LANGUAGE_CODE;
+
+		if ( '' === $language || 'all' === $language || apply_filters( 'wpml_default_language', null ) === $language ) {
+			return '';
+		}
+
+		return $language;
+	}
+
+	/**
+	 * Whether an option is stored. get_option() cannot tell for the settings: a registered setting and the
+	 * language fallback both give a missing option a default value.
+	 *
+	 * @param string $option Option name.
+	 *
+	 * @return bool
+	 */
+	public static function option_exists( string $option ): bool {
+		global $wpdb;
+
+		$all = wp_load_alloptions();
+		if ( isset( $all[ $option ] ) ) {
+			return true;
+		}
+
+		return null !== $wpdb->get_var( $wpdb->prepare( "SELECT option_id FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", $option ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	}
+
+	/**
+	 * Explains on a settings page whose language the settings belong to, as soon as the site is multilingual.
+	 *
+	 * @param array $page Options page arguments.
+	 *
+	 * @return void
+	 */
+	public function render_language_notice( array $page ): void {
+		$languages = apply_filters( 'wpml_active_languages', null, array( 'skip_missing' => 0 ) );
+		$default   = apply_filters( 'wpml_default_language', null );
+		$language  = self::get_settings_language();
+		$option    = $page['option_name'] ?? '';
+
+		if ( empty( $languages ) || ! is_array( $languages ) || ! $default || '' === $option || self::OPTION_NAME . '-general' === $option ) {
+			return;
+		}
+
+		// The module keeps one set of settings for all languages (AbstractModule::has_language_settings()).
+		if ( false === ( $page['language_settings'] ?? true ) ) {
+			return;
+		}
+
+		if ( $language ) {
+			$suffix = '_' . $language;
+			if ( ! str_ends_with( $option, $suffix ) ) {
+				// A section with its own option name that does not follow the language.
+				return;
+			}
+			$option = substr( $option, 0, - strlen( $suffix ) );
+		}
+
+		$name = static function ( string $code ) use ( $languages ): string {
+			if ( 'all' === $code ) {
+				return __( 'All languages', 'wpify-core' );
+			}
+
+			// The native name reads the same whichever language the admin is switched to.
+			return (string) ( $languages[ $code ]['native_name'] ?? $languages[ $code ]['translated_name'] ?? $code );
+		};
+
+		$page_url = static function ( string $code ) use ( $page ): string {
+			return add_query_arg(
+				array(
+					'page' => $page['menu_slug'],
+					'lang' => $code,
+				),
+				admin_url( 'admin.php' )
+			);
+		};
+
+		$delete_button = function ( string $code ) use ( $option, $name ): string {
+			$url = wp_nonce_url(
+				add_query_arg(
+					array(
+						'action'   => 'wpify_core_delete_language_settings',
+						'option'   => $option,
+						'language' => $code,
+					),
+					admin_url( 'admin-post.php' )
+				),
+				'wpify_core_delete_language_settings_' . $option . '_' . $code
+			);
+
+			return sprintf(
+				'<a href="%1$s" class="button button-small wpify-button-delete" onclick="return confirm(%2$s);">%3$s</a>',
+				esc_url( $url ),
+				esc_attr( wp_json_encode( sprintf(
+					/* translators: %s: language name */
+					__( 'Delete the settings for %s permanently? The language will use the main settings again.', 'wpify-core' ),
+					$name( $code )
+				) ) ),
+				esc_html( 'all' === $code
+					? __( 'Delete unused settings', 'wpify-core' )
+					/* translators: %s: language name */
+					: sprintf( __( 'Delete settings for %s', 'wpify-core' ), $name( $code ) ) )
+			);
+		};
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only message after the redirect.
+		$deleted = isset( $_GET['wpify-language-settings-deleted'] ) ? sanitize_key( wp_unslash( $_GET['wpify-language-settings-deleted'] ) ) : '';
+		if ( $deleted ) {
+			printf(
+				'<div class="wpify-notice wpify-notice-success"><p>%s</p></div>',
+				esc_html( 'all' === $deleted
+					? __( 'The unused settings saved under "All languages" were deleted.', 'wpify-core' )
+					: sprintf(
+						/* translators: %s: language name */
+						__( 'The settings for %s were deleted. The language uses the main settings again.', 'wpify-core' ),
+						$name( $deleted )
+					) )
+			);
+		}
+
+		if ( ! $language ) {
+			$has_unused = self::option_exists( $option . '_all' );
+			$own        = array();
+			foreach ( array_keys( $languages ) as $code ) {
+				if ( $code !== $default && self::option_exists( $option . '_' . $code ) ) {
+					$own[] = sprintf( '<a href="%s">%s</a>', esc_url( $page_url( $code ) ), esc_html( $name( $code ) ) );
+				}
+			}
+
+			// Nothing to explain while no language has settings of its own.
+			if ( ! $own && ! $has_unused ) {
+				return;
+			}
+			?>
+			<div class="wpify-notice wpify-notice-info wpify-language-notice">
+				<div class="wpify-language-notice__text">
+					<p><strong><?php esc_html_e( 'You are editing the main settings', 'wpify-core' ); ?></strong> – <?php
+						/* translators: %s: default language name */
+						echo esc_html( sprintf( __( 'They apply to the default language (%s) and to every other language that has no settings of its own.', 'wpify-core' ), $name( $default ) ) );
+					?></p>
+					<?php if ( $own ) : ?>
+						<p><?php
+							/* translators: %s: list of language names */
+							echo wp_kses_post( sprintf( __( 'Languages with their own settings (changes made here do not affect them): %s', 'wpify-core' ), implode( ', ', $own ) ) );
+						?></p>
+					<?php endif; ?>
+					<?php if ( $has_unused ) : ?>
+						<p><?php esc_html_e( 'Settings saved under "All languages" by an older version are not used anywhere.', 'wpify-core' ); ?></p>
+					<?php endif; ?>
+				</div>
+				<?php if ( $has_unused ) : ?>
+					<div class="wpify-language-notice__actions">
+						<?php echo $delete_button( 'all' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in the closure. ?>
+					</div>
+				<?php endif; ?>
+			</div>
+			<?php
+
+			return;
+		}
+
+		$has_own = self::option_exists( $option . '_' . $language );
+		?>
+		<div class="wpify-notice wpify-notice-warning wpify-language-notice">
+			<div class="wpify-language-notice__text">
+				<p><strong><?php
+					/* translators: %s: language name */
+					echo esc_html( sprintf( __( 'You are editing the settings for %s only', 'wpify-core' ), $name( $language ) ) );
+				?></strong> – <?php
+					echo esc_html( $has_own
+						/* translators: %s: language name */
+						? sprintf( __( '%s has its own settings. Changes of the main settings do not apply to it.', 'wpify-core' ), $name( $language ) )
+						/* translators: %s: language name */
+						: sprintf( __( '%1$s uses the main settings for now. Once you change something here and save, %1$s gets its own copy of all settings on this page, and later changes of the main settings will no longer apply to it.', 'wpify-core' ), $name( $language ) ) );
+				?></p>
+			</div>
+			<div class="wpify-language-notice__actions">
+				<a href="<?php echo esc_url( $page_url( $default ) ); ?>" class="button button-small"><?php esc_html_e( 'Edit main settings', 'wpify-core' ); ?></a>
+				<?php if ( $has_own ) {
+					echo $delete_button( $language ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in the closure.
+				} ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Deletes the own copy of the settings of one language, so the language uses the main settings again.
+	 *
+	 * @return void
+	 */
+	public function delete_language_settings(): void {
+		$option   = isset( $_GET['option'] ) ? sanitize_text_field( wp_unslash( $_GET['option'] ) ) : '';
+		$language = isset( $_GET['language'] ) ? sanitize_key( wp_unslash( $_GET['language'] ) ) : '';
+
+		check_admin_referer( 'wpify_core_delete_language_settings_' . $option . '_' . $language );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You are not allowed to do this.', 'wpify-core' ) );
+		}
+
+		if ( '' !== $language && str_starts_with( $option, self::OPTION_NAME . '-' ) ) {
+			delete_option( $option . '_' . $language );
+		}
+
+		$back = wp_get_referer() ?: admin_url( 'admin.php?page=' . DashboardPage::SLUG );
+		wp_safe_redirect( add_query_arg( 'wpify-language-settings-deleted', $language, remove_query_arg( 'settings-updated', $back ) ) );
+		exit;
 	}
 
 	/**

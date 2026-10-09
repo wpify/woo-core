@@ -1240,3 +1240,42 @@ span.wpifycf-field__label.wpifycf-field__label--group:empty {
         display: none;
     }
 }
+
+/* Deletes data for good (e.g. the settings of one language), so it reads as destructive. */
+.wpify-admin-page .button.wpify-button-delete {
+    border-color: var(--wpify-core-danger);
+    color: var(--wpify-core-danger);
+}
+
+.wpify-admin-page .button.wpify-button-delete:hover,
+.wpify-admin-page .button.wpify-button-delete:focus {
+    border-color: var(--wpify-core-danger);
+    background: var(--wpify-core-danger-soft);
+    color: var(--wpify-core-danger);
+}
+
+/* Language notice on the settings pages: text on the left, the actions stacked on the right
+   (like the license field); they drop below the text once it would get narrower than 240px. */
+.wpify-language-notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--wpifycf-gap-4, 16px);
+}
+
+.wpify-language-notice__text {
+    flex: 1 1 240px;
+}
+
+.wpify-language-notice__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    text-align: center;
+}
+
+/* WordPress sets 11px on the small buttons, hard to read. */
+.wpify-admin-page .button.button-small {
+    font-size: 12px;
+}

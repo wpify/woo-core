@@ -60,17 +60,29 @@ class SupportPage {
 
 		$faqs = apply_filters( 'wpify_dashboard_support_faqs', array(
 			array(
-				'title'   => __( 'How do the pricing plans work?', 'wpify-core' ),
-				'content' => __( 'When you purchase the plugin, you receive support and updates for one year. After this period, the license will automatically renew.', 'wpify-core' ),
+				'title'   => __( 'Where do I find the license key?', 'wpify-core' ),
+				'content' => __( 'There is no key to enter. Click "Activate domain" in the plugin settings and the site connects to your WPify account. If the button is missing, the license field tells you that the server blocks the plugin files and which file it is.', 'wpify-core' ),
+			),
+			array(
+				'title'   => __( 'How do I move the license to a new domain?', 'wpify-core' ),
+				'content' => __( 'On the old site, click "Deactivate domain" in the plugin settings, then click "Activate domain" on the new site. If the old site is no longer available, contact us.', 'wpify-core' ),
+			),
+			array(
+				'title'   => __( 'Why is a plugin update not available?', 'wpify-core' ),
+				'content' => __( 'Updates need a valid license for this domain. The license field in the plugin settings and the plugin list show the reason, e.g. an expired subscription or a license activated for another domain.', 'wpify-core' ),
 			),
 			array(
 				'title'   => __( 'Will the plugin work if I do not renew my license?', 'wpify-core' ),
 				'content' => __( 'Yes, the plugin will continue to work, but you will no longer have access to updates and support.', 'wpify-core' ),
 			),
 			array(
+				'title'   => __( 'My settings do not apply in another language.', 'wpify-core' ),
+				'content' => __( 'On multilingual sites (WPML, Polylang) the main settings apply to every language without settings of its own. When you change and save the settings with one language selected, that language gets its own copy. The notice at the top of the settings page tells you which settings you are editing and lets you delete the settings of a language.', 'wpify-core' ),
+			),
+			array(
 				'title'   => __( 'I need a feature that the plugin does not currently support.', 'wpify-core' ),
 				'content' => __( 'Let us know, and we will consider adding the requested functionality.', 'wpify-core' ),
-			)
+			),
 		) );
 		$active_plugins = $this->get_active_wpify_plugins();
 		$log_files      = $this->get_log_files();
